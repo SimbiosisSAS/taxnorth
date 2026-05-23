@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Inter:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-midnight-north: #1A2744;
+  --color-lantern-amber: #F4A332;
+  --color-warm-white: #FAF8F5;
+  --color-fog-gray: #EEF1F7;
+  --color-maple-green: #2E7D5E;
+  --color-deep-ink: #1A2744;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-heading: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  --radius-card: 1rem;
+  --radius-button: 0.5rem;
+  --radius-chat: 1.5rem;
+}
+
+body {
+  background-color: var(--color-warm-white);
+  color: var(--color-midnight-north);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}

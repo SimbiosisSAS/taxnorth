@@ -1,0 +1,217 @@
+import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, ChevronDown } from 'lucide-react'
+import Link from 'next/link'
+
+export default function HomePage() {
+  return (
+    <div>
+
+      {/* NAVBAR */}
+      <nav className="sticky top-0 z-50 bg-warm-white border-b border-fog-gray">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-midnight-north rounded-lg flex items-center justify-center">
+              <Flashlight className="w-4 h-4 text-lantern-amber" />
+            </div>
+            <span className="font-heading font-bold text-midnight-north text-lg">
+              TaxNorth<span className="text-sm">.ca</span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-1 text-sm text-deep-ink cursor-pointer">
+            <span>EN</span>
+            <ChevronDown className="w-4 h-4" />
+          </div>
+          <Link
+            href="/chat"
+            className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
+          >
+            Start for free
+          </Link>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section className="bg-midnight-north min-h-screen flex items-center justify-center px-6 py-20">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-8">
+            <Flashlight className="w-8 h-8 text-lantern-amber" />
+          </div>
+          <h1 className="font-heading font-bold text-white text-4xl md:text-6xl mb-6 leading-tight">
+            Taxes that finally click.
+          </h1>
+          <p className="text-white/80 text-lg mb-8 leading-relaxed">
+            Your AI guide to Canadian taxes — in any language, for every newcomer.
+          </p>
+          <Link
+            href="/chat"
+            className="inline-block bg-lantern-amber text-midnight-north font-semibold text-base px-8 py-4 rounded-button hover:opacity-90 transition-opacity mb-4"
+          >
+            Ask your first question →
+          </Link>
+          <p className="text-white/50 text-sm mt-3">
+            Free to use. No account required.
+          </p>
+        </div>
+      </section>
+
+      {/* SURPRISE SECTION */}
+      <section className="bg-warm-white py-24 px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-5 gap-12 items-center">
+          <div className="md:col-span-3">
+            <p className="text-lantern-amber font-semibold text-sm uppercase tracking-widest mb-4">
+              Most newcomers don't know this
+            </p>
+            <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl mb-6 leading-tight">
+              The Canadian government wants to give you money.
+            </h2>
+            <p className="text-deep-ink text-lg leading-relaxed mb-6">
+              Most newcomers assume filing taxes means paying taxes. The opposite
+              is often true. GST/HST credits, Canada Workers Benefit, Climate
+              Action Incentive — these benefits are designed for people like you.
+              They don't come to you automatically. They're triggered by a single
+              tax return. Every year you don't file, you're not avoiding taxes.
+              You're declining free money.
+            </p>
+            <Link href="/chat" className="text-lantern-amber font-semibold hover:opacity-80 transition-opacity">
+              Find out what you're owed →
+            </Link>
+          </div>
+          <div className="md:col-span-2">
+            <div className="bg-midnight-north rounded-card p-8 text-center">
+              <p className="font-heading font-bold text-lantern-amber text-6xl mb-3">$500+</p>
+              <p className="text-white text-sm leading-relaxed">
+                Average annual benefits unclaimed by newcomers who don't file
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="bg-fog-gray py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-12">
+            Simple from the first question.
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                number: "01",
+                icon: <MessageCircle className="w-5 h-5 text-midnight-north" />,
+                title: "Ask anything",
+                body: "Describe your situation in any language. No tax knowledge required."
+              },
+              {
+                number: "02",
+                icon: <Lightbulb className="w-5 h-5 text-midnight-north" />,
+                title: "Get clarity",
+                body: "TaxNorth explains what applies to you — simply, without jargon, at your pace."
+              },
+              {
+                number: "03",
+                icon: <Users className="w-5 h-5 text-midnight-north" />,
+                title: "Connect when ready",
+                body: "When your situation needs a professional, we make the introduction."
+              }
+            ].map((step) => (
+              <div key={step.number} className="bg-white rounded-card p-8 shadow-sm">
+                <p className="font-heading font-bold text-lantern-amber text-4xl mb-4">
+                  {step.number}
+                </p>
+                <div className="w-10 h-10 bg-fog-gray rounded-lg flex items-center justify-center mb-4">
+                  {step.icon}
+                </div>
+                <h3 className="font-heading font-semibold text-midnight-north text-xl mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-deep-ink/70 leading-relaxed">{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WHO IT'S FOR */}
+      <section className="bg-warm-white py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-12">
+            Built for everyone who's new to this.
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: <Plane className="w-6 h-6 text-lantern-amber" />,
+                title: "New to Canada",
+                body: "Permanent residents and immigrants navigating their first tax season in a new country."
+              },
+              {
+                icon: <GraduationCap className="w-6 h-6 text-lantern-amber" />,
+                title: "Studying or Working",
+                body: "International students and work permit holders unsure of their obligations."
+              },
+              {
+                icon: <Star className="w-6 h-6 text-lantern-amber" />,
+                title: "First-time filer",
+                body: "Young adults filing alone for the first time without parental guidance."
+              }
+            ].map((card) => (
+              <div key={card.title} className="bg-fog-gray rounded-card p-8">
+                <div className="w-12 h-12 bg-midnight-north rounded-xl flex items-center justify-center mb-4">
+                  {card.icon}
+                </div>
+                <h3 className="font-heading font-semibold text-midnight-north text-xl mb-2">
+                  {card.title}
+                </h3>
+                <p className="text-deep-ink/70 leading-relaxed">{card.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="bg-midnight-north py-24 px-6 text-center">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="font-heading font-bold text-white text-3xl md:text-4xl mb-4">
+            Your taxes. Finally yours.
+          </h2>
+          <p className="text-white/70 text-lg mb-8">
+            Start a conversation. No account. No commitment. Just clarity.
+          </p>
+          <Link
+            href="/chat"
+            className="inline-block bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity"
+          >
+            Start the conversation →
+          </Link>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-midnight-north border-t border-white/10 py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-white/10 rounded-lg flex items-center justify-center">
+                <Flashlight className="w-4 h-4 text-lantern-amber" />
+              </div>
+              <span className="font-heading font-bold text-white">
+                TaxNorth<span className="text-xs">.ca</span>
+              </span>
+            </Link>
+            <div className="flex items-center gap-6 text-white/60 text-sm">
+              <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+              <Link href="/connect" className="hover:text-white transition-colors">Connect with a Pro</Link>
+            </div>
+          </div>
+          <p className="text-white/40 text-xs text-center leading-relaxed">
+            TaxNorth provides educational information only and does not constitute
+            professional tax advice. For advice specific to your situation,
+            consult a licensed tax professional in Canada.
+          </p>
+        </div>
+      </footer>
+
+    </div>
+  )
+}
