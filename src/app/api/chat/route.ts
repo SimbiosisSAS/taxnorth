@@ -1,6 +1,7 @@
 import { openrouter, DEEPSEEK_MODEL } from '@/lib/openrouter'
 import { supabaseAdmin } from '@/lib/supabase'
 import { TAXNORTH_SYSTEM_PROMPT } from '@/lib/prompts'
+import { getRelevantContext } from '@/lib/rag'
 import { NextRequest } from 'next/server'
 
 export async function POST(req: NextRequest) {
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
       return new Response('Missing required fields', { status: 400 })
     }
 
-    // 1. Crear o recuperar conversación con upsert
+    // 1. Crear o recuperar conversación
     const { data: conversation, error: convError } = await supabaseAdmin
       .from('conversations')
       .upsert(
@@ -27,20 +28,13 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Guardar mensaje del usuario
-    const { error: msgError } = await supabaseAdmin
-      .from('messages')
-      .insert({
-        conversation_id: conversation.id,
-        role: 'user',
-        content: message,
-      })
+    await supabaseAdmin.from('messages').insert({
+      conversation_id: conversation.id,
+      role: 'user',
+      content: message,
+    })
 
-    if (msgError) {
-      console.error('Message error:', msgError)
-      return new Response('Failed to save message', { status: 500 })
-    }
-
-    // 3. Obtener historial (últimos 10 mensajes)
+    // 3. Obtener historial
     const { data: history } = await supabaseAdmin
       .from('messages')
       .select('role, content')
@@ -48,12 +42,26 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: true })
       .limit(10)
 
-    // 4. Llamar a DeepSeek vía OpenRouter con streaming
+    // 4. Buscar contexto relevante en la base de conocimiento
+    const context = await getRelevantContext(message)
+
+    // 5. Construir system prompt con contexto RAG
+    const systemWithContext = context
+      ? `${TAXNORTH_SYSTEM_PROMPT}
+
+VERIFIED INFORMATION FROM CRA DOCUMENTS:
+Use the following verified information to answer accurately.
+Always prefer this over general knowledge when available.
+
+${context}`
+      : TAXNORTH_SYSTEM_PROMPT
+
+    // 6. Llamar a DeepSeek con streaming
     const stream = await openrouter.chat.completions.create({
       model: DEEPSEEK_MODEL,
       stream: true,
       messages: [
-        { role: 'system', content: TAXNORTH_SYSTEM_PROMPT },
+        { role: 'system', content: systemWithContext },
         ...(history || []).map(msg => ({
           role: msg.role as 'user' | 'assistant',
           content: msg.content,
@@ -61,7 +69,7 @@ export async function POST(req: NextRequest) {
       ],
     })
 
-    // 5. Stream la respuesta y guardarla en Supabase
+    // 7. Stream la respuesta y guardar en Supabase
     let fullResponse = ''
 
     const readableStream = new ReadableStream({
