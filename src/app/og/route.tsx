@@ -9,49 +9,66 @@ export async function GET() {
         style={{
           width: '1200px',
           height: '630px',
-          backgroundColor: '#F4A332',
+          backgroundColor: '#1A2744',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          padding: '80px 100px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '40px',
         }}
       >
-        {/* Top — Brand name */}
+        {/* Lantern badge */}
         <div
           style={{
-            fontSize: '36px',
+            width: '220px',
+            height: '220px',
+            backgroundColor: '#F4A332',
+            borderRadius: '48px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <svg
+            width="120"
+            height="120"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#1A2744"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m8 2 1.88 1.88"/>
+            <path d="M14.12 3.88 16 2"/>
+            <path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/>
+            <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/>
+            <path d="M12 20v2"/>
+            <path d="M10 22h4"/>
+          </svg>
+        </div>
+
+        {/* Brand name */}
+        <div
+          style={{
+            fontSize: '64px',
             fontWeight: '700',
-            color: '#1A2744',
-            letterSpacing: '-0.5px',
+            color: '#FFFFFF',
+            letterSpacing: '-2px',
           }}
         >
           TaxNorth.ca
         </div>
 
-        {/* Center — Headline */}
-        <div
-          style={{
-            fontSize: '88px',
-            fontWeight: '700',
-            color: '#1A2744',
-            lineHeight: '1.05',
-            letterSpacing: '-3px',
-            maxWidth: '900px',
-          }}
-        >
-          Taxes that finally click.
-        </div>
-
-        {/* Bottom — Tagline */}
+        {/* Tagline */}
         <div
           style={{
             fontSize: '30px',
-            color: 'rgba(26,39,68,0.70)',
-            letterSpacing: '-0.3px',
+            color: '#F4A332',
+            letterSpacing: '-0.5px',
           }}
         >
-          Free AI tax guide for newcomers to Canada
+          Taxes that finally click.
         </div>
       </div>
     ),
