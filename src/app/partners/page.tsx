@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Tax Professional Partnership — Pre-qualified Newcomer Leads | TaxNorth.ca',
+  description: 'Partner with TaxNorth.ca to receive pre-qualified newcomer tax leads. Pay per lead or become a preferred partner. No marketing required.',
+}
+
 import { Flashlight, Users, TrendingUp, CheckCircle, MapPin, Languages, ArrowRight, Mail } from 'lucide-react'
 import Link from 'next/link'
 
