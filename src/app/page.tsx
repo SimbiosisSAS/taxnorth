@@ -54,10 +54,9 @@ export default function HomePage() {
             </span>
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm text-deep-ink/70">
-            <Link href="/resources" className="hover:text-midnight-north transition-colors">Resources</Link>
-            <Link href="/professionals" className="hover:text-midnight-north transition-colors">Find a Pro</Link>
-            <Link href="/partners" className="hover:text-midnight-north transition-colors">For Professionals</Link>
-          </div>
+  <Link href="/resources" className="hover:text-midnight-north transition-colors">Resources</Link>
+  <Link href="/professionals" className="hover:text-midnight-north transition-colors">Find a Pro</Link>
+</div>
           <div className="flex items-center gap-3">
             <Link
               href="/chat"
