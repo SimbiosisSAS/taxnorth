@@ -1,5 +1,6 @@
-import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, ChevronDown } from 'lucide-react'
+import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users } from 'lucide-react'
 import Link from 'next/link'
+import NavLanguageSwitcher from '@/components/NavLanguageSwitcher'
 
 export default function HomePage() {
 
@@ -58,10 +59,7 @@ export default function HomePage() {
             <Link href="/partners" className="hover:text-midnight-north transition-colors">For Professionals</Link>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 text-sm text-deep-ink cursor-pointer">
-              <span>EN</span>
-              <ChevronDown className="w-4 h-4" />
-            </div>
+            <NavLanguageSwitcher />
             <Link
               href="/chat"
               className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
