@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { Flashlight, Shield, Lock, CheckCircle, ArrowLeft } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Flashlight, Shield, Lock, CheckCircle, ArrowLeft, Star, User } from 'lucide-react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 const PROVINCES = [
   'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
@@ -12,7 +13,7 @@ const PROVINCES = [
 ]
 
 const LANGUAGES = [
-  'English', 'French', 'Spanish', 'Mandarin', 'Punjabi', 'Arabic', 'Other'
+  'English', 'French', 'Spanish', 'Mandarin', 'Punjabi', 'Arabic', 'Romanian', 'Other'
 ]
 
 const SITUATIONS = [
@@ -24,7 +25,14 @@ const SITUATIONS = [
   'Other'
 ]
 
-export default function ConnectPage() {
+export default function ConnectClient() {
+  const searchParams = useSearchParams()
+  const proSlug = searchParams.get('pro')
+  const proName = searchParams.get('name')
+  const proFirm = searchParams.get('firm')
+
+  const isPreSelected = !!proSlug && !!proName
+
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -49,13 +57,17 @@ export default function ConnectPage() {
     e.preventDefault()
     if (!form.email) return
     setLoading(true)
-
     try {
       const sessionId = localStorage.getItem('taxnorth_session') || ''
       await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, sessionId }),
+        body: JSON.stringify({
+          ...form,
+          sessionId,
+          professionalSlug: proSlug || null,
+          professionalName: proName || null,
+        }),
       })
       setSubmitted(true)
     } catch (error) {
@@ -73,17 +85,22 @@ export default function ConnectPage() {
             <CheckCircle className="w-8 h-8 text-maple-green" />
           </div>
           <h2 className="font-heading font-bold text-midnight-north text-2xl mb-3">
-            You're connected.
+            {isPreSelected ? `You're connected with ${proName?.split(' ')[0]}.` : "You're on the list."}
           </h2>
-          <p className="text-deep-ink/70 mb-8">
-            A licensed tax professional will reach out to you shortly.
-            In the meantime, keep exploring with TaxNorth.
+          <p className="text-deep-ink/70 mb-4">
+            {isPreSelected
+              ? `${proName} from ${proFirm} will reach out to you shortly with a special TaxNorth rate.`
+              : "We're matching you with the best professional for your situation. You'll hear from us within one business day."
+            }
+          </p>
+          <p className="text-deep-ink/50 text-sm mb-8">
+            Not satisfied? Email us at hello@taxnorth.ca and we'll match you with someone else at no extra charge.
           </p>
           <Link
             href="/chat"
             className="inline-block bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
           >
-            Back to chat
+            Back to TaxNorth
           </Link>
         </div>
       </div>
@@ -101,40 +118,90 @@ export default function ConnectPage() {
               <Flashlight className="w-3.5 h-3.5 text-lantern-amber" />
             </div>
             <span className="font-heading font-bold text-midnight-north">
-              TaxNorth<span className="text-xs">.ca</span>
+              TaxNorth<span className="text-sm">.ca</span>
             </span>
           </Link>
         </div>
       </nav>
 
+      {/* FOUNDING OFFER BANNER */}
+      <div className="bg-lantern-amber px-6 py-2.5 text-center">
+        <p className="text-midnight-north font-semibold text-sm">
+          Founding offer — first 100 clients this month:{' '}
+          <span className="line-through opacity-60">$49.99</span>{' '}
+          <strong>$19.99</strong>
+        </p>
+      </div>
+
       <div className="max-w-2xl mx-auto px-6 py-12">
 
         {/* BACK LINK */}
         <Link
-          href="/chat"
+          href={isPreSelected ? '/professionals' : '/chat'}
           className="inline-flex items-center gap-1.5 text-lantern-amber font-medium text-sm mb-8 hover:opacity-80 transition-opacity"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to chat
+          {isPreSelected ? 'Back to directory' : 'Back to chat'}
         </Link>
 
-        {/* HEADER */}
-        <h1 className="font-heading font-bold text-midnight-north text-3xl mb-3">
-          Let's find you the right tax professional.
-        </h1>
-        <p className="text-deep-ink/70 text-lg mb-10">
-          Tell us about your situation. We'll match you with a licensed
-          accountant in your province.
-        </p>
+        {/* HEADER — changes based on flow */}
+        {isPreSelected ? (
+          <div>
+            <h1 className="font-heading font-bold text-midnight-north text-3xl mb-3">
+              Connect with {proName}.
+            </h1>
+            <p className="text-deep-ink/70 text-lg mb-6">
+              Fill out the form below. {proName?.split(' ')[0]} will receive your details
+              and reach out with a special TaxNorth rate.
+            </p>
+
+            {/* Professional card */}
+            <div className="bg-fog-gray rounded-card p-4 flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 bg-midnight-north rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="font-heading font-bold text-white text-lg">
+                  {proName?.charAt(0)}
+                </span>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-heading font-semibold text-midnight-north">{proName}</span>
+                  <Star className="w-4 h-4 text-lantern-amber fill-lantern-amber" />
+                </div>
+                {proFirm && <p className="text-deep-ink/50 text-sm">{proFirm}</p>}
+              </div>
+              <div className="ml-auto text-right">
+                <p className="font-heading font-bold text-lantern-amber text-xl">$19.99</p>
+                <p className="text-deep-ink/40 text-xs">connection fee</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
+                <User className="w-5 h-5 text-deep-ink/40" />
+              </div>
+              <span className="text-deep-ink/50 text-sm font-medium">TaxNorth will choose for you</span>
+            </div>
+            <h1 className="font-heading font-bold text-midnight-north text-3xl mb-3">
+              Let's find you the right tax professional.
+            </h1>
+            <p className="text-deep-ink/70 text-lg">
+              Tell us about your situation. We'll match you with the best licensed
+              accountant for your province, language, and needs.
+            </p>
+            <div className="flex items-center gap-2 mt-4">
+              <span className="font-heading font-bold text-lantern-amber text-2xl">$19.99</span>
+              <span className="text-deep-ink/50 text-sm">connection fee — includes re-match guarantee</span>
+            </div>
+          </div>
+        )}
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Full Name */}
           <div>
-            <label className="block text-deep-ink font-medium text-sm mb-2">
-              Full name
-            </label>
+            <label className="block text-deep-ink font-medium text-sm mb-2">Full name</label>
             <input
               type="text"
               value={form.fullName}
@@ -144,7 +211,6 @@ export default function ConnectPage() {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-deep-ink font-medium text-sm mb-2">
               Email <span className="text-lantern-amber">*</span>
@@ -159,41 +225,30 @@ export default function ConnectPage() {
             />
           </div>
 
-          {/* Province */}
           <div>
-            <label className="block text-deep-ink font-medium text-sm mb-2">
-              Province or territory
-            </label>
+            <label className="block text-deep-ink font-medium text-sm mb-2">Province or territory</label>
             <select
               value={form.province}
               onChange={e => setForm(prev => ({ ...prev, province: e.target.value }))}
               className="w-full border border-fog-gray rounded-button px-4 py-3 text-sm text-deep-ink outline-none focus:border-lantern-amber transition-colors bg-white"
             >
               <option value="">Select your province</option>
-              {PROVINCES.map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
+              {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
           </div>
 
-          {/* Language */}
           <div>
-            <label className="block text-deep-ink font-medium text-sm mb-2">
-              Preferred language
-            </label>
+            <label className="block text-deep-ink font-medium text-sm mb-2">Preferred language</label>
             <select
               value={form.language}
               onChange={e => setForm(prev => ({ ...prev, language: e.target.value }))}
               className="w-full border border-fog-gray rounded-button px-4 py-3 text-sm text-deep-ink outline-none focus:border-lantern-amber transition-colors bg-white"
             >
               <option value="">Select a language</option>
-              {LANGUAGES.map(l => (
-                <option key={l} value={l}>{l}</option>
-              ))}
+              {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
 
-          {/* Situation */}
           <div>
             <label className="block text-deep-ink font-medium text-sm mb-3">
               Your situation <span className="text-deep-ink/40 font-normal">(select all that apply)</span>
@@ -216,7 +271,6 @@ export default function ConnectPage() {
             </div>
           </div>
 
-          {/* Notes */}
           <div>
             <label className="block text-deep-ink font-medium text-sm mb-2">
               Additional details <span className="text-deep-ink/40 font-normal">(optional)</span>
@@ -224,27 +278,37 @@ export default function ConnectPage() {
             <textarea
               value={form.notes}
               onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Anything else we should know about your situation?"
+              placeholder="Anything else we should know?"
               rows={4}
               className="w-full border border-fog-gray rounded-button px-4 py-3 text-sm text-deep-ink outline-none focus:border-lantern-amber transition-colors placeholder:text-deep-ink/40 resize-none"
             />
           </div>
 
-          {/* SUBMIT */}
+          {/* PRICE SUMMARY */}
+          <div className="bg-fog-gray rounded-card p-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-midnight-north text-sm">Connection fee</p>
+              <p className="text-deep-ink/50 text-xs">Includes re-match guarantee</p>
+            </div>
+            <div className="text-right">
+              <p className="text-deep-ink/40 text-xs line-through">$49.99</p>
+              <p className="font-heading font-bold text-lantern-amber text-xl">$19.99 CAD</p>
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={loading || !form.email}
-            className="w-full bg-lantern-amber text-midnight-north font-semibold py-4 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40"
+            className="w-full bg-lantern-amber text-midnight-north font-semibold py-4 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40 text-base"
           >
-            {loading ? 'Connecting...' : 'Connect me with a professional →'}
+            {loading ? 'Processing...' : `Connect for $19.99 →`}
           </button>
 
-          {/* TRUST SIGNALS */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             {[
               { icon: <Shield className="w-4 h-4" />, text: "Your data is never sold" },
-              { icon: <Lock className="w-4 h-4" />, text: "Shared only with your matched professional" },
-              { icon: <CheckCircle className="w-4 h-4" />, text: "Free to connect" },
+              { icon: <Lock className="w-4 h-4" />, text: "Secure connection" },
+              { icon: <CheckCircle className="w-4 h-4" />, text: "Re-match guarantee" },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-1.5 text-deep-ink/50 text-xs">
                 {item.icon}
