@@ -13,55 +13,16 @@ export default function HomePage() {
         "description": "Free AI tax guide for newcomers to Canada",
         "applicationCategory": "FinanceApplication",
         "operatingSystem": "Web",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "CAD"
-        }
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" }
       },
       {
         "@type": "FAQPage",
         "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Do newcomers to Canada need to file taxes?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. As a newcomer to Canada, you generally need to file a tax return for the part of the year you were a Canadian resident. Even if you had no income, filing is important to access benefits like the GST/HST credit and Climate Action Incentive Payment."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the tax filing deadline in Canada?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "For most individuals in Canada, the tax filing deadline is April 30. If you or your spouse are self-employed, the deadline to file is June 15, but any taxes owing must be paid by April 30."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is a T4 slip in Canada?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A T4 slip is a Statement of Remuneration Paid issued by your employer. It shows your total employment income and the amounts deducted for income tax, CPP contributions, and EI premiums. You need your T4 to file your tax return."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the GST/HST credit for newcomers?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The GST/HST credit is a tax-free quarterly payment from the Canadian government to help people with low and modest incomes offset the sales tax they pay. Newcomers may be eligible in their first year. You receive it automatically by filing your tax return."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do international students file taxes in Canada?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "International students who live in Canada for more than 183 days are generally considered Canadian residents for tax purposes and should file a tax return. You can claim the tuition tax credit using your T2202 form from your school. Even with low income, filing helps you access GST/HST credits."
-            }
-          }
+          { "@type": "Question", "name": "Do newcomers to Canada need to file taxes?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. As a newcomer to Canada, you generally need to file a tax return for the part of the year you were a Canadian resident. Even if you had no income, filing is important to access benefits like the GST/HST credit and Climate Action Incentive Payment." } },
+          { "@type": "Question", "name": "What is the tax filing deadline in Canada?", "acceptedAnswer": { "@type": "Answer", "text": "For most individuals in Canada, the tax filing deadline is April 30. If you or your spouse are self-employed, the deadline to file is June 15, but any taxes owing must be paid by April 30." } },
+          { "@type": "Question", "name": "What is a T4 slip in Canada?", "acceptedAnswer": { "@type": "Answer", "text": "A T4 slip is a Statement of Remuneration Paid issued by your employer. It shows your total employment income and the amounts deducted for income tax, CPP contributions, and EI premiums. You need your T4 to file your tax return." } },
+          { "@type": "Question", "name": "What is the GST/HST credit for newcomers?", "acceptedAnswer": { "@type": "Answer", "text": "The GST/HST credit is a tax-free quarterly payment from the Canadian government to help people with low and modest incomes offset the sales tax they pay. Newcomers may be eligible in their first year. You receive it automatically by filing your tax return." } },
+          { "@type": "Question", "name": "How do international students file taxes in Canada?", "acceptedAnswer": { "@type": "Answer", "text": "International students who live in Canada for more than 183 days are generally considered Canadian residents for tax purposes and should file a tax return. You can claim the tuition tax credit using your T2202 form from your school. Even with low income, filing helps you access GST/HST credits." } }
         ]
       },
       {
@@ -69,11 +30,7 @@ export default function HomePage() {
         "name": "TaxNorth",
         "url": "https://www.taxnorth.ca",
         "logo": "https://www.taxnorth.ca/og?v=2",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "email": "hello@taxnorth.ca",
-          "contactType": "customer service"
-        }
+        "contactPoint": { "@type": "ContactPoint", "email": "hello@taxnorth.ca", "contactType": "customer service" }
       }
     ]
   }
@@ -96,16 +53,22 @@ export default function HomePage() {
               TaxNorth<span className="text-sm">.ca</span>
             </span>
           </Link>
-          <div className="flex items-center gap-1 text-sm text-deep-ink cursor-pointer">
-            <span>EN</span>
-            <ChevronDown className="w-4 h-4" />
+          <div className="hidden md:flex items-center gap-6 text-sm text-deep-ink/70">
+            <Link href="/resources" className="hover:text-midnight-north transition-colors">Resources</Link>
+            <Link href="/partners" className="hover:text-midnight-north transition-colors">For Professionals</Link>
           </div>
-          <Link
-            href="/chat"
-            className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
-          >
-            Start for free
-          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-sm text-deep-ink cursor-pointer">
+              <span>EN</span>
+              <ChevronDown className="w-4 h-4" />
+            </div>
+            <Link
+              href="/chat"
+              className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
+            >
+              Start for free
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -174,35 +137,14 @@ export default function HomePage() {
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              {
-                number: "01",
-                icon: <MessageCircle className="w-5 h-5 text-midnight-north" />,
-                title: "Ask anything",
-                body: "Describe your situation in any language. No tax knowledge required."
-              },
-              {
-                number: "02",
-                icon: <Lightbulb className="w-5 h-5 text-midnight-north" />,
-                title: "Get clarity",
-                body: "TaxNorth explains what applies to you — simply, without jargon, at your pace."
-              },
-              {
-                number: "03",
-                icon: <Users className="w-5 h-5 text-midnight-north" />,
-                title: "Connect when ready",
-                body: "When your situation needs a professional, we make the introduction."
-              }
+              { number: "01", icon: <MessageCircle className="w-5 h-5 text-midnight-north" />, title: "Ask anything", body: "Describe your situation in any language. No tax knowledge required." },
+              { number: "02", icon: <Lightbulb className="w-5 h-5 text-midnight-north" />, title: "Get clarity", body: "TaxNorth explains what applies to you — simply, without jargon, at your pace." },
+              { number: "03", icon: <Users className="w-5 h-5 text-midnight-north" />, title: "Connect when ready", body: "When your situation needs a professional, we make the introduction." }
             ].map((step) => (
               <div key={step.number} className="bg-white rounded-card p-8 shadow-sm">
-                <p className="font-heading font-bold text-lantern-amber text-4xl mb-4">
-                  {step.number}
-                </p>
-                <div className="w-10 h-10 bg-fog-gray rounded-lg flex items-center justify-center mb-4">
-                  {step.icon}
-                </div>
-                <h3 className="font-heading font-semibold text-midnight-north text-xl mb-2">
-                  {step.title}
-                </h3>
+                <p className="font-heading font-bold text-lantern-amber text-4xl mb-4">{step.number}</p>
+                <div className="w-10 h-10 bg-fog-gray rounded-lg flex items-center justify-center mb-4">{step.icon}</div>
+                <h3 className="font-heading font-semibold text-midnight-north text-xl mb-2">{step.title}</h3>
                 <p className="text-deep-ink/70 leading-relaxed">{step.body}</p>
               </div>
             ))}
@@ -218,29 +160,13 @@ export default function HomePage() {
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              {
-                icon: <Plane className="w-6 h-6 text-lantern-amber" />,
-                title: "New to Canada",
-                body: "Permanent residents and immigrants navigating their first tax season in a new country."
-              },
-              {
-                icon: <GraduationCap className="w-6 h-6 text-lantern-amber" />,
-                title: "Studying or Working",
-                body: "International students and work permit holders unsure of their obligations."
-              },
-              {
-                icon: <Star className="w-6 h-6 text-lantern-amber" />,
-                title: "First-time filer",
-                body: "Young adults filing alone for the first time without parental guidance."
-              }
+              { icon: <Plane className="w-6 h-6 text-lantern-amber" />, title: "New to Canada", body: "Permanent residents and immigrants navigating their first tax season in a new country." },
+              { icon: <GraduationCap className="w-6 h-6 text-lantern-amber" />, title: "Studying or Working", body: "International students and work permit holders unsure of their obligations." },
+              { icon: <Star className="w-6 h-6 text-lantern-amber" />, title: "First-time filer", body: "Young adults filing alone for the first time without parental guidance." }
             ].map((card) => (
               <div key={card.title} className="bg-fog-gray rounded-card p-8">
-                <div className="w-12 h-12 bg-midnight-north rounded-xl flex items-center justify-center mb-4">
-                  {card.icon}
-                </div>
-                <h3 className="font-heading font-semibold text-midnight-north text-xl mb-2">
-                  {card.title}
-                </h3>
+                <div className="w-12 h-12 bg-midnight-north rounded-xl flex items-center justify-center mb-4">{card.icon}</div>
+                <h3 className="font-heading font-semibold text-midnight-north text-xl mb-2">{card.title}</h3>
                 <p className="text-deep-ink/70 leading-relaxed">{card.body}</p>
               </div>
             ))}
@@ -279,6 +205,8 @@ export default function HomePage() {
               </span>
             </Link>
             <div className="flex items-center gap-6 text-white/60 text-sm">
+              <Link href="/resources" className="hover:text-white transition-colors">Resources</Link>
+              <Link href="/partners" className="hover:text-white transition-colors">For Professionals</Link>
               <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link href="#" className="hover:text-white transition-colors">Terms</Link>
               <Link href="/connect" className="hover:text-white transition-colors">Connect with a Pro</Link>
