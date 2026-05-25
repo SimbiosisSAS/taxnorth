@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'TaxNorth.ca — Taxes that finally click.',
   description: 'Your free AI guide to Canadian taxes — in any language, for every newcomer. Understand what you owe, what you\'re owed, and when to file.',
   keywords: 'Canadian taxes, newcomers Canada, tax guide, impuestos Canada, CRA, file taxes Canada',
+  verification: {
+    google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
+  },
   metadataBase: new URL('https://www.taxnorth.ca'),
   openGraph: {
     type: 'website',
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
     siteName: 'TaxNorth.ca',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og?v=2',
         width: 1200,
         height: 630,
         alt: 'TaxNorth.ca — Taxes that finally click.',
@@ -25,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'TaxNorth.ca — Taxes that finally click.',
     description: 'Your free AI guide to Canadian taxes — in any language, for every newcomer.',
-    images: ['/og-image.png'],
+    images: ['/og?v=2'],
   },
 }
 
