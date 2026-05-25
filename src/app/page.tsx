@@ -170,6 +170,82 @@ export default function HomePage() {
         </div>
       </section>
 
+{/* WHY IT MATTERS */}
+<section className="bg-midnight-north py-24 px-6">
+  <div className="max-w-6xl mx-auto">
+    <div className="max-w-3xl mb-16">
+      <p className="text-lantern-amber font-semibold text-sm uppercase tracking-widest mb-4">
+        Why it matters who does your taxes
+      </p>
+      <h2 className="font-heading font-bold text-white text-3xl md:text-4xl leading-tight">
+        You probably know someone who learned this the hard way.
+      </h2>
+    </div>
+
+    <div className="grid md:grid-cols-3 gap-6 mb-16">
+      {[
+        {
+          number: "01",
+          title: "The CRA letter nobody expected",
+          body: "A friend followed their accountant's advice. A year later, a CRA audit. Back taxes, penalties, and stress that could have been avoided. Bad tax advice doesn't show up immediately — it shows up when it's too late."
+        },
+        {
+          number: "02",
+          title: "The free option that costs more",
+          body: "University and community programs mean well. But the person filing your return is still learning. You're not their client — you're their practice case. Your real situation, your real money, their learning curve."
+        },
+        {
+          number: "03",
+          title: "The big firm that didn't know your situation",
+          body: "Large tax chains run standardized processes built for volume. Fifty clients a day means your specific situation as a newcomer — your arrival date, your foreign income, your first year — gets missed."
+        }
+      ].map((item) => (
+        <div key={item.number} className="border border-white/10 rounded-card p-8">
+          <p className="font-heading font-bold text-lantern-amber text-3xl mb-4">{item.number}</p>
+          <h3 className="font-heading font-semibold text-white text-lg mb-3">{item.title}</h3>
+          <p className="text-white/60 leading-relaxed text-sm">{item.body}</p>
+        </div>
+      ))}
+    </div>
+
+    <div className="bg-white/5 border border-white/10 rounded-card p-8 md:p-12">
+      <div className="md:grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h3 className="font-heading font-bold text-white text-2xl mb-4">
+            Small firms. Big expertise.
+          </h3>
+          <p className="text-white/70 leading-relaxed mb-4">
+            The best tax professionals for newcomers are often small firms led by experienced entrepreneurs. They built their practice to serve a specific community — and they show up for every client personally.
+          </p>
+          <p className="text-white/70 leading-relaxed">
+            They offer quality service at a fair price, and because their reputation depends on results, they go further than any standardized process ever could.
+          </p>
+        </div>
+        <div className="mt-8 md:mt-0">
+          <h3 className="font-heading font-bold text-white text-2xl mb-4">
+            TaxNorth verifies who we work with.
+          </h3>
+          <div className="space-y-3">
+            {[
+              "We know their background and years of experience",
+              "We verify they specialize in newcomer situations",
+              "We confirm they offer fair, transparent pricing",
+              "We stand behind every connection we make"
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-lantern-amber/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-2 h-2 bg-lantern-amber rounded-full" />
+                </div>
+                <span className="text-white/70 text-sm leading-relaxed">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
       {/* FINAL CTA */}
       <section className="bg-midnight-north py-24 px-6 text-center">
         <div className="max-w-2xl mx-auto">
