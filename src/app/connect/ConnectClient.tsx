@@ -36,6 +36,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
   const [form, setForm] = useState({
     fullName: '',
     email: '',
+    phone: '',
     province: '',
     language: '',
     situation: [] as string[],
@@ -55,7 +56,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.email) return
+    if (!form.email || !form.phone) return
     setLoading(true)
     try {
       const sessionId = localStorage.getItem('taxnorth_session') || ''
@@ -78,80 +79,80 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
   }
 
   if (submitted) {
-  return (
-    <div className="min-h-screen bg-warm-white px-6 py-12">
-      <div className="max-w-md mx-auto">
+    return (
+      <div className="min-h-screen bg-warm-white px-6 py-12">
+        <div className="max-w-md mx-auto">
 
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-fog-gray rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Flashlight className="w-8 h-8 text-lantern-amber" />
-          </div>
-          <h2 className="font-heading font-bold text-midnight-north text-2xl mb-2">
-            One last step — complete your payment.
-          </h2>
-          <p className="text-deep-ink/60 text-sm">
-            Your information was saved. Complete the $19.99 payment to confirm your connection.
-          </p>
-        </div>
-
-        {/* INTERAC OPTION */}
-        <div className="bg-white border-2 border-midnight-north rounded-card p-6 mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
-            <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
-              Available now
-            </span>
-          </div>
-          <div className="space-y-3 mb-4">
-            <div className="bg-fog-gray rounded-button p-3">
-              <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
-              <p className="font-semibold text-midnight-north text-sm">billing@asce.ca</p>
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-fog-gray rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Flashlight className="w-8 h-8 text-lantern-amber" />
             </div>
-            <div className="bg-fog-gray rounded-button p-3">
-              <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
-              <p className="font-semibold text-midnight-north text-sm">$19.99 CAD</p>
-            </div>
-            <div className="bg-fog-gray rounded-button p-3">
-              <p className="text-deep-ink/50 text-xs mb-1">Message / Memo</p>
-              <p className="font-semibold text-midnight-north text-sm">
-                {form.fullName || 'Your name'} — TaxNorth
-              </p>
-            </div>
+            <h2 className="font-heading font-bold text-midnight-north text-2xl mb-2">
+              One last step — complete your payment.
+            </h2>
+            <p className="text-deep-ink/60 text-sm">
+              Your information was saved. Complete the $19.99 payment to confirm your connection.
+            </p>
           </div>
-          <p className="text-deep-ink/50 text-xs">
-            We confirm receipt within 1 business hour and process your connection immediately.
-          </p>
-        </div>
 
-        {/* CARD OPTION */}
-        <div className="bg-fog-gray border border-fog-gray rounded-card p-6 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-heading font-semibold text-midnight-north">Credit / Debit Card</h3>
-            <span className="bg-lantern-amber/20 text-lantern-amber text-xs font-semibold px-2 py-1 rounded-full">
-              Coming soon
-            </span>
+          {/* INTERAC OPTION */}
+          <div className="bg-white border-2 border-midnight-north rounded-card p-6 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
+              <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
+                Available now
+              </span>
+            </div>
+            <div className="space-y-3 mb-4">
+              <div className="bg-fog-gray rounded-button p-3">
+                <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
+                <p className="font-semibold text-midnight-north text-sm">billing@asce.ca</p>
+              </div>
+              <div className="bg-fog-gray rounded-button p-3">
+                <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
+                <p className="font-semibold text-midnight-north text-sm">$19.99 CAD</p>
+              </div>
+              <div className="bg-fog-gray rounded-button p-3">
+                <p className="text-deep-ink/50 text-xs mb-1">Message / Memo</p>
+                <p className="font-semibold text-midnight-north text-sm">
+                  {form.fullName || 'Your name'} — TaxNorth
+                </p>
+              </div>
+            </div>
+            <p className="text-deep-ink/50 text-xs">
+              We confirm receipt within 1 business hour and process your connection immediately.
+            </p>
           </div>
-          <p className="text-deep-ink/50 text-sm">
-            Card payments will be available shortly. Use Interac e-Transfer in the meantime.
-          </p>
-        </div>
 
-        <div className="text-center">
-          <p className="text-deep-ink/40 text-xs mb-4">
-            Not satisfied? Email hello@taxnorth.ca — we'll re-match you at no extra charge.
-          </p>
-          <Link
-            href="/chat"
-            className="text-lantern-amber font-medium text-sm hover:opacity-80 transition-opacity"
-          >
-            Back to TaxNorth
-          </Link>
-        </div>
+          {/* CARD OPTION */}
+          <div className="bg-fog-gray border border-fog-gray rounded-card p-6 mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-heading font-semibold text-midnight-north">Credit / Debit Card</h3>
+              <span className="bg-lantern-amber/20 text-lantern-amber text-xs font-semibold px-2 py-1 rounded-full">
+                Coming soon
+              </span>
+            </div>
+            <p className="text-deep-ink/50 text-sm">
+              Card payments will be available shortly. Use Interac e-Transfer in the meantime.
+            </p>
+          </div>
 
+          <div className="text-center">
+            <p className="text-deep-ink/40 text-xs mb-4">
+              Not satisfied? Email hello@taxnorth.ca — we'll re-match you at no extra charge.
+            </p>
+            <Link
+              href="/chat"
+              className="text-lantern-amber font-medium text-sm hover:opacity-80 transition-opacity"
+            >
+              Back to TaxNorth
+            </Link>
+          </div>
+
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
   return (
     <div className="min-h-screen bg-warm-white">
@@ -265,6 +266,20 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           </div>
 
           <div>
+            <label className="block text-deep-ink font-medium text-sm mb-2">
+              Phone number <span className="text-lantern-amber">*</span>
+            </label>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
+              placeholder="+1 (403) 000-0000"
+              required
+              className="w-full border border-fog-gray rounded-button px-4 py-3 text-sm text-deep-ink outline-none focus:border-lantern-amber transition-colors placeholder:text-deep-ink/40"
+            />
+          </div>
+
+          <div>
             <label className="block text-deep-ink font-medium text-sm mb-2">Province or territory</label>
             <select
               value={form.province}
@@ -336,7 +351,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
 
           <button
             type="submit"
-            disabled={loading || !form.email}
+            disabled={loading || !form.email || !form.phone}
             className="w-full bg-lantern-amber text-midnight-north font-semibold py-4 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40 text-base"
           >
             {loading ? 'Processing...' : 'Connect for $19.99 →'}
