@@ -207,8 +207,8 @@ export default function HomePage() {
             <div className="flex items-center gap-6 text-white/60 text-sm">
               <Link href="/resources" className="hover:text-white transition-colors">Resources</Link>
               <Link href="/partners" className="hover:text-white transition-colors">For Professionals</Link>
-              <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+              <Link href="<Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="<Link href="/terms" className="hover:text-white transition-colors">Terms</Link>" className="hover:text-white transition-colors">Terms</Link>
               <Link href="/connect" className="hover:text-white transition-colors">Connect with a Pro</Link>
             </div>
           </div>
