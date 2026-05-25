@@ -171,18 +171,18 @@ export default function HomePage() {
       </section>
 
 {/* WHY IT MATTERS */}
-<section className="bg-midnight-north py-24 px-6">
+<section className="bg-fog-gray py-24 px-6">
   <div className="max-w-6xl mx-auto">
     <div className="max-w-3xl mb-16">
       <p className="text-lantern-amber font-semibold text-sm uppercase tracking-widest mb-4">
         Why it matters who does your taxes
       </p>
-      <h2 className="font-heading font-bold text-white text-3xl md:text-4xl leading-tight">
+      <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl leading-tight">
         You probably know someone who learned this the hard way.
       </h2>
     </div>
 
-    <div className="grid md:grid-cols-3 gap-6 mb-16">
+    <div className="grid md:grid-cols-3 gap-6 mb-10">
       {[
         {
           number: "01",
@@ -200,16 +200,16 @@ export default function HomePage() {
           body: "Large tax chains run standardized processes built for volume. Fifty clients a day means your specific situation as a newcomer — your arrival date, your foreign income, your first year — gets missed."
         }
       ].map((item) => (
-        <div key={item.number} className="border border-white/10 rounded-card p-8">
+        <div key={item.number} className="bg-white rounded-card p-8 shadow-sm">
           <p className="font-heading font-bold text-lantern-amber text-3xl mb-4">{item.number}</p>
-          <h3 className="font-heading font-semibold text-white text-lg mb-3">{item.title}</h3>
-          <p className="text-white/60 leading-relaxed text-sm">{item.body}</p>
+          <h3 className="font-heading font-semibold text-midnight-north text-lg mb-3">{item.title}</h3>
+          <p className="text-deep-ink/60 leading-relaxed text-sm">{item.body}</p>
         </div>
       ))}
     </div>
 
-    <div className="bg-white/5 border border-white/10 rounded-card p-8 md:p-12">
-      <div className="md:grid md:grid-cols-2 gap-12 items-center">
+    <div className="bg-midnight-north rounded-card p-8 md:p-12">
+      <div className="md:grid md:grid-cols-2 gap-12 items-start">
         <div>
           <h3 className="font-heading font-bold text-white text-2xl mb-4">
             Small firms. Big expertise.
