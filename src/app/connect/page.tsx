@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import ConnectClient from './ConnectClient'
 
 export const metadata = {
@@ -6,5 +7,13 @@ export const metadata = {
 }
 
 export default function ConnectPage() {
-  return <ConnectClient />
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-warm-white flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-lantern-amber border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ConnectClient />
+    </Suspense>
+  )
 }
