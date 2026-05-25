@@ -7,8 +7,9 @@ export async function generateStaticParams() {
   return resources.map((r) => ({ slug: r.slug }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const resource = getResource(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const resource = getResource(slug)
   if (!resource) return {}
   return {
     title: resource.metaTitle,
@@ -16,11 +17,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function ResourcePage({ params }: { params: { slug: string } }) {
-  const resource = getResource(params.slug)
+export default async function ResourcePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const resource = getResource(slug)
   if (!resource) notFound()
 
-  const otherResources = resources.filter(r => r.slug !== params.slug).slice(0, 3)
+  const otherResources = resources.filter(r => r.slug !== slug).slice(0, 3)
 
   return (
     <div>
@@ -44,7 +46,6 @@ export default function ResourcePage({ params }: { params: { slug: string } }) {
       </nav>
 
       <div className="max-w-3xl mx-auto px-6 py-12">
-
         <Link
           href="/resources"
           className="inline-flex items-center gap-1.5 text-lantern-amber font-medium text-sm mb-8 hover:opacity-80 transition-opacity"
@@ -110,7 +111,6 @@ export default function ResourcePage({ params }: { params: { slug: string } }) {
             </div>
           </div>
         )}
-
       </div>
     </div>
   )
