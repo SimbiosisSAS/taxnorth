@@ -146,10 +146,10 @@ export default function ProfessionalsGrid({ professionals }: { professionals: Pr
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((pro) => (
             <Link
-              key={pro.id}
-              href={`/professionals/${pro.slug || pro.id}`}
-              className="bg-white border border-fog-gray rounded-card p-6 hover:border-lantern-amber hover:shadow-sm transition-all group"
-            >
+  key={pro.id}
+  href={`/connect?pro=${pro.slug || pro.id}&name=${encodeURIComponent(pro.name)}&firm=${encodeURIComponent(pro.firm_name || '')}`}
+  className="bg-white border border-fog-gray rounded-card p-6 hover:border-lantern-amber hover:shadow-sm transition-all group"
+>
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-14 h-14 bg-fog-gray rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                   {pro.photo_url ? (
