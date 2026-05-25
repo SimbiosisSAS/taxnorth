@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
+import { LanguageProvider } from '@/context/LanguageContext'
 
 export const metadata: Metadata = {
   title: 'TaxNorth.ca — Taxes that finally click.',
@@ -16,14 +17,7 @@ export const metadata: Metadata = {
     title: 'TaxNorth.ca — Taxes that finally click.',
     description: 'Your free AI guide to Canadian taxes — in any language, for every newcomer.',
     siteName: 'TaxNorth.ca',
-    images: [
-      {
-        url: '/og?v=2',
-        width: 1200,
-        height: 630,
-        alt: 'TaxNorth.ca — Taxes that finally click.',
-      }
-    ],
+    images: [{ url: '/og?v=2', width: 1200, height: 630, alt: 'TaxNorth.ca — Taxes that finally click.' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -33,15 +27,13 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
         <Analytics />
       </body>
     </html>

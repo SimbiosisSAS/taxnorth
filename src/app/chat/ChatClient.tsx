@@ -1,31 +1,30 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Flashlight, Send, Plus, X } from 'lucide-react'
+import { Flashlight, Send, Plus, X, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
+import { useLanguage } from '@/context/LanguageContext'
+import { translations, languageNames, SupportedLanguage } from '@/lib/translations'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
 }
 
-const SUGGESTED_QUESTIONS = [
-  "Do I need to file taxes in Canada?",
-  "What is a T4 form?",
-  "Am I eligible for any tax credits?"
-]
-
 function generateSessionId() {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
 
-export default function ChatPage() {
+export default function ChatClient() {
+  const { language, setLanguage } = useLanguage()
+  const t = translations[language]
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId] = useState(() => generateSessionId())
   const [showReferral, setShowReferral] = useState(false)
+  const [showLangMenu, setShowLangMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -38,27 +37,21 @@ export default function ChatPage() {
 
   async function sendMessage(content: string) {
     if (!content.trim() || isLoading) return
-
     const userMessage: Message = { role: 'user', content }
     setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsLoading(true)
-
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content, sessionId }),
+        body: JSON.stringify({ message: content, sessionId, language }),
       })
-
-      if (!response.ok) throw new Error('Failed to send message')
-
+      if (!response.ok) throw new Error('Failed')
       const reader = response.body?.getReader()
       const decoder = new TextDecoder()
       let assistantMessage = ''
-
       setMessages(prev => [...prev, { role: 'assistant', content: '' }])
-
       while (reader) {
         const { done, value } = await reader.read()
         if (done) break
@@ -66,10 +59,7 @@ export default function ChatPage() {
         assistantMessage += chunk
         setMessages(prev => {
           const updated = [...prev]
-          updated[updated.length - 1] = {
-            role: 'assistant',
-            content: assistantMessage
-          }
+          updated[updated.length - 1] = { role: 'assistant', content: assistantMessage }
           return updated
         })
       }
@@ -95,12 +85,10 @@ export default function ChatPage() {
         </Link>
         <button className="w-full border border-white/20 text-white text-sm font-medium py-2 px-4 rounded-button hover:bg-white/10 transition-colors flex items-center gap-2 mb-6">
           <Plus className="w-4 h-4" />
-          New conversation
+          {t.newConversation}
         </button>
         <div className="flex-1">
-          <p className="text-white/40 text-xs uppercase tracking-wider mb-3">
-            Recent
-          </p>
+          <p className="text-white/40 text-xs uppercase tracking-wider mb-3">Recent</p>
           <div className="space-y-1">
             {["Filing taxes as a newcomer", "What is a T4 slip?", "GST/HST credit eligibility"].map((item) => (
               <div key={item} className="text-white/60 text-sm py-2 px-3 rounded-lg hover:bg-white/10 cursor-pointer truncate">
@@ -109,10 +97,27 @@ export default function ChatPage() {
             ))}
           </div>
         </div>
-        <div className="mt-auto">
-          <span className="inline-flex items-center gap-1 bg-lantern-amber/20 text-lantern-amber text-xs font-medium px-2 py-1 rounded-full">
-            EN
-          </span>
+        <div className="mt-auto relative">
+          <button
+            onClick={() => setShowLangMenu(!showLangMenu)}
+            className="flex items-center gap-2 bg-lantern-amber/20 text-lantern-amber text-xs font-medium px-3 py-1.5 rounded-full hover:bg-lantern-amber/30 transition-colors"
+          >
+            {language.toUpperCase()}
+            <ChevronDown className="w-3 h-3" />
+          </button>
+          {showLangMenu && (
+            <div className="absolute bottom-8 left-0 bg-white rounded-card shadow-sm border border-fog-gray py-1 min-w-36 z-10">
+              {(Object.keys(languageNames) as SupportedLanguage[]).map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => { setLanguage(lang); setShowLangMenu(false) }}
+                  className={`w-full text-left px-4 py-2 text-sm hover:bg-fog-gray transition-colors ${language === lang ? 'text-lantern-amber font-semibold' : 'text-deep-ink'}`}
+                >
+                  {languageNames[lang]}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -121,29 +126,46 @@ export default function ChatPage() {
 
         {/* TOP BAR */}
         <div className="flex items-center justify-between px-6 py-3 border-b border-fog-gray bg-white">
-          <span className="text-deep-ink/50 text-sm">
-            Educational guidance only — not professional tax advice
-          </span>
-          <Link
-            href="/connect"
-            className="text-maple-green border border-maple-green text-xs font-semibold px-3 py-1.5 rounded-button hover:bg-maple-green hover:text-white transition-colors"
-          >
-            Connect with a Pro
-          </Link>
+          <span className="text-deep-ink/50 text-sm hidden md:block">{t.disclaimer}</span>
+          <div className="flex items-center gap-3 ml-auto">
+            {/* Mobile language switcher */}
+            <div className="relative md:hidden">
+              <button
+                onClick={() => setShowLangMenu(!showLangMenu)}
+                className="flex items-center gap-1 text-xs font-medium text-deep-ink/60 px-2 py-1 rounded border border-fog-gray"
+              >
+                {language.toUpperCase()} <ChevronDown className="w-3 h-3" />
+              </button>
+              {showLangMenu && (
+                <div className="absolute top-8 right-0 bg-white rounded-card shadow-sm border border-fog-gray py-1 min-w-36 z-10">
+                  {(Object.keys(languageNames) as SupportedLanguage[]).map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => { setLanguage(lang); setShowLangMenu(false) }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-fog-gray transition-colors ${language === lang ? 'text-lantern-amber font-semibold' : 'text-deep-ink'}`}
+                    >
+                      {languageNames[lang]}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <Link
+              href="/connect"
+              className="text-maple-green border border-maple-green text-xs font-semibold px-3 py-1.5 rounded-button hover:bg-maple-green hover:text-white transition-colors"
+            >
+              {t.connectPro}
+            </Link>
+          </div>
         </div>
 
         {/* REFERRAL BANNER */}
         {showReferral && (
           <div className="flex items-center justify-between px-6 py-3 bg-maple-green/10 border-l-4 border-maple-green">
-            <p className="text-deep-ink text-sm font-medium">
-              Need a licensed tax professional? We can connect you.
-            </p>
+            <p className="text-deep-ink text-sm font-medium">{t.referralText}</p>
             <div className="flex items-center gap-3">
-              <Link
-                href="/connect"
-                className="bg-maple-green text-white text-xs font-semibold px-3 py-1.5 rounded-button hover:opacity-90 transition-opacity"
-              >
-                Connect me →
+              <Link href="/connect" className="bg-maple-green text-white text-xs font-semibold px-3 py-1.5 rounded-button hover:opacity-90 transition-opacity">
+                {t.referralButton}
               </Link>
               <button onClick={() => setShowReferral(false)}>
                 <X className="w-4 h-4 text-deep-ink/40 hover:text-deep-ink transition-colors" />
@@ -155,21 +177,17 @@ export default function ChatPage() {
         {/* MESSAGES */}
         <div className="flex-1 overflow-y-auto px-6 py-6">
           <div className="max-w-2xl mx-auto">
-
-            {/* WELCOME STATE */}
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center min-h-96 text-center">
                 <div className="w-16 h-16 bg-midnight-north rounded-2xl flex items-center justify-center mb-4">
                   <Flashlight className="w-8 h-8 text-lantern-amber" />
                 </div>
                 <h2 className="font-heading font-bold text-midnight-north text-2xl mb-2">
-                  Hi, I'm TaxNorth.
+                  {t.welcome}
                 </h2>
-                <p className="text-deep-ink/60 mb-8">
-                  Ask me anything about Canadian taxes — in any language.
-                </p>
+                <p className="text-deep-ink/60 mb-8">{t.welcomeSub}</p>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {SUGGESTED_QUESTIONS.map((q) => (
+                  {t.suggestedQuestions.map((q) => (
                     <button
                       key={q}
                       onClick={() => sendMessage(q)}
@@ -181,20 +199,15 @@ export default function ChatPage() {
                 </div>
               </div>
             )}
-
-            {/* MESSAGE BUBBLES */}
             <div className="space-y-4">
               {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
+                <div key={index} className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {message.role === 'assistant' && (
                     <div className="w-8 h-8 bg-midnight-north rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                       <Flashlight className="w-4 h-4 text-lantern-amber" />
                     </div>
                   )}
-                  <div className={`max-w-lg px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                  <div className={`max-w-lg px-4 py-3 text-sm leading-relaxed ${
                     message.role === 'user'
                       ? 'bg-midnight-north text-white rounded-chat rounded-br-sm'
                       : 'bg-fog-gray text-deep-ink rounded-chat rounded-tl-sm'
@@ -208,7 +221,6 @@ export default function ChatPage() {
               ))}
               <div ref={messagesEndRef} />
             </div>
-
           </div>
         </div>
 
@@ -221,12 +233,12 @@ export default function ChatPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
-                placeholder="Ask your tax question..."
+                placeholder={t.placeholder}
                 className="flex-1 bg-transparent text-deep-ink text-sm outline-none placeholder:text-deep-ink/40"
                 disabled={isLoading}
               />
               <span className="text-xs font-medium text-deep-ink/40 bg-fog-gray px-2 py-0.5 rounded-full">
-                EN
+                {language.toUpperCase()}
               </span>
             </div>
             <button
@@ -238,7 +250,6 @@ export default function ChatPage() {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   )
