@@ -2,6 +2,8 @@ import { Flashlight, MapPin, Languages, Star, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Find a Tax Professional — TaxNorth.ca',
   description: 'Browse verified tax professionals in Canada who specialize in newcomers. Filter by province, language, and specialty.',
