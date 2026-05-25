@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Flashlight, Shield, Lock, CheckCircle, ArrowLeft, Star, User } from 'lucide-react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 
 const PROVINCES = [
   'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
@@ -25,12 +24,13 @@ const SITUATIONS = [
   'Other'
 ]
 
-export default function ConnectClient() {
-  const searchParams = useSearchParams()
-  const proSlug = searchParams.get('pro')
-  const proName = searchParams.get('name')
-  const proFirm = searchParams.get('firm')
+interface ConnectClientProps {
+  proSlug: string | null
+  proName: string | null
+  proFirm: string | null
+}
 
+export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClientProps) {
   const isPreSelected = !!proSlug && !!proName
 
   const [form, setForm] = useState({
@@ -110,7 +110,6 @@ export default function ConnectClient() {
   return (
     <div className="min-h-screen bg-warm-white">
 
-      {/* NAVBAR */}
       <nav className="border-b border-fog-gray bg-white px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -124,7 +123,6 @@ export default function ConnectClient() {
         </div>
       </nav>
 
-      {/* FOUNDING OFFER BANNER */}
       <div className="bg-lantern-amber px-6 py-2.5 text-center">
         <p className="text-midnight-north font-semibold text-sm">
           Founding offer — first 100 clients this month:{' '}
@@ -135,7 +133,6 @@ export default function ConnectClient() {
 
       <div className="max-w-2xl mx-auto px-6 py-12">
 
-        {/* BACK LINK */}
         <Link
           href={isPreSelected ? '/professionals' : '/chat'}
           className="inline-flex items-center gap-1.5 text-lantern-amber font-medium text-sm mb-8 hover:opacity-80 transition-opacity"
@@ -144,7 +141,6 @@ export default function ConnectClient() {
           {isPreSelected ? 'Back to directory' : 'Back to chat'}
         </Link>
 
-        {/* HEADER — changes based on flow */}
         {isPreSelected ? (
           <div>
             <h1 className="font-heading font-bold text-midnight-north text-3xl mb-3">
@@ -154,8 +150,6 @@ export default function ConnectClient() {
               Fill out the form below. {proName?.split(' ')[0]} will receive your details
               and reach out with a special TaxNorth rate.
             </p>
-
-            {/* Professional card */}
             <div className="bg-fog-gray rounded-card p-4 flex items-center gap-4 mb-8">
               <div className="w-12 h-12 bg-midnight-north rounded-xl flex items-center justify-center flex-shrink-0">
                 <span className="font-heading font-bold text-white text-lg">
@@ -197,7 +191,6 @@ export default function ConnectClient() {
           </div>
         )}
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-6">
 
           <div>
@@ -284,7 +277,6 @@ export default function ConnectClient() {
             />
           </div>
 
-          {/* PRICE SUMMARY */}
           <div className="bg-fog-gray rounded-card p-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-midnight-north text-sm">Connection fee</p>
@@ -301,7 +293,7 @@ export default function ConnectClient() {
             disabled={loading || !form.email}
             className="w-full bg-lantern-amber text-midnight-north font-semibold py-4 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40 text-base"
           >
-            {loading ? 'Processing...' : `Connect for $19.99 →`}
+            {loading ? 'Processing...' : 'Connect for $19.99 →'}
           </button>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
