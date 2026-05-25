@@ -78,34 +78,80 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
   }
 
   if (submitted) {
-    return (
-      <div className="min-h-screen bg-warm-white flex items-center justify-center px-6">
-        <div className="max-w-md mx-auto text-center">
-          <div className="w-16 h-16 bg-maple-green/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-8 h-8 text-maple-green" />
+  return (
+    <div className="min-h-screen bg-warm-white px-6 py-12">
+      <div className="max-w-md mx-auto">
+
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-fog-gray rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Flashlight className="w-8 h-8 text-lantern-amber" />
           </div>
-          <h2 className="font-heading font-bold text-midnight-north text-2xl mb-3">
-            {isPreSelected ? `You're connected with ${proName?.split(' ')[0]}.` : "You're on the list."}
+          <h2 className="font-heading font-bold text-midnight-north text-2xl mb-2">
+            One last step — complete your payment.
           </h2>
-          <p className="text-deep-ink/70 mb-4">
-            {isPreSelected
-              ? `${proName} from ${proFirm} will reach out to you shortly with a special TaxNorth rate.`
-              : "We're matching you with the best professional for your situation. You'll hear from us within one business day."
-            }
+          <p className="text-deep-ink/60 text-sm">
+            Your information was saved. Complete the $19.99 payment to confirm your connection.
           </p>
-          <p className="text-deep-ink/50 text-sm mb-8">
-            Not satisfied? Email us at hello@taxnorth.ca and we'll match you with someone else at no extra charge.
+        </div>
+
+        {/* INTERAC OPTION */}
+        <div className="bg-white border-2 border-midnight-north rounded-card p-6 mb-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
+            <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
+              Available now
+            </span>
+          </div>
+          <div className="space-y-3 mb-4">
+            <div className="bg-fog-gray rounded-button p-3">
+              <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
+              <p className="font-semibold text-midnight-north text-sm">hello@taxnorth.ca</p>
+            </div>
+            <div className="bg-fog-gray rounded-button p-3">
+              <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
+              <p className="font-semibold text-midnight-north text-sm">$19.99 CAD</p>
+            </div>
+            <div className="bg-fog-gray rounded-button p-3">
+              <p className="text-deep-ink/50 text-xs mb-1">Message / Memo</p>
+              <p className="font-semibold text-midnight-north text-sm">
+                {form.fullName || 'Your name'} — TaxNorth
+              </p>
+            </div>
+          </div>
+          <p className="text-deep-ink/50 text-xs">
+            We confirm receipt within 1 business hour and process your connection immediately.
+          </p>
+        </div>
+
+        {/* CARD OPTION */}
+        <div className="bg-fog-gray border border-fog-gray rounded-card p-6 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-heading font-semibold text-midnight-north">Credit / Debit Card</h3>
+            <span className="bg-lantern-amber/20 text-lantern-amber text-xs font-semibold px-2 py-1 rounded-full">
+              Coming soon
+            </span>
+          </div>
+          <p className="text-deep-ink/50 text-sm">
+            Card payments will be available shortly. Use Interac e-Transfer in the meantime.
+          </p>
+        </div>
+
+        <div className="text-center">
+          <p className="text-deep-ink/40 text-xs mb-4">
+            Not satisfied? Email hello@taxnorth.ca — we'll re-match you at no extra charge.
           </p>
           <Link
             href="/chat"
-            className="inline-block bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
+            className="text-lantern-amber font-medium text-sm hover:opacity-80 transition-opacity"
           >
             Back to TaxNorth
           </Link>
         </div>
+
       </div>
-    )
-  }
+    </div>
+  )
+}
 
   return (
     <div className="min-h-screen bg-warm-white">
