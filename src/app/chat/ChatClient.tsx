@@ -151,11 +151,11 @@ export default function ChatClient() {
               )}
             </div>
             <Link
-              href="/connect"
-              className="text-maple-green border border-maple-green text-xs font-semibold px-3 py-1.5 rounded-button hover:bg-maple-green hover:text-white transition-colors"
-            >
-              {t.connectPro}
-            </Link>
+  href="/connect"
+  className="text-maple-green border border-maple-green text-xs font-semibold px-4 py-2.5 rounded-button hover:bg-maple-green hover:text-white transition-colors min-h-[44px] flex items-center"
+>
+  {t.connectPro}
+</Link>
           </div>
         </div>
 
@@ -225,7 +225,16 @@ export default function ChatClient() {
         </div>
 
         {/* INPUT */}
-        <div className="border-t border-fog-gray bg-white px-6 py-4">
+        {/* Mobile sticky CTA */}
+<div className="md:hidden px-6 py-2 bg-white border-t border-fog-gray">
+  <Link
+    href="/connect"
+    className="w-full flex items-center justify-center gap-2 bg-maple-green text-white font-semibold py-3 rounded-button text-sm hover:opacity-90 transition-opacity"
+  >
+    Connect with a licensed tax professional →
+  </Link>
+</div>
+<div className="border-t border-fog-gray bg-white px-6 py-4">
           <div className="max-w-2xl mx-auto flex items-center gap-3">
             <div className="flex-1 flex items-center gap-2 border border-fog-gray rounded-button px-4 py-2.5 focus-within:border-lantern-amber transition-colors">
               <input
