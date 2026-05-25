@@ -105,7 +105,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           <div className="space-y-3 mb-4">
             <div className="bg-fog-gray rounded-button p-3">
               <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
-              <p className="font-semibold text-midnight-north text-sm">hello@taxnorth.ca</p>
+              <p className="font-semibold text-midnight-north text-sm">billing@asce.ca</p>
             </div>
             <div className="bg-fog-gray rounded-button p-3">
               <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
