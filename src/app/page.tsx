@@ -55,6 +55,7 @@ export default function HomePage() {
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm text-deep-ink/70">
             <Link href="/resources" className="hover:text-midnight-north transition-colors">Resources</Link>
+            <Link href="/professionals" className="hover:text-midnight-north transition-colors">Find a Pro</Link>
             <Link href="/partners" className="hover:text-midnight-north transition-colors">For Professionals</Link>
           </div>
           <div className="flex items-center gap-3">
@@ -200,12 +201,13 @@ export default function HomePage() {
                 TaxNorth<span className="text-xs">.ca</span>
               </span>
             </Link>
-            <div className="flex items-center gap-6 text-white/60 text-sm">
+            <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-white/60 text-sm">
               <Link href="/resources" className="hover:text-white transition-colors">Resources</Link>
+              <Link href="/professionals" className="hover:text-white transition-colors">Find a Pro</Link>
               <Link href="/partners" className="hover:text-white transition-colors">For Professionals</Link>
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-<Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-              <Link href="/connect" className="hover:text-white transition-colors">Connect with a Pro</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+              <Link href="/connect" className="hover:text-white transition-colors whitespace-nowrap">Connect with a Pro</Link>
             </div>
           </div>
           <p className="text-white/40 text-xs text-center leading-relaxed">
