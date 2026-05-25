@@ -2,8 +2,88 @@ import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users
 import Link from 'next/link'
 
 export default function HomePage() {
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "TaxNorth",
+        "url": "https://www.taxnorth.ca",
+        "description": "Free AI tax guide for newcomers to Canada",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "CAD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do newcomers to Canada need to file taxes?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. As a newcomer to Canada, you generally need to file a tax return for the part of the year you were a Canadian resident. Even if you had no income, filing is important to access benefits like the GST/HST credit and Climate Action Incentive Payment."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the tax filing deadline in Canada?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For most individuals in Canada, the tax filing deadline is April 30. If you or your spouse are self-employed, the deadline to file is June 15, but any taxes owing must be paid by April 30."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a T4 slip in Canada?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A T4 slip is a Statement of Remuneration Paid issued by your employer. It shows your total employment income and the amounts deducted for income tax, CPP contributions, and EI premiums. You need your T4 to file your tax return."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the GST/HST credit for newcomers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The GST/HST credit is a tax-free quarterly payment from the Canadian government to help people with low and modest incomes offset the sales tax they pay. Newcomers may be eligible in their first year. You receive it automatically by filing your tax return."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do international students file taxes in Canada?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "International students who live in Canada for more than 183 days are generally considered Canadian residents for tax purposes and should file a tax return. You can claim the tuition tax credit using your T2202 form from your school. Even with low income, filing helps you access GST/HST credits."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Organization",
+        "name": "TaxNorth",
+        "url": "https://www.taxnorth.ca",
+        "logo": "https://www.taxnorth.ca/og?v=2",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "hello@taxnorth.ca",
+          "contactType": "customer service"
+        }
+      }
+    ]
+  }
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
 
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 bg-warm-white border-b border-fog-gray">
