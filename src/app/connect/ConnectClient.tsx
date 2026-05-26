@@ -125,29 +125,37 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           </div>
 
           {/* CARD OPTION */}
-          <div className="bg-fog-gray border border-fog-gray rounded-card p-6 mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-heading font-semibold text-midnight-north">Credit / Debit Card</h3>
-              <span className="bg-lantern-amber/20 text-lantern-amber text-xs font-semibold px-2 py-1 rounded-full">
-                Coming soon
-              </span>
-            </div>
-            <p className="text-deep-ink/50 text-sm">
-              Card payments will be available shortly. Use Interac e-Transfer in the meantime.
-            </p>
-          </div>
+<a
+  href="https://taxnorth.myhelcim.com/hosted/?token=5449fe12da0aa7f12c5574&amount=19.99&amountHash=2b8216946cd1838aae12f0958b4cb6a4148b4d9d8a3019d905d825cb785f7342"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block bg-white border border-fog-gray rounded-card p-6 mb-4 hover:border-lantern-amber transition-colors"
+>
+  <div className="flex items-center justify-between mb-3">
+    <h3 className="font-heading font-semibold text-midnight-north">Credit / Debit Card</h3>
+    <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
+      Available now
+    </span>
+  </div>
+  <p className="text-deep-ink/50 text-sm mb-3">
+    Pay securely with Visa, Mastercard, or debit card via Helcim.
+  </p>
+  <span className="inline-flex items-center gap-1 text-lantern-amber font-semibold text-sm">
+    Pay $19.99 with card →
+  </span>
+</a>
 
-          <div className="text-center">
-            <p className="text-deep-ink/40 text-xs mb-4">
-              Not satisfied? Email hello@taxnorth.ca — we'll re-match you at no extra charge.
-            </p>
-            <Link
-              href="/chat"
-              className="text-lantern-amber font-medium text-sm hover:opacity-80 transition-opacity"
-            >
-              Back to TaxNorth
-            </Link>
-          </div>
+<div className="text-center">
+  <p className="text-deep-ink/40 text-xs mb-4">
+    Not satisfied? Email hello@taxnorth.ca — we'll re-match you at no extra charge.
+  </p>
+  <Link
+    href="/chat"
+    className="text-lantern-amber font-medium text-sm hover:opacity-80 transition-opacity"
+  >
+    Back to TaxNorth
+  </Link>
+</div>
 
         </div>
       </div>
