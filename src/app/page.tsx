@@ -212,11 +212,11 @@ export default function HomePage() {
       <div className="md:grid md:grid-cols-2 gap-12 items-start">
         <div>
           <h3 className="font-heading font-bold text-white text-2xl mb-4">
-            Small firms. Big expertise.
-          </h3>
-          <p className="text-white/70 leading-relaxed mb-4">
-            The best tax professionals for newcomers are often small firms led by experienced entrepreneurs. They built their practice to serve a specific community — and they show up for every client personally.
-          </p>
+  Small firms. Deeper expertise.
+</h3>
+<p className="text-white/70 leading-relaxed mb-4">
+  The best tax professionals are often small firms led by entrepreneurs with years in the field. They built their practice to serve real people with real situations — not to process volume.
+</p>
           <p className="text-white/70 leading-relaxed">
             They offer quality service at a fair price, and because their reputation depends on results, they go further than any standardized process ever could.
           </p>
@@ -228,7 +228,7 @@ export default function HomePage() {
           <div className="space-y-3">
             {[
               "We know their background and years of experience",
-              "We verify they specialize in newcomer situations",
+              "We verify their expertise matches your specific situation",
               "We confirm they offer fair, transparent pricing",
               "We stand behind every connection we make"
             ].map((item) => (
