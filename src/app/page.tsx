@@ -197,7 +197,7 @@ export default function HomePage() {
         {
           number: "03",
           title: "Tax software weren't built for you",
-          body: "Same questions for everyone, hundreds of returns a day — and no room to ask yours."
+          body: "Same questions for everyone, hundreds of returns a day — and no room to ask yours. The details that matter most get missed when the process was designed for the average filer, not for you."
         }
       ].map((item) => (
         <div key={item.number} className="bg-white rounded-card p-8 shadow-sm">
