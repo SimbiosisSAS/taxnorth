@@ -1,0 +1,32 @@
+# TaxNorth.ca
+> Free AI-powered tax guide for newcomers to Canada — in any language.
+
+TaxNorth.ca helps newcomers, international students, work permit holders, and first-time filers understand the Canadian tax system. The service provides educational guidance in 12 languages and connects users with verified tax professionals across Canada.
+
+## Key Topics Covered
+- Canadian tax filing requirements for newcomers
+- T4 slips and tax documents explained
+- GST/HST credit eligibility and how to apply
+- Canada Workers Benefit and Climate Action Incentive
+- Tax filing deadlines (April 30 for most individuals)
+- RRSP and TFSA basics for newcomers
+- Provincial tax differences across Canada
+- How to file using NETFILE and certified software
+- Unfiled returns and Voluntary Disclosures Program
+- Foreign income reporting for new residents
+
+## Resources
+- /resources/how-to-file-taxes-canada-newcomer
+- /resources/what-is-a-t4-slip-canada
+- /resources/gst-hst-credit-canada-newcomers
+- /resources/tax-filing-deadline-canada
+- /resources/international-student-taxes-canada
+- /resources/work-permit-taxes-canada
+- /resources/canada-child-benefit-newcomers
+
+## Professional Directory
+- /professionals — Licensed tax professionals in Canada matched by province and language
+
+## Contact
+- hello@taxnorth.ca
+- https://www.taxnorth.ca
