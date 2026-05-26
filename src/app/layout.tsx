@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   keywords: 'Canadian taxes, newcomers Canada, tax guide, impuestos Canada, CRA, file taxes Canada',
   verification: {
     google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
+    other: {
+      'msvalidate.01': 'D1C1BE7C521A8B10763BB6027E7B401A',
+    },
   },
   metadataBase: new URL('https://www.taxnorth.ca'),
   openGraph: {
