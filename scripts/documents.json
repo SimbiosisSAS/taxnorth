@@ -155,4 +155,45 @@
     "category": "filing_basics",
     "text": "TurboTax Canada — Overview for Newcomers. TurboTax Canada, owned by Intuit, is an online tax software platform with no physical office locations. TaxNorth has no affiliation or partnership with TurboTax Canada. This information is provided for educational purposes only. TurboTax Canada offers three service levels for the 2025 tax year: Do It Yourself ranging from $0 to approximately $70 depending on complexity; Expert Assist ranging from $70 to $150 which provides unlimited access to a tax expert who can review your screen and answer questions in real time; and Full Service ranging from $120 to $315 where a TurboTax-employed professional prepares and files your entire return. The free Do It Yourself tier covers basic T4 income, student credits, and RRSP contributions only. TurboTax offers a $20 rate for Expert Assist for users aged 25 and younger, which targets international students and young professionals. TurboTax has a dedicated newcomer section that addresses foreign income reporting, including Form T1135 which must be filed if you held foreign property worth more than $100,000 CAD at any point during the year. TurboTax is a digital-only platform and does not have physical offices in Canada. For newcomers who prefer in-person guidance or have complex situations, a licensed independent tax professional through TaxNorth provides personalized service that software cannot replicate."
   }
+  ,
+  {
+    "source": "rrsp-newcomers-guide",
+    "category": "filing_basics",
+    "text": "RRSP for Newcomers to Canada. A Registered Retirement Savings Plan lets you save for retirement while reducing taxes today. Contributions are tax-deductible. Your contribution room is 18 percent of your previous year earned income up to the annual maximum. As a newcomer you start building RRSP room from your first year of Canadian income. You do not get credit for income earned outside Canada before you arrived. Unused contribution room carries forward indefinitely. The RRSP contribution deadline is 60 days after December 31, usually March 1. Contributions made in January or February can apply to either the previous or current tax year. The TFSA is often recommended for newcomers before the RRSP because TFSA withdrawals are flexible and tax-free at any time. Check your available RRSP room on your Notice of Assessment or in My Account at canada.ca. Over-contributing by more than 2,000 dollars above your limit results in a penalty tax of 1 percent per month on the excess."
+  },
+  {
+    "source": "owing-taxes-options",
+    "category": "filing_basics",
+    "text": "What to Do If You Owe Taxes in Canada. Always file your tax return on time even if you cannot pay. Filing late adds a 5 percent penalty plus 1 percent per month on what you owe. If you owe taxes and do not pay by April 30, the CRA charges daily compound interest from May 1. Contact the CRA at 1-888-863-8657 to arrange a payment plan. You can pay through online banking by adding Canada Revenue Agency as a payee using your Social Insurance Number. Pay at any bank branch, by mail, or through My Account at canada.ca. The Voluntary Disclosures Program allows you to correct unfiled returns before the CRA contacts you, with possible waiver of penalties. Newcomers who did not know they were required to file can use this program. Unpaid taxes do not directly affect your immigration status but the CRA can garnish wages or bank accounts if a debt remains unpaid for extended periods."
+  },
+  {
+    "source": "provincial-tax-guide",
+    "category": "filing_basics",
+    "text": "Provincial Tax Differences in Canada. You pay provincial tax based on which province you lived in on December 31 of the tax year. Alberta has no provincial sales tax and is attractive for workers at most income levels. Ontario is the most populous province with large newcomer communities and the Ontario Trillium Benefit combining energy, property, and sales tax credits. Quebec residents must file two separate tax returns, one federal and one to Revenu Quebec. Quebec has higher provincial taxes but significantly subsidized services including very low-cost childcare. British Columbia has 12 percent HST and progressive income tax rates. For families with children, Quebec childcare subsidies often make it the most financially advantageous province. For individual workers without dependents, Alberta's low taxes and no provincial sales tax are often the best combination."
+  },
+  {
+    "source": "guide-impots-nouveaux-arrivants-fr",
+    "category": "newcomers",
+    "text": "Bienvenue au Canada — Informations fiscales pour les nouveaux arrivants. En tant que nouvel arrivant au Canada, vous devrez peut-être produire une déclaration de revenus canadienne. L'année fiscale s'étend du 1er janvier au 31 décembre. La date limite de production est le 30 avril de l'année suivante. Si vous êtes devenu résident pendant l'année, vous ne déclarez que les revenus gagnés à partir de la date à laquelle vous êtes devenu résident. Le crédit pour la TPS/TVH est un paiement trimestriel non imposable qui aide les personnes à revenu modeste. Pour le recevoir, vous devez produire une déclaration de revenus même si vous n'avez aucun revenu à déclarer. La Prestation canadienne pour les travailleurs est un crédit d'impôt remboursable pour les personnes qui travaillent et qui ont un faible revenu. La Paiement de l'Incitatif à agir pour le climat est disponible dans plusieurs provinces. Demandez votre numéro d'assurance sociale dès votre arrivée au Canada."
+  },
+  {
+    "source": "t4-explique-fr",
+    "category": "employment",
+    "text": "Comprendre votre feuillet T4. Le feuillet T4, appelé État de la rémunération payée, est un document que votre employeur vous remet. Il indique votre revenu d'emploi total de l'année et les montants retenus pour l'impôt sur le revenu, les cotisations au RPC et les primes d'AE. Vous devriez recevoir votre T4 au plus tard le dernier jour de février pour l'année fiscale précédente. Si vous avez travaillé pour plusieurs employeurs, vous recevrez un T4 de chacun. La case 14 indique votre revenu d'emploi total. La case 22 indique l'impôt sur le revenu retenu. La case 16 indique vos cotisations au RPC. La case 18 indique vos primes d'AE. Vous avez besoin de votre T4 pour produire votre déclaration de revenus."
+  },
+  {
+    "source": "delais-impots-canada-fr",
+    "category": "deadlines",
+    "text": "Dates limites de production des déclarations de revenus au Canada. Pour la plupart des particuliers, la date limite est le 30 avril. Si vous ou votre conjoint êtes travailleur indépendant, la date limite est le 15 juin, mais tout solde dû doit être payé avant le 30 avril. Un retard de production entraîne une pénalité de 5 pour cent du solde dû, plus 1 pour cent pour chaque mois complet de retard, jusqu'à 12 mois. Même si vous ne pouvez pas payer ce que vous devez, il est toujours préférable de produire à temps pour éviter la pénalité. Les nouveaux arrivants et les étudiants sans revenus devraient quand même produire une déclaration pour accéder aux prestations et crédits auxquels ils ont droit."
+  },
+  {
+    "source": "credit-tps-tvh-fr",
+    "category": "credits_benefits",
+    "text": "Crédit pour la TPS/TVH pour les nouveaux arrivants. Le crédit pour la TPS/TVH est un paiement trimestriel non imposable de l'ARC pour aider les personnes à revenu modeste à compenser la taxe de vente qu'elles paient. Les paiements sont versés en janvier, avril, juillet et octobre. Vous êtes automatiquement pris en considération pour ce crédit lorsque vous produisez votre déclaration de revenus. Vous n'avez pas à faire une demande séparée. Même si vous n'avez aucun revenu, produire votre déclaration vous rend admissible. En tant que nouvel arrivant, vous pourriez être admissible dès l'année de votre arrivée au Canada. Le montant dépend de votre revenu familial net et du nombre d'enfants que vous avez. Pour recevoir ce crédit, vous devez être résident canadien et avoir 19 ans ou plus, ou avoir un conjoint de fait, ou être parent vivant avec votre enfant."
+  },
+  {
+    "source": "etudiants-internationaux-impots-fr",
+    "category": "students",
+    "text": "Impôts pour les étudiants internationaux au Canada. En tant qu'étudiant international, vous êtes généralement considéré comme résident canadien aux fins de l'impôt si vous vivez au Canada plus de 183 jours par année. Vous devriez produire une déclaration de revenus canadienne. Le crédit d'impôt pour frais de scolarité vous permet de déduire les frais admissibles payés à un établissement d'enseignement postsecondaire canadien. Votre établissement vous remet un formulaire T2202 indiquant vos frais admissibles. Si votre crédit dépasse votre impôt à payer, vous pouvez reporter le montant non utilisé aux années futures ou le transférer à un parent ou à un conjoint. Les étudiants qui travaillent à temps partiel reçoivent des feuillets T4 de leurs employeurs. Même avec un faible revenu, produire une déclaration est important pour accéder au crédit pour la TPS/TVH."
+  }
 ]

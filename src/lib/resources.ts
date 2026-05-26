@@ -223,6 +223,143 @@ export const resources: Resource[] = [
     ],
     cta: 'Questions about the Canada Child Benefit or other benefits for your family? Ask TaxNorth — free, in your language.'
   }
+  ,
+  {
+    slug: 'rrsp-for-newcomers-canada',
+    title: 'RRSP for Newcomers to Canada: A Complete Guide',
+    metaTitle: 'RRSP for Newcomers to Canada: How It Works and When to Start | TaxNorth',
+    description: 'Everything newcomers need to know about the Registered Retirement Savings Plan in Canada — contribution room, deadlines, tax benefits, and how to get started.',
+    intro: 'The RRSP is one of the most powerful tax tools available to Canadians — and as a newcomer, you start building contribution room from your very first year of Canadian income. Understanding how it works early can save you thousands of dollars over your lifetime.',
+    sections: [
+      {
+        heading: 'What is an RRSP?',
+        content: 'A Registered Retirement Savings Plan is a government-registered account that lets you save for retirement while reducing your taxes today. Contributions to your RRSP are tax-deductible, meaning they reduce your taxable income for the year you contribute. The investments inside your RRSP grow tax-free until you withdraw them, typically in retirement when your income is lower.'
+      },
+      {
+        heading: 'How does contribution room work for newcomers?',
+        content: 'Your RRSP contribution room is calculated as 18 percent of your previous year\'s earned income, up to the annual maximum limit. As a newcomer, you start earning contribution room from the first year you have Canadian income. You do not get credit for income earned outside Canada before you arrived. Unused contribution room carries forward indefinitely — so you can save it for years when you earn more.'
+      },
+      {
+        heading: 'What is the RRSP contribution deadline?',
+        content: 'The deadline to contribute to your RRSP for a given tax year is 60 days after December 31 — usually March 1 of the following year. For example, to claim RRSP contributions on your 2024 tax return, you have until March 1, 2025. Contributions made in January or February of the new year can be applied to either the previous year or the current year.'
+      },
+      {
+        heading: 'When should newcomers start contributing?',
+        content: 'There is no rush to contribute immediately upon arriving in Canada. In your early years as a newcomer, your income may be lower and your marginal tax rate may be modest. RRSP contributions are most valuable when you are in a high tax bracket because the deduction saves you more. Many financial advisors suggest newcomers focus first on building an emergency fund and a TFSA before prioritizing RRSP contributions.'
+      },
+      {
+        heading: 'RRSP vs. TFSA — which is better for newcomers?',
+        content: 'Both are valuable but serve different purposes. The TFSA is often recommended first for newcomers because withdrawals are completely tax-free and flexible — you can take money out at any time without tax consequences. The RRSP is better for high earners who want to reduce their taxable income now and expect to be in a lower bracket in retirement. Many Canadians use both strategically.'
+      },
+      {
+        heading: 'How to check your RRSP contribution room',
+        content: 'Your available RRSP contribution room is shown on your Notice of Assessment, which the CRA sends after processing your tax return. You can also check it anytime in My Account at canada.ca. If you over-contribute by more than $2,000 above your limit, you are subject to a penalty tax of 1 percent per month on the excess amount.'
+      }
+    ],
+    cta: 'Have questions about RRSP as a newcomer? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'what-to-do-if-you-owe-taxes-canada',
+    title: 'What to Do If You Owe Taxes in Canada',
+    metaTitle: 'Owe Taxes in Canada? What Newcomers Should Do | TaxNorth',
+    description: 'Owe money to the CRA? Learn your options — payment plans, interest charges, voluntary disclosure, and how to avoid penalties as a newcomer in Canada.',
+    intro: 'Getting a tax bill can be stressful, especially if you are new to Canada and unfamiliar with the system. The good news is that the CRA has clear processes for managing what you owe — and the worst thing you can do is ignore it.',
+    sections: [
+      {
+        heading: 'Why do some people owe taxes?',
+        content: 'You may owe taxes if your employer did not withhold enough throughout the year, if you have multiple income sources, if you earned self-employment or freelance income, or if you received investment income. Even newcomers with only employment income sometimes owe a small balance due to the timing of their arrival in Canada.'
+      },
+      {
+        heading: 'When does the CRA charge interest and penalties?',
+        content: 'If you owe taxes and do not pay by April 30, the CRA charges daily compound interest from May 1 onward. The interest rate changes quarterly and is typically between 8 and 10 percent annually. If you also filed your return late, there is an additional late-filing penalty of 5 percent of the balance owing plus 1 percent for each full month late, up to 12 months.'
+      },
+      {
+        heading: 'What if you cannot afford to pay the full amount?',
+        content: 'Always file your return on time even if you cannot pay. Filing late adds a penalty on top of what you already owe. Once you have filed, contact the CRA at 1-888-863-8657 to arrange a payment plan. The CRA works with taxpayers who reach out proactively. They can set up pre-authorized monthly payments from your bank account and will often reduce or waive interest if you demonstrate financial hardship.'
+      },
+      {
+        heading: 'How to make a payment to the CRA',
+        content: 'You can pay the CRA through online banking by adding Canada Revenue Agency as a payee and using your Social Insurance Number as the account number. You can also pay in person at any bank branch, by mail with a cheque, or through My Account at canada.ca. When paying online, allow 3 to 5 business days for the payment to be processed before the deadline.'
+      },
+      {
+        heading: 'What is the Voluntary Disclosures Program?',
+        content: 'If you have not filed returns from previous years or did not report income, the Voluntary Disclosures Program allows you to come forward and correct your tax affairs before the CRA contacts you. If you qualify, the CRA may waive penalties and reduce interest. This program is especially relevant for newcomers who did not know they were required to file in their first years in Canada. You must apply before the CRA starts an audit or collection action against you.'
+      },
+      {
+        heading: 'Can owing taxes affect your immigration status?',
+        content: 'Unpaid taxes generally do not directly affect your immigration status, but they can affect your ability to receive certain benefits and government services. The CRA can also take collection actions including garnishing wages or bank accounts if a debt remains unpaid for an extended period. It is always better to communicate with the CRA and arrange payment rather than ignore the situation.'
+      }
+    ],
+    cta: 'Worried about what you owe the CRA? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'provincial-tax-differences-canada',
+    title: 'Provincial Tax Differences in Canada: What Newcomers Need to Know',
+    metaTitle: 'Provincial Tax Differences Canada: Guide for Newcomers | TaxNorth',
+    description: 'How provincial taxes differ across Canada — tax rates, credits, sales tax, and benefits that vary by province. Helps newcomers choose where to live.',
+    intro: 'Canada\'s tax system has two layers — federal and provincial. While federal taxes apply the same way across the country, your province of residence significantly affects how much you pay and what benefits you receive. Here is what newcomers need to know.',
+    sections: [
+      {
+        heading: 'How provincial taxes work',
+        content: 'Every province and territory has its own income tax rates and brackets that are applied on top of federal tax. When you file your tax return, you report your income once and the CRA calculates both federal and provincial tax together. You pay provincial tax based on which province you lived in on December 31 of the tax year. If you moved provinces during the year, you pay based on where you were on December 31.'
+      },
+      {
+        heading: 'Alberta — no provincial sales tax',
+        content: 'Alberta is the only province with no provincial sales tax. Residents pay only the 5 percent federal GST on purchases. Alberta also has relatively flat provincial income tax rates, making it attractive for workers at most income levels. Calgary and Edmonton are major immigration hubs with large newcomer communities and strong job markets in energy, technology, and services.'
+      },
+      {
+        heading: 'Ontario — highest population, significant credits',
+        content: 'Ontario is Canada\'s most populous province and home to the largest newcomer population. Provincial income tax rates are moderate but Ontario offers significant credits including the Ontario Trillium Benefit, which combines energy, property tax, and sales tax credits into monthly payments. Ontario has a 13 percent Harmonized Sales Tax combining federal and provincial sales tax.'
+      },
+      {
+        heading: 'British Columbia — high cost, progressive rates',
+        content: 'British Columbia has relatively progressive income tax rates and a combined 12 percent HST. Vancouver is one of the most expensive cities in Canada but also one of the most diverse with large immigrant communities from Asia. BC offers the BC Family Benefit for families with children and the Climate Action Tax Credit.'
+      },
+      {
+        heading: 'Quebec — separate tax return required',
+        content: 'Quebec is unique in Canada because residents file two separate tax returns — one federal and one provincial — to Revenu Québec. Quebec has its own Quebec Pension Plan instead of CPP. Provincial income tax rates in Quebec are higher than most provinces but Quebec also offers significantly more subsidized services including very low-cost childcare. Quebec residents receive communications and services in French.'
+      },
+      {
+        heading: 'Which province is best for newcomers financially?',
+        content: 'There is no single answer — it depends on your income level, family situation, and priorities. Alberta is often best for workers without children due to low taxes and no provincial sales tax. Quebec can be best for families with children due to subsidized childcare. Ontario offers the most job opportunities in finance, technology, and government. British Columbia attracts many from Asia-Pacific countries due to established communities. Consider the total picture including housing costs, job market, and community when choosing where to settle.'
+      }
+    ],
+    cta: 'Questions about taxes in your province? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'reading-your-notice-of-assessment-canada',
+    title: 'How to Read Your Notice of Assessment from the CRA',
+    metaTitle: 'Notice of Assessment Canada: How to Read It as a Newcomer | TaxNorth',
+    description: 'Learn what every section of your CRA Notice of Assessment means, what to check, and what to do if something looks wrong.',
+    intro: 'After you file your tax return, the CRA sends you a Notice of Assessment. For many newcomers, this is their first official document from the Canadian government — and it contains important information about your tax situation, refund, and future contribution room.',
+    sections: [
+      {
+        heading: 'What is a Notice of Assessment?',
+        content: 'A Notice of Assessment (NOA) is the official confirmation from the Canada Revenue Agency that your tax return has been received and processed. It shows whether the CRA agrees with your return, calculates any refund or balance owing, and provides your RRSP and TFSA contribution room for the following year. It is one of the most important documents you receive as a taxpayer.'
+      },
+      {
+        heading: 'When do you receive it?',
+        content: 'If you filed electronically using NETFILE, your NOA typically arrives within two weeks. If you filed by paper, it can take up to eight weeks. You can access your NOA online through My Account at canada.ca as soon as it is processed, even before the physical copy arrives by mail. Set up direct deposit to receive any refund within 5 business days of the NOA being issued.'
+      },
+      {
+        heading: 'Key sections to check',
+        content: 'The Assessment section shows whether the CRA changed anything from your filed return and why. The Refund or Balance Owing section shows whether you receive money back or owe an amount. The RRSP Deduction Limit shows your available contribution room for next year. The TFSA Contribution Room shows how much you can contribute to your Tax-Free Savings Account. Always compare these numbers to what you expected.'
+      },
+      {
+        heading: 'What if the CRA changed your return?',
+        content: 'The CRA sometimes makes adjustments to your return — for example, if they have different T4 information from your employer, or if they disallow a deduction. Any changes are explained in the Explanation of Changes section of the NOA. Review these carefully. If you disagree with a change, you have 90 days from the date on the NOA to file a formal objection.'
+      },
+      {
+        heading: 'How to file an objection',
+        content: 'If you believe the CRA made an error on your NOA, you can file a Notice of Objection using Form T400A or through My Account online. You must file within 90 days of the NOA date. The CRA will review your objection and respond. If you remain unsatisfied, you can appeal to the Tax Court of Canada. Most straightforward errors are resolved at the objection stage without going to court.'
+      },
+      {
+        heading: 'Keep your NOA in a safe place',
+        content: 'Your Notice of Assessment is required to register for My CRA Account for the first time, to apply for certain loans where income verification is needed, and as proof of your tax status for various purposes. If you lose it, you can request a copy through My Account or by calling the CRA at 1-800-959-8281. Keep all NOAs for at least six years.'
+      }
+    ],
+    cta: 'Questions about your Notice of Assessment or tax return? Ask TaxNorth — free guidance in any language.'
+  }
 ]
 
 export function getResource(slug: string): Resource | undefined {
