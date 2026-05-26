@@ -196,8 +196,8 @@ export default function HomePage() {
         },
         {
           number: "03",
-          title: "One size fits nobody",
-          body: "Standardized platforms process hundreds of returns a day using the same questions for everyone. Your arrival date, your foreign income, your first year in Canada — these details get missed when the process was designed for the average filer, not for you."
+          title: "Tax software weren't built for you",
+          body: ""Same questions for everyone, hundreds of returns a day — and no room to ask yours."
         }
       ].map((item) => (
         <div key={item.number} className="bg-white rounded-card p-8 shadow-sm">
