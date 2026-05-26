@@ -39,15 +39,15 @@ export default function PartnersPage() {
             For Tax Professionals
           </p>
           <h1 className="font-heading font-bold text-white text-4xl md:text-5xl mb-4 leading-tight">
-            Get discovered by newcomers<br />who are ready to hire.
+            Your next clients are already<br />looking for you.
           </h1>
           <p className="text-lantern-amber/80 text-sm font-medium mb-6">
             Founding Member Rate — price locked forever for early subscribers.
           </p>
           <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-            TaxNorth educates newcomers about Canadian taxes for free. When they need a professional,
-            we match them to you — by province, language, and specialty. You focus on the work.
-            We handle the rest.
+            TaxNorth educates people about Canadian taxes for free — newcomers, first-time filers,
+self-employed workers, and more. When they need a professional, we match them to you
+by province, language, and specialty. You focus on the work. We handle the rest.
           </p>
           <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity text-base">
