@@ -12,7 +12,9 @@ const PROVINCES = [
 ]
 
 const LANGUAGES = [
-  'English', 'French', 'Spanish', 'Mandarin', 'Punjabi', 'Arabic', 'Romanian', 'Other'
+  'English', 'French', 'Spanish', 'Mandarin',
+  'Punjabi', 'Arabic', 'Romanian', 'Ukrainian',
+  'Japanese', 'Korean', 'Dari', 'Turkish', 'Other'
 ]
 
 const SITUATIONS = [
@@ -97,7 +99,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           </div>
 
           {/* INTERAC OPTION */}
-<div className="bg-white border-2 border-midnight-north rounded-card p-6 mb-4">
+<div className="bg-white border border-fog-gray rounded-card p-6 mb-4">
   <div className="flex items-center justify-between mb-4">
     <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
   </div>
