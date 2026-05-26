@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/context/LanguageContext'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
   title: 'TaxNorth.ca — Taxes that finally click.',
