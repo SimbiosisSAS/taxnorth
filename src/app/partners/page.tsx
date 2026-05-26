@@ -38,16 +38,20 @@ export default function PartnersPage() {
           <p className="text-lantern-amber font-semibold text-sm uppercase tracking-widest mb-4">
             For Tax Professionals
           </p>
-          <h1 className="font-heading font-bold text-white text-4xl md:text-5xl mb-6 leading-tight">
+          <h1 className="font-heading font-bold text-white text-4xl md:text-5xl mb-4 leading-tight">
             Get discovered by newcomers<br />who are ready to hire.
           </h1>
+          <p className="text-lantern-amber/80 text-sm font-medium mb-6">
+            Founding Member Rate — price locked forever for early subscribers.
+          </p>
           <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
             TaxNorth educates newcomers about Canadian taxes for free. When they need a professional,
-            we match them to you — by province, language, and specialty.
+            we match them to you — by province, language, and specialty. You focus on the work.
+            We handle the rest.
           </p>
           <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity text-base">
-            Join for $10/month <ArrowRight className="w-4 h-4" />
+            Join for $29/month <ArrowRight className="w-4 h-4" />
           </a>
           <p className="text-white/40 text-sm mt-4">
             After payment we contact you to set up your profile. No long-term commitment required.
@@ -98,9 +102,12 @@ export default function PartnersPage() {
       {/* PRICING */}
       <section className="bg-fog-gray py-24 px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-4">
+          <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-2">
             Simple pricing.
           </h2>
+          <p className="text-lantern-amber font-semibold text-sm text-center mb-3">
+            Founding Member Rate — join now and lock in this price forever.
+          </p>
           <p className="text-deep-ink/60 text-center text-lg mb-12">
             No per-client fees. No commissions. Just a flat directory listing.
           </p>
@@ -110,7 +117,7 @@ export default function PartnersPage() {
             <div className="bg-white rounded-card p-8">
               <h3 className="font-heading font-bold text-midnight-north text-xl mb-1">Monthly</h3>
               <p className="text-deep-ink/50 text-sm mb-4">Cancel anytime</p>
-              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$10</p>
+              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$29</p>
               <p className="text-deep-ink/60 text-sm mb-6">CAD / month</p>
               <div className="space-y-2 mb-8">
                 {[
@@ -135,16 +142,16 @@ export default function PartnersPage() {
             {/* Annual Monthly */}
             <div className="bg-midnight-north rounded-card p-8 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-lantern-amber text-midnight-north text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
-                SAVE 30%
+                SAVE 35%
               </div>
               <h3 className="font-heading font-bold text-white text-xl mb-1">Annual</h3>
               <p className="text-white/50 text-sm mb-4">Billed monthly · 12-month plan</p>
-              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$7</p>
+              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$19</p>
               <p className="text-white/60 text-sm mb-6">CAD / month</p>
               <div className="space-y-2 mb-6">
                 {[
                   "Everything in Monthly",
-                  "30% savings vs monthly",
+                  "35% savings vs monthly",
                   "Priority placement in results",
                   "TaxNorth Verified badge",
                   "Monthly performance report",
@@ -173,8 +180,8 @@ export default function PartnersPage() {
               </div>
               <h3 className="font-heading font-bold text-midnight-north text-xl mb-1">Annual Upfront</h3>
               <p className="text-deep-ink/50 text-sm mb-4">Pay once · Full year included</p>
-              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$50</p>
-              <p className="text-deep-ink/60 text-sm mb-6">CAD / year — less than $4.20/month</p>
+              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$149</p>
+              <p className="text-deep-ink/60 text-sm mb-6">CAD / year — less than $12.50/month</p>
               <div className="space-y-2 mb-6">
                 {[
                   "Everything in Annual plan",
@@ -214,7 +221,7 @@ export default function PartnersPage() {
               <p className="text-white/70 text-sm leading-relaxed">
                 If TaxNorth does not send you at least one new client during your 12-month subscription,
                 we refund your full payment at the end of the year. No questions asked.
-                Applies to Annual Monthly ($7/mo) and Annual Upfront ($50/yr) plans.
+                Applies to Annual ($19/mo) and Annual Upfront ($149/yr) plans.
               </p>
             </div>
           </div>
@@ -239,7 +246,7 @@ export default function PartnersPage() {
               { title: "Quality standards apply", body: "TaxNorth reserves the right to remove any professional from the directory following repeated client complaints or verified misconduct." },
               { title: "Billing terms", body: "Monthly plans are charged on the 1st of each month. Annual monthly plans are billed monthly over 12 months. Annual upfront plans have no refund after the first 30 days." },
               { title: "Cancellation", body: "Monthly plans can be cancelled with 30 days notice. Annual monthly plans run for 12 months with no early cancellation. Annual upfront plans are non-refundable after 30 days." },
-              { title: "Annual plan money-back guarantee", body: "If TaxNorth does not connect you with at least one new client during your 12-month subscription, we refund your full payment at the end of the year. Applies to Annual Monthly ($7/mo) and Annual Upfront ($50/yr) plans only." },
+              { title: "Annual plan money-back guarantee", body: "If TaxNorth does not connect you with at least one new client during your 12-month subscription, we refund your full payment at the end of the year. Applies to Annual ($19/mo) and Annual Upfront ($149/yr) plans only." },
             ].map((item) => (
               <div key={item.title} className="bg-fog-gray rounded-card p-6">
                 <h3 className="font-heading font-semibold text-midnight-north mb-2">{item.title}</h3>
@@ -277,24 +284,27 @@ export default function PartnersPage() {
       {/* CTA */}
       <section className="bg-midnight-north py-24 px-6 text-center">
         <div className="max-w-2xl mx-auto">
-          <h2 className="font-heading font-bold text-white text-3xl md:text-4xl mb-4">
+          <h2 className="font-heading font-bold text-white text-3xl md:text-4xl mb-2">
             Ready to grow your practice?
           </h2>
+          <p className="text-lantern-amber/80 text-sm font-medium mb-4">
+            Founding Member Rate — lock in your price today.
+          </p>
           <p className="text-white/70 text-lg mb-8">
             Choose your plan and get listed. We contact you within 24 hours to set up your profile.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
               className="border border-white/30 text-white font-semibold px-6 py-3 rounded-button hover:bg-white/10 transition-colors">
-              Monthly — $10/mo
+              Monthly — $29/mo
             </a>
             <a href={HELCIM_ANNUAL_MONTHLY} target="_blank" rel="noopener noreferrer"
               className="border border-lantern-amber text-lantern-amber font-semibold px-6 py-3 rounded-button hover:bg-lantern-amber hover:text-midnight-north transition-colors">
-              Annual — $7/mo
+              Annual — $19/mo
             </a>
             <a href={HELCIM_ANNUAL_UPFRONT} target="_blank" rel="noopener noreferrer"
               className="bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity">
-              Best value — $50/yr
+              Best value — $149/yr
             </a>
           </div>
         </div>
