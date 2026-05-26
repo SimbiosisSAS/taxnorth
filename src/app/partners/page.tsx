@@ -1,14 +1,18 @@
+import { Flashlight, Users, MapPin, Languages, CheckCircle, Star, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+
 export const metadata = {
-  title: 'Tax Professional Partnership — Pre-qualified Newcomer Leads | TaxNorth.ca',
-  description: 'Partner with TaxNorth.ca to receive pre-qualified newcomer tax leads. Pay per lead or become a preferred partner. No marketing required.',
+  title: 'Join TaxNorth — Tax Professional Directory | TaxNorth.ca',
+  description: 'List your practice on TaxNorth.ca and receive pre-qualified newcomer clients matched by province, language, and specialty.',
 }
 
-import { Flashlight, Users, TrendingUp, CheckCircle, MapPin, Languages, ArrowRight, Mail } from 'lucide-react'
-import Link from 'next/link'
+const HELCIM_MONTHLY = 'https://taxnorth.myhelcim.com/hosted/?token=df4984d93272c04002588f&amount=10.00&amountHash=a8994a9020c4c3c2ad52f5ea86644fea733f40ee98af95a05a5bd864a2875f67'
+const HELCIM_ANNUAL_MONTHLY = 'https://taxnorth.myhelcim.com/hosted/?token=8fa6705ef1e05fdd203b39&amount=7.00&amountHash=b2337ecb40fbaf31d691e1c244fe7f8782464e747305c4172bc955cb2aedd9af'
+const HELCIM_ANNUAL_UPFRONT = 'https://taxnorth.myhelcim.com/hosted/?token=9f85bbec4ecd86596dc101&amount=50.00&amountHash=a99210875f112a6e8ab130a4a4fb700a903c05dfe49bc3c4ec22ce3827cb20be'
 
 export default function PartnersPage() {
   return (
-    <div className="min-w-mobile">
+    <div>
 
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 bg-warm-white border-b border-fog-gray">
@@ -22,10 +26,12 @@ export default function PartnersPage() {
             </span>
           </Link>
           <a
-            href="mailto:partners@taxnorth.ca"
+            href={HELCIM_MONTHLY}
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
           >
-            Become a Partner
+            Join the directory
           </a>
         </div>
       </nav>
@@ -37,22 +43,24 @@ export default function PartnersPage() {
             For Tax Professionals
           </p>
           <h1 className="font-heading font-bold text-white text-4xl md:text-5xl mb-6 leading-tight">
-            Pre-qualified newcomer leads.<br />No marketing required.
+            Get discovered by newcomers<br />who are ready to hire.
           </h1>
           <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-            TaxNorth educates newcomers to Canada about the tax system for free.
-            When they need a professional, we connect them with you. You only pay
-            for the leads you receive.
+            TaxNorth educates newcomers about Canadian taxes for free. When they need a professional,
+            we match them to you — by province, language, and specialty. You focus on the work.
+            We handle the rest.
           </p>
           <a
-            href="mailto:partners@taxnorth.ca"
+            href={HELCIM_MONTHLY}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity text-base"
           >
-            Get started today
+            Join for $10/month
             <ArrowRight className="w-4 h-4" />
           </a>
           <p className="text-white/40 text-sm mt-4">
-            No monthly fees to start. Pay only per lead received.
+            After payment we contact you to set up your profile. No long-term commitment required.
           </p>
         </div>
       </section>
@@ -62,13 +70,11 @@ export default function PartnersPage() {
         <div className="max-w-4xl mx-auto grid grid-cols-3 gap-8 text-center">
           {[
             { number: "500K+", label: "Newcomers arrive in Canada each year" },
-            { number: "73%", label: "Have never filed a Canadian tax return" },
-            { number: "$0", label: "Marketing cost to you" },
+            { number: "12", label: "Languages supported by TaxNorth" },
+            { number: "$0", label: "Per-client cost to you" },
           ].map((stat) => (
             <div key={stat.label}>
-              <p className="font-heading font-bold text-midnight-north text-3xl md:text-4xl mb-1">
-                {stat.number}
-              </p>
+              <p className="font-heading font-bold text-midnight-north text-3xl md:text-4xl mb-1">{stat.number}</p>
               <p className="text-midnight-north/70 text-sm leading-snug">{stat.label}</p>
             </div>
           ))}
@@ -79,90 +85,22 @@ export default function PartnersPage() {
       <section className="bg-warm-white py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-4">
-            How the partnership works.
+            How it works.
           </h2>
           <p className="text-deep-ink/60 text-center text-lg mb-12">
-            Simple, transparent, and built around your success.
+            Simple. Transparent. Built around your growth.
           </p>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
             {[
-              {
-                step: "01",
-                title: "Newcomer discovers TaxNorth",
-                body: "Someone new to Canada finds TaxNorth.ca and starts chatting with our AI guide about their tax situation."
-              },
-              {
-                step: "02",
-                title: "Agent detects they need help",
-                body: "When their situation requires a professional — self-employment, multiple income sources, unfiled returns — TaxNorth suggests connecting with an accountant."
-              },
-              {
-                step: "03",
-                title: "You receive the lead",
-                body: "You get an immediate email with their name, contact info, province, language, and a summary of their tax situation. Pre-qualified and ready to connect."
-              }
+              { step: "01", title: "Subscribe", body: "Choose your plan and complete payment. We contact you within 24 hours to set up your profile." },
+              { step: "02", title: "Get listed", body: "Your profile appears in the TaxNorth directory, matched to clients by province, language, and specialty." },
+              { step: "03", title: "Client connects", body: "A newcomer pays $19.99 to connect with you. You receive their full details — name, email, phone, and situation." },
+              { step: "04", title: "You reach out", body: "Contact the client within 24 hours with your TaxNorth rate. They already understand the basics and are ready to hire." },
             ].map((item) => (
-              <div key={item.step} className="bg-fog-gray rounded-card p-8">
-                <p className="font-heading font-bold text-lantern-amber text-4xl mb-4">
-                  {item.step}
-                </p>
-                <h3 className="font-heading font-semibold text-midnight-north text-lg mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-deep-ink/70 leading-relaxed text-sm">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* WHY TAXNORTH LEADS */}
-      <section className="bg-fog-gray py-24 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-12">
-            Why TaxNorth leads are different.
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                icon: <CheckCircle className="w-5 h-5 text-maple-green" />,
-                title: "Already educated",
-                body: "Our AI guide explains the basics before referring. Your client arrives knowing what a T4 is, why they need to file, and what to expect."
-              },
-              {
-                icon: <CheckCircle className="w-5 h-5 text-maple-green" />,
-                title: "High intent",
-                body: "They asked to be connected with a professional. This isn't a cold lead — it's someone who actively requested help and is ready to hire."
-              },
-              {
-                icon: <CheckCircle className="w-5 h-5 text-maple-green" />,
-                title: "Situation pre-screened",
-                body: "You receive a summary of their tax situation before you even reach out — self-employed, first-time filer, unfiled years, or other specifics."
-              },
-              {
-                icon: <CheckCircle className="w-5 h-5 text-maple-green" />,
-                title: "Multilingual audience",
-                body: "TaxNorth serves newcomers in any language. Your leads include clients from South Asia, Latin America, the Philippines, and beyond."
-              },
-              {
-                icon: <CheckCircle className="w-5 h-5 text-maple-green" />,
-                title: "Growing market",
-                body: "Canada welcomes over 500,000 newcomers each year. Every one of them needs to file taxes. The demand only grows."
-              },
-              {
-                icon: <CheckCircle className="w-5 h-5 text-maple-green" />,
-                title: "No long-term commitment",
-                body: "Start with a pay-per-lead arrangement. No monthly fees, no contracts. Pause or stop anytime."
-              }
-            ].map((item) => (
-              <div key={item.title} className="bg-white rounded-card p-6 flex gap-4">
-                <div className="flex-shrink-0 mt-0.5">{item.icon}</div>
-                <div>
-                  <h3 className="font-heading font-semibold text-midnight-north mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-deep-ink/70 text-sm leading-relaxed">{item.body}</p>
-                </div>
+              <div key={item.step} className="bg-fog-gray rounded-card p-6">
+                <p className="font-heading font-bold text-lantern-amber text-3xl mb-3">{item.step}</p>
+                <h3 className="font-heading font-semibold text-midnight-north text-base mb-2">{item.title}</h3>
+                <p className="text-deep-ink/60 text-sm leading-relaxed">{item.body}</p>
               </div>
             ))}
           </div>
@@ -170,31 +108,29 @@ export default function PartnersPage() {
       </section>
 
       {/* PRICING */}
-      <section className="bg-warm-white py-24 px-6">
-        <div className="max-w-3xl mx-auto">
+      <section className="bg-fog-gray py-24 px-6">
+        <div className="max-w-4xl mx-auto">
           <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-4">
             Simple pricing.
           </h2>
           <p className="text-deep-ink/60 text-center text-lg mb-12">
-            Two ways to partner with TaxNorth.
+            No per-client fees. No commissions. Just a flat directory listing.
           </p>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
 
-            {/* Pay per lead */}
-            <div className="bg-fog-gray rounded-card p-8">
-              <h3 className="font-heading font-bold text-midnight-north text-xl mb-2">
-                Pay Per Lead
-              </h3>
-              <p className="font-heading font-bold text-lantern-amber text-4xl mb-1">
-                $40
-              </p>
-              <p className="text-deep-ink/60 text-sm mb-6">CAD per qualified lead</p>
-              <div className="space-y-3 mb-8">
+            {/* Monthly */}
+            <div className="bg-white rounded-card p-8">
+              <h3 className="font-heading font-bold text-midnight-north text-xl mb-1">Monthly</h3>
+              <p className="text-deep-ink/50 text-sm mb-4">Cancel anytime</p>
+              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$10</p>
+              <p className="text-deep-ink/60 text-sm mb-6">CAD / month</p>
+              <div className="space-y-2 mb-8">
                 {[
-                  "No monthly commitment",
-                  "Full lead details on arrival",
-                  "Pay only for leads received",
-                  "Pause or stop anytime",
+                  "Profile in the TaxNorth directory",
+                  "Matched by province and language",
+                  "Receive full client details",
+                  "No per-client fees",
+                  "Cancel anytime",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-maple-green flex-shrink-0" />
@@ -203,32 +139,31 @@ export default function PartnersPage() {
                 ))}
               </div>
               <a
-                href="mailto:partners@taxnorth.ca?subject=Pay Per Lead Partnership"
+                href={HELCIM_MONTHLY}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block w-full text-center border-2 border-midnight-north text-midnight-north font-semibold py-3 rounded-button hover:bg-midnight-north hover:text-white transition-colors"
               >
                 Get started
               </a>
             </div>
 
-            {/* Preferred Partner */}
+            {/* Annual Monthly */}
             <div className="bg-midnight-north rounded-card p-8 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-lantern-amber text-midnight-north text-xs font-bold px-3 py-1 rounded-full">
-                MOST POPULAR
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-lantern-amber text-midnight-north text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                SAVE 30%
               </div>
-              <h3 className="font-heading font-bold text-white text-xl mb-2">
-                Preferred Partner
-              </h3>
-              <p className="font-heading font-bold text-lantern-amber text-4xl mb-1">
-                $300
-              </p>
-              <p className="text-white/60 text-sm mb-6">CAD per month</p>
-              <div className="space-y-3 mb-8">
+              <h3 className="font-heading font-bold text-white text-xl mb-1">Annual</h3>
+              <p className="text-white/50 text-sm mb-4">Billed monthly · 12-month plan</p>
+              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$7</p>
+              <p className="text-white/60 text-sm mb-6">CAD / month</p>
+              <div className="space-y-2 mb-8">
                 {[
-                  "All leads in your province",
-                  "Listed as recommended partner",
-                  "Priority placement in the agent",
-                  "Monthly lead volume report",
-                  "Dedicated partner support",
+                  "Everything in Monthly",
+                  "30% savings vs monthly",
+                  "Priority placement in results",
+                  "TaxNorth Verified badge",
+                  "Monthly performance report",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-lantern-amber flex-shrink-0" />
@@ -237,13 +172,76 @@ export default function PartnersPage() {
                 ))}
               </div>
               <a
-                href="mailto:partners@taxnorth.ca?subject=Preferred Partner Inquiry"
+                href={HELCIM_ANNUAL_MONTHLY}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block w-full text-center bg-lantern-amber text-midnight-north font-semibold py-3 rounded-button hover:opacity-90 transition-opacity"
               >
-                Become preferred partner
+                Get started
               </a>
             </div>
 
+            {/* Annual Upfront */}
+            <div className="bg-white rounded-card p-8 relative border-2 border-lantern-amber">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-maple-green text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                BEST VALUE
+              </div>
+              <h3 className="font-heading font-bold text-midnight-north text-xl mb-1">Annual Upfront</h3>
+              <p className="text-deep-ink/50 text-sm mb-4">Pay once · Full year included</p>
+              <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$50</p>
+              <p className="text-deep-ink/60 text-sm mb-6">CAD / year — less than $4.20/month</p>
+              <div className="space-y-2 mb-8">
+                {[
+                  "Everything in Annual plan",
+                  "Lowest price available",
+                  "One payment, no renewals",
+                  "Priority placement in results",
+                  "TaxNorth Verified badge",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-maple-green flex-shrink-0" />
+                    <span className="text-deep-ink text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <a
+                href={HELCIM_ANNUAL_UPFRONT}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full text-center bg-maple-green text-white font-semibold py-3 rounded-button hover:opacity-90 transition-opacity"
+              >
+                Get the best deal
+              </a>
+            </div>
+
+          </div>
+
+          <p className="text-deep-ink/40 text-xs text-center mt-6">
+            After payment we contact you within 24 hours to gather your profile information and get you listed.
+          </p>
+        </div>
+      </section>
+
+      {/* TERMS */}
+      <section className="bg-warm-white py-24 px-6">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-12">
+            Partnership conditions.
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {[
+              { title: "Respond within 24 hours", body: "When a client is matched to you, reach out within 24 hours of receiving their details. Fast response builds trust and improves conversion." },
+              { title: "Offer a TaxNorth rate", body: "Clients connected through TaxNorth expect a fair, transparent price. Offering a special rate for TaxNorth referrals builds loyalty and repeat clients." },
+              { title: "Keep your profile current", body: "Your languages, specialties, and availability must reflect your actual practice. Outdated profiles lead to poor matches for clients and wasted time for you." },
+              { title: "Quality standards apply", body: "TaxNorth reserves the right to remove any professional from the directory following repeated client complaints or verified professional misconduct." },
+              { title: "Billing terms", body: "Monthly plans are charged on the 1st of each month. Annual monthly plans are billed monthly over 12 months. Annual upfront plans have no refund after the first 30 days." },
+              { title: "Cancellation", body: "Monthly plans can be cancelled with 30 days notice. Annual monthly plans run for 12 months with no early cancellation. Annual upfront plans are non-refundable after 30 days." },
+            ].map((item) => (
+              <div key={item.title} className="bg-fog-gray rounded-card p-6">
+                <h3 className="font-heading font-semibold text-midnight-north mb-2">{item.title}</h3>
+                <p className="text-deep-ink/70 text-sm leading-relaxed">{item.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -256,29 +254,15 @@ export default function PartnersPage() {
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              {
-                icon: <Users className="w-6 h-6 text-lantern-amber" />,
-                title: "Independent CPAs",
-                body: "Solo practitioners and small firms looking to grow their newcomer client base without spending on marketing."
-              },
-              {
-                icon: <MapPin className="w-6 h-6 text-lantern-amber" />,
-                title: "Regional tax firms",
-                body: "Firms with 2 to 15 accountants serving specific cities or provinces who want a steady, qualified pipeline."
-              },
-              {
-                icon: <Languages className="w-6 h-6 text-lantern-amber" />,
-                title: "Multilingual practices",
-                body: "Professionals who serve immigrant communities in their native language and want more clients from their community."
-              }
+              { icon: <Users className="w-6 h-6 text-lantern-amber" />, title: "Independent CPAs", body: "Solo practitioners and small firms looking to grow their newcomer client base without spending on marketing." },
+              { icon: <MapPin className="w-6 h-6 text-lantern-amber" />, title: "Regional tax firms", body: "Firms serving specific cities or provinces who want a steady pipeline of qualified newcomer clients." },
+              { icon: <Languages className="w-6 h-6 text-lantern-amber" />, title: "Multilingual practices", body: "Professionals who serve immigrant communities in their language — and want more clients from that community." }
             ].map((card) => (
               <div key={card.title} className="bg-white rounded-card p-8">
                 <div className="w-12 h-12 bg-midnight-north rounded-xl flex items-center justify-center mb-4">
                   {card.icon}
                 </div>
-                <h3 className="font-heading font-semibold text-midnight-north text-lg mb-2">
-                  {card.title}
-                </h3>
+                <h3 className="font-heading font-semibold text-midnight-north text-lg mb-2">{card.title}</h3>
                 <p className="text-deep-ink/70 text-sm leading-relaxed">{card.body}</p>
               </div>
             ))}
@@ -293,19 +277,34 @@ export default function PartnersPage() {
             Ready to grow your practice?
           </h2>
           <p className="text-white/70 text-lg mb-8">
-            Send us an email and we'll set up a 15-minute call to discuss
-            how TaxNorth can work for your practice.
+            Choose your plan and get listed. We contact you within 24 hours to set up your profile.
           </p>
-          <a
-            href="mailto:partners@taxnorth.ca?subject=Partnership Inquiry"
-            className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity text-base"
-          >
-            <Mail className="w-4 h-4" />
-            partners@taxnorth.ca
-          </a>
-          <p className="text-white/40 text-sm mt-4">
-            We respond within one business day.
-          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href={HELCIM_MONTHLY}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-white/30 text-white font-semibold px-6 py-3 rounded-button hover:bg-white/10 transition-colors"
+            >
+              Monthly — $10/mo
+            </a>
+            <a
+              href={HELCIM_ANNUAL_MONTHLY}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-lantern-amber text-lantern-amber font-semibold px-6 py-3 rounded-button hover:bg-lantern-amber hover:text-midnight-north transition-colors"
+            >
+              Annual — $7/mo
+            </a>
+            <a
+              href={HELCIM_ANNUAL_UPFRONT}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
+            >
+              Best value — $50/yr
+            </a>
+          </div>
         </div>
       </section>
 
@@ -323,7 +322,7 @@ export default function PartnersPage() {
           <div className="flex items-center gap-6 text-white/60 text-sm">
             <Link href="/" className="hover:text-white transition-colors">For Users</Link>
             <Link href="/chat" className="hover:text-white transition-colors">Try the Agent</Link>
-            <Link href="/connect" className="hover:text-white transition-colors">Find a Professional</Link>
+            <Link href="/professionals" className="hover:text-white transition-colors">Find a Professional</Link>
           </div>
         </div>
       </footer>
