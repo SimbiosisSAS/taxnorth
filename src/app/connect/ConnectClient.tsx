@@ -100,9 +100,6 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
 <div className="bg-white border-2 border-midnight-north rounded-card p-6 mb-4">
   <div className="flex items-center justify-between mb-4">
     <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
-    <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
-      Available now
-    </span>
   </div>
 
   {!etransferConfirmed ? (
@@ -154,9 +151,6 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
 >
   <div className="flex items-center justify-between mb-3">
     <h3 className="font-heading font-semibold text-midnight-north">Credit / Debit Card</h3>
-    <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
-      Available now
-    </span>
   </div>
   <p className="text-deep-ink/50 text-sm mb-3">
     Pay securely with Visa, Mastercard, or debit card via Helcim.
