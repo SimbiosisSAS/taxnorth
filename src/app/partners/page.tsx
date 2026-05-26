@@ -6,8 +6,8 @@ export const metadata = {
   description: 'List your practice on TaxNorth.ca and receive pre-qualified newcomer clients matched by province, language, and specialty.',
 }
 
-const HELCIM_MONTHLY = 'https://taxnorth.myhelcim.com/hosted/?token=df4984d93272c04002588f&amount=10.00&amountHash=a8994a9020c4c3c2ad52f5ea86644fea733f40ee98af95a05a5bd864a2875f67'
-const HELCIM_ANNUAL_MONTHLY = 'https://taxnorth.myhelcim.com/hosted/?token=8fa6705ef1e05fdd203b39&amount=7.00&amountHash=b2337ecb40fbaf31d691e1c244fe7f8782464e747305c4172bc955cb2aedd9af'
+const HELCIM_MONTHLY = 'https://subscriptions.helcim.com/subscribe/f7z5gxyqylvg0sq09shzlahqe7ot4'
+const HELCIM_ANNUAL_MONTHLY = 'https://subscriptions.helcim.com/subscribe/favedrob2savk535dxncthk4a5ixi'
 const HELCIM_ANNUAL_UPFRONT = 'https://taxnorth.myhelcim.com/hosted/?token=9f85bbec4ecd86596dc101&amount=50.00&amountHash=a99210875f112a6e8ab130a4a4fb700a903c05dfe49bc3c4ec22ce3827cb20be'
 
 export default function PartnersPage() {
