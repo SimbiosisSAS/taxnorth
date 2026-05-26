@@ -196,7 +196,7 @@ export default function HomePage() {
         },
         {
           number: "03",
-          title: "Tax software didn't know your situation",
+          title: "One size fits nobody",
           body: "Standardized platforms process hundreds of returns a day using the same questions for everyone. Your arrival date, your foreign income, your first year in Canada — these details get missed when the process was designed for the average filer, not for you."
         }
       ].map((item) => (
