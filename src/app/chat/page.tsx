@@ -6,5 +6,10 @@ export const metadata = {
 }
 
 export default function ChatPage() {
-  return <ChatClient />
+  return (
+    <>
+      <h1 className="sr-only">Free Canadian Tax Help — TaxNorth AI Guide</h1>
+      <ChatClient />
+    </>
+  )
 }
