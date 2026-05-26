@@ -44,6 +44,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
   })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [etransferConfirmed, setEtransferConfirmed] = useState(false)
 
   function handleSituation(item: string) {
     setForm(prev => ({
@@ -96,33 +97,53 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           </div>
 
           {/* INTERAC OPTION */}
-          <div className="bg-white border-2 border-midnight-north rounded-card p-6 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
-              <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
-                Available now
-              </span>
-            </div>
-            <div className="space-y-3 mb-4">
-              <div className="bg-fog-gray rounded-button p-3">
-                <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
-                <p className="font-semibold text-midnight-north text-sm">billing@asce.ca</p>
-              </div>
-              <div className="bg-fog-gray rounded-button p-3">
-                <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
-                <p className="font-semibold text-midnight-north text-sm">$19.99 CAD</p>
-              </div>
-              <div className="bg-fog-gray rounded-button p-3">
-                <p className="text-deep-ink/50 text-xs mb-1">Message / Memo</p>
-                <p className="font-semibold text-midnight-north text-sm">
-                  {form.fullName || 'Your name'} — TaxNorth
-                </p>
-              </div>
-            </div>
-            <p className="text-deep-ink/50 text-xs">
-              We confirm receipt within 1 business hour and process your connection immediately.
-            </p>
-          </div>
+<div className="bg-white border-2 border-midnight-north rounded-card p-6 mb-4">
+  <div className="flex items-center justify-between mb-4">
+    <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
+    <span className="bg-maple-green/10 text-maple-green text-xs font-semibold px-2 py-1 rounded-full">
+      Available now
+    </span>
+  </div>
+
+  {!etransferConfirmed ? (
+    <>
+      <div className="space-y-3 mb-4">
+        <div className="bg-fog-gray rounded-button p-3">
+          <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
+          <p className="font-semibold text-midnight-north text-sm">billing@asce.ca</p>
+        </div>
+        <div className="bg-fog-gray rounded-button p-3">
+          <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
+          <p className="font-semibold text-midnight-north text-sm">$19.99 CAD</p>
+        </div>
+        <div className="bg-fog-gray rounded-button p-3">
+          <p className="text-deep-ink/50 text-xs mb-1">Message / Memo</p>
+          <p className="font-semibold text-midnight-north text-sm">
+            {form.fullName || 'Your name'} — TaxNorth
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={() => setEtransferConfirmed(true)}
+        className="w-full bg-midnight-north text-white font-semibold py-3 rounded-button hover:opacity-90 transition-opacity text-sm"
+      >
+        I've sent my e-Transfer ✓
+      </button>
+    </>
+  ) : (
+    <div className="text-center py-4">
+      <div className="w-12 h-12 bg-maple-green/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <CheckCircle className="w-6 h-6 text-maple-green" />
+      </div>
+      <p className="font-heading font-semibold text-midnight-north mb-1">
+        Payment confirmed.
+      </p>
+      <p className="text-deep-ink/60 text-sm">
+        We'll verify your transfer and send a confirmation to <strong>{form.email}</strong> within 1 business hour. Your professional will reach out within 24 hours.
+      </p>
+    </div>
+  )}
+</div>
 
           {/* CARD OPTION */}
 <a
