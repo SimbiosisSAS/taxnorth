@@ -25,12 +25,8 @@ export default function PartnersPage() {
               TaxNorth<span className="text-sm">.ca</span>
             </span>
           </Link>
-          <a
-            href={HELCIM_MONTHLY}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
-          >
+          <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
+            className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity">
             Join the directory
           </a>
         </div>
@@ -47,17 +43,11 @@ export default function PartnersPage() {
           </h1>
           <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
             TaxNorth educates newcomers about Canadian taxes for free. When they need a professional,
-            we match them to you — by province, language, and specialty. You focus on the work.
-            We handle the rest.
+            we match them to you — by province, language, and specialty.
           </p>
-          <a
-            href={HELCIM_MONTHLY}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity text-base"
-          >
-            Join for $10/month
-            <ArrowRight className="w-4 h-4" />
+          <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity text-base">
+            Join for $10/month <ArrowRight className="w-4 h-4" />
           </a>
           <p className="text-white/40 text-sm mt-4">
             After payment we contact you to set up your profile. No long-term commitment required.
@@ -87,15 +77,13 @@ export default function PartnersPage() {
           <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-4">
             How it works.
           </h2>
-          <p className="text-deep-ink/60 text-center text-lg mb-12">
-            Simple. Transparent. Built around your growth.
-          </p>
+          <p className="text-deep-ink/60 text-center text-lg mb-12">Simple. Transparent. Built around your growth.</p>
           <div className="grid md:grid-cols-4 gap-6">
             {[
               { step: "01", title: "Subscribe", body: "Choose your plan and complete payment. We contact you within 24 hours to set up your profile." },
               { step: "02", title: "Get listed", body: "Your profile appears in the TaxNorth directory, matched to clients by province, language, and specialty." },
               { step: "03", title: "Client connects", body: "A newcomer pays $19.99 to connect with you. You receive their full details — name, email, phone, and situation." },
-              { step: "04", title: "You reach out", body: "Contact the client within 24 hours with your TaxNorth rate. They already understand the basics and are ready to hire." },
+              { step: "04", title: "You reach out", body: "Contact the client within 24 hours with your TaxNorth rate. They are pre-educated and ready to hire." },
             ].map((item) => (
               <div key={item.step} className="bg-fog-gray rounded-card p-6">
                 <p className="font-heading font-bold text-lantern-amber text-3xl mb-3">{item.step}</p>
@@ -138,12 +126,8 @@ export default function PartnersPage() {
                   </div>
                 ))}
               </div>
-              <a
-                href={HELCIM_MONTHLY}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center border-2 border-midnight-north text-midnight-north font-semibold py-3 rounded-button hover:bg-midnight-north hover:text-white transition-colors"
-              >
+              <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
+                className="block w-full text-center border-2 border-midnight-north text-midnight-north font-semibold py-3 rounded-button hover:bg-midnight-north hover:text-white transition-colors">
                 Get started
               </a>
             </div>
@@ -157,7 +141,7 @@ export default function PartnersPage() {
               <p className="text-white/50 text-sm mb-4">Billed monthly · 12-month plan</p>
               <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$7</p>
               <p className="text-white/60 text-sm mb-6">CAD / month</p>
-              <div className="space-y-2 mb-8">
+              <div className="space-y-2 mb-6">
                 {[
                   "Everything in Monthly",
                   "30% savings vs monthly",
@@ -171,12 +155,13 @@ export default function PartnersPage() {
                   </div>
                 ))}
               </div>
-              <a
-                href={HELCIM_ANNUAL_MONTHLY}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center bg-lantern-amber text-midnight-north font-semibold py-3 rounded-button hover:opacity-90 transition-opacity"
-              >
+              <div className="bg-lantern-amber/10 border border-lantern-amber/30 rounded-button p-3 mb-4 text-center">
+                <p className="text-lantern-amber text-xs font-semibold">
+                  ✓ Money-back guarantee if no clients in 12 months
+                </p>
+              </div>
+              <a href={HELCIM_ANNUAL_MONTHLY} target="_blank" rel="noopener noreferrer"
+                className="block w-full text-center bg-lantern-amber text-midnight-north font-semibold py-3 rounded-button hover:opacity-90 transition-opacity">
                 Get started
               </a>
             </div>
@@ -190,7 +175,7 @@ export default function PartnersPage() {
               <p className="text-deep-ink/50 text-sm mb-4">Pay once · Full year included</p>
               <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$50</p>
               <p className="text-deep-ink/60 text-sm mb-6">CAD / year — less than $4.20/month</p>
-              <div className="space-y-2 mb-8">
+              <div className="space-y-2 mb-6">
                 {[
                   "Everything in Annual plan",
                   "Lowest price available",
@@ -204,16 +189,34 @@ export default function PartnersPage() {
                   </div>
                 ))}
               </div>
-              <a
-                href={HELCIM_ANNUAL_UPFRONT}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center bg-maple-green text-white font-semibold py-3 rounded-button hover:opacity-90 transition-opacity"
-              >
+              <div className="bg-maple-green/10 border border-maple-green/30 rounded-button p-3 mb-4 text-center">
+                <p className="text-maple-green text-xs font-semibold">
+                  ✓ Money-back guarantee if no clients in 12 months
+                </p>
+              </div>
+              <a href={HELCIM_ANNUAL_UPFRONT} target="_blank" rel="noopener noreferrer"
+                className="block w-full text-center bg-maple-green text-white font-semibold py-3 rounded-button hover:opacity-90 transition-opacity">
                 Get the best deal
               </a>
             </div>
 
+          </div>
+
+          {/* GUARANTEE BANNER */}
+          <div className="bg-midnight-north rounded-card p-6 mt-8 flex items-start gap-4">
+            <div className="w-10 h-10 bg-lantern-amber/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+              <Star className="w-5 h-5 text-lantern-amber" />
+            </div>
+            <div>
+              <h3 className="font-heading font-semibold text-white mb-1">
+                Annual plan guarantee — zero risk.
+              </h3>
+              <p className="text-white/70 text-sm leading-relaxed">
+                If TaxNorth does not send you at least one new client during your 12-month subscription,
+                we refund your full payment at the end of the year. No questions asked.
+                Applies to Annual Monthly ($7/mo) and Annual Upfront ($50/yr) plans.
+              </p>
+            </div>
           </div>
 
           <p className="text-deep-ink/40 text-xs text-center mt-6">
@@ -230,12 +233,13 @@ export default function PartnersPage() {
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              { title: "Respond within 24 hours", body: "When a client is matched to you, reach out within 24 hours of receiving their details. Fast response builds trust and improves conversion." },
-              { title: "Offer a TaxNorth rate", body: "Clients connected through TaxNorth expect a fair, transparent price. Offering a special rate for TaxNorth referrals builds loyalty and repeat clients." },
-              { title: "Keep your profile current", body: "Your languages, specialties, and availability must reflect your actual practice. Outdated profiles lead to poor matches for clients and wasted time for you." },
-              { title: "Quality standards apply", body: "TaxNorth reserves the right to remove any professional from the directory following repeated client complaints or verified professional misconduct." },
+              { title: "Respond within 24 hours", body: "When a client is matched to you, reach out within 24 hours. Fast response builds trust and improves your conversion rate." },
+              { title: "Offer a TaxNorth rate", body: "Clients connected through TaxNorth expect fair, transparent pricing. Offering a special rate builds loyalty and repeat referrals." },
+              { title: "Keep your profile current", body: "Your languages, specialties, and availability must reflect your actual practice. Outdated profiles lead to poor matches." },
+              { title: "Quality standards apply", body: "TaxNorth reserves the right to remove any professional from the directory following repeated client complaints or verified misconduct." },
               { title: "Billing terms", body: "Monthly plans are charged on the 1st of each month. Annual monthly plans are billed monthly over 12 months. Annual upfront plans have no refund after the first 30 days." },
               { title: "Cancellation", body: "Monthly plans can be cancelled with 30 days notice. Annual monthly plans run for 12 months with no early cancellation. Annual upfront plans are non-refundable after 30 days." },
+              { title: "Annual plan money-back guarantee", body: "If TaxNorth does not connect you with at least one new client during your 12-month subscription, we refund your full payment at the end of the year. Applies to Annual Monthly ($7/mo) and Annual Upfront ($50/yr) plans only." },
             ].map((item) => (
               <div key={item.title} className="bg-fog-gray rounded-card p-6">
                 <h3 className="font-heading font-semibold text-midnight-north mb-2">{item.title}</h3>
@@ -280,28 +284,16 @@ export default function PartnersPage() {
             Choose your plan and get listed. We contact you within 24 hours to set up your profile.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={HELCIM_MONTHLY}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-white/30 text-white font-semibold px-6 py-3 rounded-button hover:bg-white/10 transition-colors"
-            >
+            <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
+              className="border border-white/30 text-white font-semibold px-6 py-3 rounded-button hover:bg-white/10 transition-colors">
               Monthly — $10/mo
             </a>
-            <a
-              href={HELCIM_ANNUAL_MONTHLY}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-lantern-amber text-lantern-amber font-semibold px-6 py-3 rounded-button hover:bg-lantern-amber hover:text-midnight-north transition-colors"
-            >
+            <a href={HELCIM_ANNUAL_MONTHLY} target="_blank" rel="noopener noreferrer"
+              className="border border-lantern-amber text-lantern-amber font-semibold px-6 py-3 rounded-button hover:bg-lantern-amber hover:text-midnight-north transition-colors">
               Annual — $7/mo
             </a>
-            <a
-              href={HELCIM_ANNUAL_UPFRONT}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
-            >
+            <a href={HELCIM_ANNUAL_UPFRONT} target="_blank" rel="noopener noreferrer"
+              className="bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity">
               Best value — $50/yr
             </a>
           </div>
