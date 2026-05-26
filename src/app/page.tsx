@@ -196,8 +196,8 @@ export default function HomePage() {
         },
         {
           number: "03",
-          title: "The big firm that didn't know your situation",
-          body: "Large tax chains run standardized processes built for volume. Fifty clients a day means your specific situation as a newcomer — your arrival date, your foreign income, your first year — gets missed."
+          title: "Tax software didn't know your situation",
+          body: "Standardized platforms process hundreds of returns a day using the same questions for everyone. Your arrival date, your foreign income, your first year in Canada — these details get missed when the process was designed for the average filer, not for you."
         }
       ].map((item) => (
         <div key={item.number} className="bg-white rounded-card p-8 shadow-sm">
