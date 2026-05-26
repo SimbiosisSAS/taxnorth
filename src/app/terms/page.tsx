@@ -38,7 +38,7 @@ export default function TermsPage() {
               1. About TaxNorth
             </h2>
             <p>
-              TaxNorth.ca provides AI-powered educational information about the Canadian tax system for newcomers to Canada. By using TaxNorth, you agree to these Terms of Service. If you do not agree, please do not use the service.
+              TaxNorth.ca is a service operated by Ascendant Canada Ltd., an Alberta corporation, doing business as TaxNorth.ca. TaxNorth.ca provides AI-powered educational information about the Canadian tax system for newcomers to Canada. By using TaxNorth, you agree to these Terms of Service. If you do not agree, please do not use the service.
             </p>
           </section>
 

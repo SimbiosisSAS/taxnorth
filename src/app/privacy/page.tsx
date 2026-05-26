@@ -38,7 +38,7 @@ export default function PrivacyPage() {
               1. Who we are
             </h2>
             <p>
-              TaxNorth.ca is an AI-powered educational service that helps newcomers to Canada understand the Canadian tax system. We are operated by TaxNorth and can be reached at hello@taxnorth.ca. This Privacy Policy explains how we collect, use, and protect your personal information in accordance with the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable Canadian privacy laws.
+              TaxNorth.ca is an AI-powered educational service that helps newcomers to Canada understand the Canadian tax system. We are operated by Ascendant Canada Ltd., doing business as TaxNorth.ca, and can be reached at hello@taxnorth.ca. This Privacy Policy explains how we collect, use, and protect your personal information in accordance with the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable Canadian privacy laws.
             </p>
           </section>
 

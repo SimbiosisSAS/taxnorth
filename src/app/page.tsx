@@ -286,9 +286,8 @@ export default function HomePage() {
             </div>
           </div>
           <p className="text-white/40 text-xs text-center leading-relaxed">
-            TaxNorth provides educational information only and does not constitute
-            professional tax advice. For advice specific to your situation,
-            consult a licensed tax professional in Canada.
+            TaxNorth.ca is a service of Ascendant Canada Ltd. (Alberta). Educational information only — not professional tax advice.
+For advice specific to your situation, consult a licensed tax professional in Canada.
           </p>
         </div>
       </footer>
