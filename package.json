@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@deepgram/sdk": "^5.3.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
     "@vercel/analytics": "^2.0.1",
@@ -21,7 +22,9 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "^10.1.0",
-    "resend": "^6.12.3"
+    "resend": "^6.12.3",
+    "twilio": "^6.0.2",
+    "ws": "^8.21.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
