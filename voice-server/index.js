@@ -10,129 +10,146 @@ app.use(express.json())
 const server = http.createServer(app)
 const wss = new WebSocket.Server({ server, path: '/stream' })
 
-const INBOUND_PROMPT = `You are TaxNorth, a friendly AI tax guide for newcomers to Canada.
-Respond in the same language the person speaks.
-Keep responses SHORT — maximum 3 sentences for voice.
-Never recommend specific tax software by name like TurboTax or Wealthsimple.
-For filing options, mention only: the CRA free software list at canada.ca, or a licensed professional through TaxNorth.
-Always present the professional option as the better choice.
-When suggesting a professional say: I can connect you with a verified tax professional who speaks your language. Visit taxnorth.ca slash connect.
-You provide educational information only, not professional tax advice.`
+const INBOUND_PROMPT = `You are TaxNorth, a friendly AI tax guide for newcomers to Canada. Respond in the same language the person speaks. Keep responses SHORT for voice, maximum 3 sentences. Never recommend specific tax software by name like TurboTax or Wealthsimple. Always suggest connecting with a licensed professional through TaxNorth at taxnorth.ca slash connect. You provide educational information only.`
 
-const OUTBOUND_PROMPT = `You are a professional sales representative for TaxNorth.ca calling tax accountants in Alberta, Canada.
-YOUR GOAL: Convince them to subscribe at taxnorth.ca/partners
-KEY FACTS: TaxNorth connects newcomers to verified tax professionals. Clients pay $19.99 to connect. Subscription starts at $29/month with money-back guarantee. 500,000+ newcomers arrive in Canada each year.
-Keep responses SHORT — 2-3 sentences max.
-If interested, direct to taxnorth.ca/partners.
-If not interested, thank them and end politely.
-If asked if you are AI, be honest.`
+const OUTBOUND_PROMPT = `You are a professional sales representative for TaxNorth.ca calling tax accountants in Alberta, Canada. Goal: convince them to subscribe at taxnorth.ca/partners. TaxNorth connects newcomers to verified professionals. Clients pay $19.99 to connect. Subscription starts at $29 per month. Keep responses to 2-3 sentences. If interested, direct to taxnorth.ca/partners. If not interested, thank them politely and end.`
 
-wss.on('connection', (twilioWs, req) => {
+server.on('upgrade', function(req, socket, head) {
+  console.log('WebSocket upgrade:', req.url)
+})
+
+wss.on('connection', function(twilioWs, req) {
   console.log('Twilio connected')
 
-  const urlParams = new URLSearchParams(req.url.split('?')[1] || '')
-  const callType = urlParams.get('type') || 'inbound'
-  const firmName = urlParams.get('firmName') || ''
+  var urlParams = new URLSearchParams(req.url.split('?')[1] || '')
+  var callType = urlParams.get('type') || 'inbound'
+  var firmName = urlParams.get('firmName') || ''
+  var streamSid = null
+  var deepgramWs = null
+  var deepgramReady = false
+  var audioQueue = []
 
-  const systemPrompt = callType === 'outbound'
-    ? OUTBOUND_PROMPT + ` You are calling ${firmName || 'a tax firm'} in Alberta.`
+  var systemPrompt = callType === 'outbound'
+    ? OUTBOUND_PROMPT + ' You are calling ' + (firmName || 'a tax firm') + ' in Alberta.'
     : INBOUND_PROMPT
 
-  let streamSid = null
-  let deepgramWs = null
-
-  // Connect to Deepgram Voice Agent
-  deepgramWs = new WebSocket('wss://agent.deepgram.com/agent', {
-    headers: { Authorization: `Token ${process.env.DEEPGRAM_API_KEY}` }
+  deepgramWs = new WebSocket('wss://agent.deepgram.com/v1/agent/converse', {
+    headers: { Authorization: 'Token ' + process.env.DEEPGRAM_API_KEY }
   })
 
-  deepgramWs.on('open', () => {
-    console.log('Deepgram connected')
-
-    deepgramWs.send(JSON.stringify({
-      type: 'SettingsConfiguration',
-      audio: {
-        input: { encoding: 'mulaw', sample_rate: 8000 },
-        output: { encoding: 'mulaw', sample_rate: 8000, container: 'none' }
-      },
-      agent: {
-        listen: { model: 'nova-3' },
-        think: {
-          provider: {
-            type: 'open_ai',
-            fallback_to_groq: false
-          },
-          model: 'gpt-4o-mini',
-          instructions: systemPrompt
-        },
-        speak: { model: 'aura-2-theia-en' }
-      }
-    }))
+  deepgramWs.on('open', function() {
+    console.log('Deepgram connected — sending Settings')
+    var settings = {
+  type: 'Settings',
+  audio: {
+    input: { encoding: 'mulaw', sample_rate: 8000 },
+    output: { encoding: 'mulaw', sample_rate: 8000, container: 'none' }
+  },
+  agent: {
+    listen: {
+      provider: { type: 'deepgram', model: 'nova-3' }
+    },
+    speak: {
+      provider: { type: 'deepgram', model: 'aura-2-theia-en' }
+    },
+    greeting: 'Welcome to TaxNorth. How can I help you today?'
+  }
+}
+    deepgramWs.send(JSON.stringify(settings))
+    console.log('Settings sent')
   })
 
-  deepgramWs.on('message', (data) => {
-    if (Buffer.isBuffer(data) && streamSid) {
-      if (twilioWs.readyState === WebSocket.OPEN) {
+  deepgramWs.on('message', function(data) {
+    if (Buffer.isBuffer(data)) {
+      if (streamSid && twilioWs.readyState === WebSocket.OPEN) {
         twilioWs.send(JSON.stringify({
           event: 'media',
-          streamSid,
+          streamSid: streamSid,
           media: { payload: data.toString('base64') }
         }))
       }
     } else {
       try {
-        const event = JSON.parse(data.toString())
-        console.log('Deepgram event:', event.type)
-      } catch (e) {}
+        var event = JSON.parse(data.toString())
+        console.log('Deepgram event:', event.type, JSON.stringify(event).substring(0, 100))
+
+        if (event.type === 'SettingsApplied') {
+          console.log('Settings applied — ready to receive audio')
+          deepgramReady = true
+          while (audioQueue.length > 0) {
+            if (deepgramWs.readyState === WebSocket.OPEN) {
+              deepgramWs.send(audioQueue.shift())
+            } else {
+              break
+            }
+          }
+        }
+      } catch(e) {}
     }
   })
 
-  deepgramWs.on('error', (err) => console.error('Deepgram error:', err))
-  deepgramWs.on('close', () => console.log('Deepgram disconnected'))
+  deepgramWs.on('error', function(err) {
+    console.error('Deepgram error:', err.message)
+  })
 
-  twilioWs.on('message', (rawData) => {
+  deepgramWs.on('close', function(code, reason) {
+    console.log('Deepgram closed — code:', code, 'reason:', reason.toString())
+    deepgramReady = false
+  })
+
+  twilioWs.on('message', function(rawData) {
     try {
-      const msg = JSON.parse(rawData.toString())
+      var msg = JSON.parse(rawData.toString())
 
       if (msg.event === 'start') {
         streamSid = msg.start.streamSid
         console.log('Stream started:', streamSid)
       }
 
-      if (msg.event === 'media' && deepgramWs?.readyState === WebSocket.OPEN) {
-        const audioBuffer = Buffer.from(msg.media.payload, 'base64')
-        deepgramWs.send(audioBuffer)
+      if (msg.event === 'media') {
+        var audioBuffer = Buffer.from(msg.media.payload, 'base64')
+        if (deepgramReady && deepgramWs && deepgramWs.readyState === WebSocket.OPEN) {
+          deepgramWs.send(audioBuffer)
+        } else {
+          audioQueue.push(audioBuffer)
+          if (audioQueue.length > 100) audioQueue.shift()
+        }
       }
 
       if (msg.event === 'stop') {
         console.log('Stream stopped')
-        deepgramWs?.close()
+        if (deepgramWs) deepgramWs.close()
       }
-    } catch (e) {}
+    } catch(e) {}
   })
 
-  twilioWs.on('close', () => {
+  twilioWs.on('close', function() {
     console.log('Twilio disconnected')
-    deepgramWs?.close()
+    if (deepgramWs) deepgramWs.close()
+  })
+
+  twilioWs.on('error', function(err) {
+    console.error('Twilio error:', err.message)
   })
 })
 
-// TwiML endpoint for inbound calls
-app.post('/voice', (req, res) => {
-  const host = req.headers.host
-  const type = req.query.type || 'inbound'
-  const firmName = req.query.firmName || ''
+app.post('/voice', function(req, res) {
+  var publicUrl = process.env.PUBLIC_URL || ('https://' + req.headers.host)
+  var wsUrl = publicUrl.replace('https://', 'wss://')
+  var type = req.query.type || 'inbound'
+  var firmName = req.query.firmName || ''
+
+  console.log('Incoming call — type:', type)
 
   res.type('text/xml')
-  res.send(`<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Connect>
-    <Stream url="wss://${host}/stream?type=${type}&firmName=${encodeURIComponent(firmName)}"/>
-  </Connect>
-</Response>`)
+  res.send('<?xml version="1.0" encoding="UTF-8"?><Response><Connect><Stream url="' + wsUrl + '/stream?type=' + type + '"/></Connect></Response>')
 })
 
-app.get('/health', (req, res) => res.json({ status: 'ok' }))
+app.get('/health', function(req, res) {
+  res.json({ status: 'ok' })
+})
 
-const PORT = process.env.PORT || 3001
-server.listen(PORT, () => console.log(`Voice server running on port ${PORT}`))
+var PORT = process.env.PORT || 3001
+server.listen(PORT, function() {
+  console.log('Voice server running on port ' + PORT)
+})
