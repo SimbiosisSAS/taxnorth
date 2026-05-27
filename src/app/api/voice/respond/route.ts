@@ -8,42 +8,49 @@ const SALES_PROMPT = `You are a professional sales representative for TaxNorth.c
 
 YOUR GOAL: Convince them to subscribe to TaxNorth's professional directory at taxnorth.ca/partners
 
-KEY FACTS TO SHARE:
+KEY FACTS:
 - TaxNorth.ca is a free AI guide that educates newcomers about Canadian taxes in 12 languages
-- When they need a professional, we connect them directly to accountants in our directory
-- Clients pay $19.99 to connect - they arrive pre-qualified and ready to hire
+- When they need a professional, we connect them to accountants in our directory
+- Clients pay $19.99 to connect — they arrive pre-qualified and ready to hire
 - Directory subscription starts at $29/month — no per-client fees
 - Annual plans with money-back guarantee if no clients in 12 months
-- Over 500,000 newcomers arrive in Canada each year — growing market
+- Over 500,000 newcomers arrive in Canada each year
 
-CONVERSATION RULES:
+RULES:
 - Keep every response SHORT — maximum 2-3 sentences
-- Sound natural and conversational, not scripted
-- If they ask questions, answer confidently
+- Sound natural and conversational
 - If they show interest, tell them to visit taxnorth.ca/partners
-- If they want more time, offer to send an email to partners@taxnorth.ca
-- If they are not interested, thank them politely and end the call
-- If asked if you are human or AI, be honest: you are an AI assistant from TaxNorth
+- If they want follow-up, offer to send email to partners@taxnorth.ca
+- If not interested, thank them politely and end
+- If asked if you are human or AI, be honest
+- End the call naturally when appropriate
 
-END THE CALL if:
-- They say they are not interested
-- They ask to be removed from the list
-- They confirm they will visit the website
-Respond with ONLY the spoken words — no stage directions, no quotation marks.`
+Respond with ONLY the spoken words — no stage directions.`
+
+const TAX_GUIDANCE_PROMPT = `You are TaxNorth, a friendly AI tax guide for newcomers to Canada. You answer questions about the Canadian tax system clearly and simply.
+
+RULES:
+- Respond in the same language the person speaks
+- Keep responses SHORT for voice — maximum 3-4 sentences
+- Be warm and patient
+- If the situation is complex, suggest they connect with a professional at taxnorth.ca/connect
+- You provide educational information only, not professional tax advice
+- End naturally when the person has their answer
+
+Respond with ONLY the spoken words — no stage directions, no markdown.`
 
 export async function POST(req: NextRequest) {
   const url = new URL(req.url)
+  const type = url.searchParams.get('type') || 'inbound'
   const firmName = url.searchParams.get('firmName') || ''
   const rawHistory = url.searchParams.get('history') || ''
 
   const formData = await req.formData()
   const speechResult = formData.get('SpeechResult') as string || ''
-  const callStatus = formData.get('CallStatus') as string || ''
 
   const twiml = new VoiceResponse()
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.taxnorth.ca'
+  const baseUrl = 'https://www.taxnorth.ca'
 
-  // Parse conversation history
   let history: { role: string; content: string }[] = []
   try {
     history = rawHistory ? JSON.parse(decodeURIComponent(rawHistory)) : []
@@ -51,37 +58,38 @@ export async function POST(req: NextRequest) {
     history = []
   }
 
-  if (!speechResult || callStatus === 'completed') {
-    twiml.say({ voice: 'Polly.Joanna-Neural' }, 'Thank you for your time. Have a great day.')
+  if (!speechResult) {
+    twiml.say({ voice: 'Polly.Joanna-Neural' }, 'Thank you for calling TaxNorth. Goodbye.')
     twiml.hangup()
     return new Response(twiml.toString(), {
       headers: { 'Content-Type': 'text/xml' },
     })
   }
 
-  // Add user message to history
   history.push({ role: 'user', content: speechResult })
 
+  const systemPrompt = type === 'outbound'
+    ? SALES_PROMPT + `\n\nYou are calling ${firmName || 'a tax firm'} in Alberta.`
+    : TAX_GUIDANCE_PROMPT
+
   try {
-    // Generate AI response
     const completion = await openrouter.chat.completions.create({
       model: 'deepseek/deepseek-v4-flash',
       messages: [
-        { role: 'system', content: SALES_PROMPT + `\n\nYou are calling ${firmName || 'a tax firm'} in Alberta.` },
+        { role: 'system', content: systemPrompt },
         ...history as any,
       ],
-      max_tokens: 150,
+      max_tokens: 120,
     })
 
-    const aiResponse = completion.choices[0]?.message?.content || 'Thank you for your time.'
-
-    // Add AI response to history
+    const aiResponse = completion.choices[0]?.message?.content || 'Thank you for calling TaxNorth.'
     history.push({ role: 'assistant', content: aiResponse })
 
-    // Check if we should end the call
-    const shouldEnd = aiResponse.toLowerCase().includes('thank you for your time') ||
+    const shouldEnd = type === 'outbound' && (
+      aiResponse.toLowerCase().includes('thank you for your time') ||
       aiResponse.toLowerCase().includes('have a great day') ||
       aiResponse.toLowerCase().includes('goodbye')
+    )
 
     if (shouldEnd) {
       twiml.say({ voice: 'Polly.Joanna-Neural', language: 'en-US' }, aiResponse)
@@ -91,10 +99,13 @@ export async function POST(req: NextRequest) {
 
       const gather = twiml.gather({
         input: ['speech'],
-        action: `${baseUrl}/api/voice/respond?firmName=${encodeURIComponent(firmName)}&history=${historyEncoded}`,
+        action: `${baseUrl}/api/voice/respond?type=${type}&firmName=${encodeURIComponent(firmName)}&history=${historyEncoded}`,
         method: 'POST',
-        speechTimeout: 'auto',
+        speechTimeout: '3',
+        speechModel: 'phone_call',
+        enhanced: true,
         language: 'en-CA',
+        timeout: 10,
       })
 
       gather.say({
@@ -102,12 +113,12 @@ export async function POST(req: NextRequest) {
         language: 'en-US',
       }, aiResponse)
 
-      twiml.redirect(`${baseUrl}/api/voice/respond?firmName=${encodeURIComponent(firmName)}&history=${historyEncoded}`)
+      twiml.redirect(`${baseUrl}/api/voice/respond?type=${type}&firmName=${encodeURIComponent(firmName)}&history=${historyEncoded}`)
     }
 
   } catch (error) {
-    console.error('AI response error:', error)
-    twiml.say({ voice: 'Polly.Joanna-Neural' }, 'I apologize, there was a technical issue. Please visit taxnorth.ca/partners for more information. Thank you.')
+    console.error('Voice AI error:', error)
+    twiml.say({ voice: 'Polly.Joanna-Neural' }, 'I apologize for the technical issue. Please visit taxnorth dot ca. Thank you.')
     twiml.hangup()
   }
 

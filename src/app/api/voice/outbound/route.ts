@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const call = await client.calls.create({
       to,
       from: process.env.TWILIO_PHONE_NUMBER!,
-      url: `${baseUrl}/api/voice/webhook?contactName=${encodeURIComponent(contactName || '')}&firmName=${encodeURIComponent(firmName || '')}`,
+      url: `${baseUrl}/api/voice/webhook?type=outbound&contactName=${encodeURIComponent(contactName || '')}&firmName=${encodeURIComponent(firmName || '')}`,
       statusCallback: `${baseUrl}/api/voice/status`,
       statusCallbackMethod: 'POST',
     })
