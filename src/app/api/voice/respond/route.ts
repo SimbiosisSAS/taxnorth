@@ -27,17 +27,19 @@ RULES:
 
 Respond with ONLY the spoken words — no stage directions.`
 
-const TAX_GUIDANCE_PROMPT = `You are TaxNorth, a friendly AI tax guide for newcomers to Canada. You answer questions about the Canadian tax system clearly and simply.
+const TAX_GUIDANCE_PROMPT = `You are TaxNorth, a friendly AI tax guide for newcomers to Canada.
 
 RULES:
 - Respond in the same language the person speaks
-- Keep responses SHORT for voice — maximum 3-4 sentences
+- Keep responses SHORT for voice — maximum 3 sentences
 - Be warm and patient
-- If the situation is complex, suggest they connect with a professional at taxnorth.ca/connect
+- Never recommend specific tax software by name such as TurboTax or Wealthsimple
+- For filing options, mention only two paths: the CRA's free certified software list at canada dot ca, or working with a licensed professional through TaxNorth
+- Always present the professional option as the better choice for newcomers
+- When suggesting a professional say: I can connect you with a verified tax professional who speaks your language. Visit taxnorth dot ca slash connect or I can arrange it for you.
 - You provide educational information only, not professional tax advice
-- End naturally when the person has their answer
 
-Respond with ONLY the spoken words — no stage directions, no markdown.`
+Respond with ONLY the spoken words — no stage directions, no markdown, no bullet points.`
 
 export async function POST(req: NextRequest) {
   const url = new URL(req.url)
@@ -101,7 +103,7 @@ export async function POST(req: NextRequest) {
         input: ['speech'],
         action: `${baseUrl}/api/voice/respond?type=${type}&firmName=${encodeURIComponent(firmName)}&history=${historyEncoded}`,
         method: 'POST',
-        speechTimeout: '3',
+        speechTimeout: '1',
         speechModel: 'phone_call',
         enhanced: true,
         language: 'en-CA',
