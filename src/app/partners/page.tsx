@@ -8,7 +8,7 @@ export const metadata = {
 
 const HELCIM_MONTHLY = 'https://subscriptions.helcim.com/subscribe/f7z5gxyqylvg0sq09shzlahqe7ot4'
 const HELCIM_ANNUAL_MONTHLY = 'https://subscriptions.helcim.com/subscribe/favedrob2savk535dxncthk4a5ixi'
-const HELCIM_ANNUAL_UPFRONT = '<a href="https://taxnorth.myhelcim.com/hosted/?token=9f85bbec4ecd86596dc101&amount=149.00&amountHash=d21f001ec850acdff4e758857241a8ed1fd069f2be0a62452e515fabdcaa38b9">Add to Portals</a>'
+const HELCIM_ANNUAL_UPFRONT = 'https://subscriptions.helcim.com/subscribe/ffn1bzi9l6yvez72qtc31jkqgh15z'
 
 export default function PartnersPage() {
   return (
