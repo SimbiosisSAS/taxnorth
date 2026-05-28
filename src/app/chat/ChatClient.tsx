@@ -22,7 +22,16 @@ export default function ChatClient() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [sessionId] = useState(() => generateSessionId())
+  const [sessionId] = useState(() => {
+  if (typeof window !== 'undefined') {
+    const existing = localStorage.getItem('taxnorth_session')
+    if (existing) return existing
+    const newId = generateSessionId()
+    localStorage.setItem('taxnorth_session', newId)
+    return newId
+  }
+  return generateSessionId()
+})
   const [showReferral, setShowReferral] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
