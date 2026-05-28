@@ -1,8 +1,23 @@
 import type { Metadata } from 'next'
+import { Plus_Jakarta_Sans, Inter } from 'next/font/google'
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LanguageProvider } from '@/context/LanguageContext'
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  variable: '--font-plus-jakarta',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'TaxNorth.ca — Taxes that finally click.',
@@ -10,9 +25,7 @@ export const metadata: Metadata = {
   keywords: 'Canadian taxes, newcomers Canada, tax guide, impuestos Canada, CRA, file taxes Canada',
   verification: {
     google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
-    other: {
-      'msvalidate.01': 'D1C1BE7C521A8B10763BB6027E7B401A',
-    },
+    other: { 'msvalidate.01': 'D1C1BE7C521A8B10763BB6027E7B401A' },
   },
   metadataBase: new URL('https://www.taxnorth.ca'),
   openGraph: {
@@ -33,7 +46,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${plusJakarta.variable} ${inter.variable}`}>
       <body>
         <LanguageProvider>
           {children}
