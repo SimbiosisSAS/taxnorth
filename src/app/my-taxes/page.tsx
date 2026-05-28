@@ -116,24 +116,29 @@ export default async function MyTaxesPage() {
           ) : (
             <div className="space-y-3">
               {conversationsWithMessages.map((conv) => (
-                <div key={conv.id} className="bg-white border border-fog-gray rounded-card p-5 flex items-center justify-between">
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div className="w-8 h-8 bg-fog-gray rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <MessageCircle className="w-4 h-4 text-deep-ink/40" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-deep-ink font-medium text-sm truncate mb-1">
-                        {conv.firstMessage}
-                      </p>
-                      <div className="flex items-center gap-1 text-deep-ink/40 text-xs">
-                        <Clock className="w-3 h-3" />
-                        {new Date(conv.created_at).toLocaleDateString('en-CA', {
-                          year: 'numeric', month: 'long', day: 'numeric'
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Link
+  key={conv.id}
+  href={`/my-taxes/${conv.id}`}
+  className="bg-white border border-fog-gray rounded-card p-5 flex items-center justify-between hover:border-lantern-amber transition-colors group"
+>
+  <div className="flex items-start gap-3 flex-1 min-w-0">
+    <div className="w-8 h-8 bg-fog-gray rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+      <MessageCircle className="w-4 h-4 text-deep-ink/40" />
+    </div>
+    <div className="flex-1 min-w-0">
+      <p className="text-deep-ink font-medium text-sm truncate mb-1">
+        {conv.firstMessage}
+      </p>
+      <div className="flex items-center gap-1 text-deep-ink/40 text-xs">
+        <Clock className="w-3 h-3" />
+        {new Date(conv.created_at).toLocaleDateString('en-CA', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        })}
+      </div>
+    </div>
+  </div>
+  <ArrowRight className="w-4 h-4 text-lantern-amber opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+</Link>
               ))}
             </div>
           )}
