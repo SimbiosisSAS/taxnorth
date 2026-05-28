@@ -34,11 +34,16 @@ export default function ChatClient() {
 })
   const [showReferral, setShowReferral] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
+const [showEmailCapture, setShowEmailCapture] = useState(false)
+const [captureEmail, setCaptureEmail] = useState('')
+const [emailSaved, setEmailSaved] = useState(false)
+const [savingEmail, setSavingEmail] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (messages.length >= 6) setShowReferral(true)
-  }, [messages])
+  if (messages.length >= 6) setShowReferral(true)
+  if (messages.length === 4 && !emailSaved) setShowEmailCapture(true)
+}, [messages, emailSaved])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -78,7 +83,23 @@ export default function ChatClient() {
       setIsLoading(false)
     }
   }
-
+async function saveEmail() {
+  if (!captureEmail || savingEmail) return
+  setSavingEmail(true)
+  try {
+    await fetch('/api/auth/request-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: captureEmail, sessionId }),
+    })
+    setEmailSaved(true)
+    setShowEmailCapture(false)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    setSavingEmail(false)
+  }
+}
   return (
     <div className="flex h-screen bg-warm-white">
 
@@ -243,6 +264,41 @@ export default function ChatClient() {
     Connect with a licensed tax professional →
   </Link>
 </div>
+
+{/* EMAIL CAPTURE */}
+{showEmailCapture && !emailSaved && (
+  <div className="px-6 py-3 bg-midnight-north/5 border-t border-fog-gray">
+    <div className="max-w-2xl mx-auto">
+      <p className="text-deep-ink font-medium text-sm mb-2">
+        💾 Save this conversation and get a reminder next tax season?
+      </p>
+      <div className="flex gap-2">
+        <input
+          type="email"
+          value={captureEmail}
+          onChange={(e) => setCaptureEmail(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && saveEmail()}
+          placeholder="your@email.com"
+          className="flex-1 border border-fog-gray rounded-button px-3 py-2 text-sm text-deep-ink outline-none focus:border-lantern-amber transition-colors placeholder:text-deep-ink/40"
+        />
+        <button
+          onClick={saveEmail}
+          disabled={savingEmail || !captureEmail}
+          className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40"
+        >
+          {savingEmail ? 'Saving...' : 'Save'}
+        </button>
+        <button
+          onClick={() => setShowEmailCapture(false)}
+          className="text-deep-ink/40 text-sm px-2 hover:text-deep-ink transition-colors"
+        >
+          Skip
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 <div className="border-t border-fog-gray bg-white px-6 py-4">
           <div className="max-w-2xl mx-auto flex items-center gap-3">
             <div className="flex-1 flex items-center gap-2 border border-fog-gray rounded-button px-4 py-2.5 focus-within:border-lantern-amber transition-colors">
