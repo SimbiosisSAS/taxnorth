@@ -1,5 +1,6 @@
 import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users } from 'lucide-react'
 import Link from 'next/link'
+import Script from 'next/script'
 
 export default function HomePage() {
 
@@ -37,10 +38,12 @@ export default function HomePage() {
 
   return (
     <div>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      <Script
+  id="structured-data"
+  type="application/ld+json"
+  strategy="afterInteractive"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+/>
 
       {/* NAVBAR */}
       <nav className="sticky top-0 z-50 bg-warm-white border-b border-fog-gray">
