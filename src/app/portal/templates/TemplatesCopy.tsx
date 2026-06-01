@@ -28,7 +28,6 @@ export default function TemplatesCopy({ templates }: { templates: Template[] }) 
 
   return (
     <div>
-      {/* Language selector */}
       <div className="flex gap-2 mb-6">
         {LANGUAGES.map(lang => (
           <button
@@ -40,4 +39,38 @@ export default function TemplatesCopy({ templates }: { templates: Template[] }) 
                 : 'bg-white border border-fog-gray text-deep-ink/60 hover:border-midnight-north'
             }`}
           >
-            {lang.
+            {lang.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-4">
+        {templates.map(template => {
+          const content = template.versions[activeLang] || template.versions['en']
+          const copyId = `${template.id}-${activeLang}`
+          return (
+            <div key={template.id} className="bg-white rounded-card border border-fog-gray overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-fog-gray bg-fog-gray/30">
+                <h3 className="font-heading font-semibold text-midnight-north text-sm">
+                  {template.title}
+                </h3>
+                <button
+                  onClick={() => copy(content, copyId)}
+                  className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-button transition-colors bg-lantern-amber text-midnight-north hover:opacity-90"
+                >
+                  {copied === copyId
+                    ? <><Check className="w-3.5 h-3.5" /> Copied!</>
+                    : <><Copy className="w-3.5 h-3.5" /> Copy</>
+                  }
+                </button>
+              </div>
+              <pre className="p-5 text-sm text-deep-ink leading-relaxed whitespace-pre-wrap font-sans">
+                {content}
+              </pre>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
