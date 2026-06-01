@@ -60,50 +60,62 @@ export default async function AdminPage({
       <div className="max-w-7xl mx-auto px-6 py-10">
 
         {/* STATS */}
-        <div className="grid grid-cols-4 gap-6 mb-10">
-  <div className="bg-white rounded-card p-6 flex items-center gap-4">
-    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-      <Users className="w-6 h-6 text-lantern-amber" />
-    </div>
-    <div>
-      <p className="font-heading font-bold text-midnight-north text-3xl">{totalUsers || 0}</p>
-      <p className="text-deep-ink/50 text-sm">Registered users</p>
-    </div>
-  </div>
-  <div className="bg-white rounded-card p-6 flex items-center gap-4">
-    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-      <DollarSign className="w-6 h-6 text-maple-green" />
-    </div>
-    <div>
-      <p className="font-heading font-bold text-midnight-north text-3xl">{totalLeads || 0}</p>
-      <p className="text-deep-ink/50 text-sm">Total leads</p>
-    </div>
-  </div>
-  <Link
-    href={`/admin/conversations?key=${key}`}
-    className="bg-white rounded-card p-6 flex items-center gap-4 hover:border-lantern-amber border-2 border-transparent transition-colors"
-  >
-    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-      <MessageCircle className="w-6 h-6 text-lantern-amber" />
-    </div>
-    <div>
-      <p className="font-heading font-bold text-midnight-north text-3xl">{totalConversations || 0}</p>
-      <p className="text-deep-ink/50 text-sm">Conversations →</p>
-    </div>
-  </Link>
-  <Link
-    href={`/admin/professionals?key=${key}`}
-    className="bg-white rounded-card p-6 flex items-center gap-4 hover:border-lantern-amber border-2 border-transparent transition-colors"
-  >
-    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-      <Users className="w-6 h-6 text-maple-green" />
-    </div>
-    <div>
-      <p className="font-heading font-bold text-midnight-north text-3xl">Pros →</p>
-      <p className="text-deep-ink/50 text-sm">Manage directory</p>
-    </div>
-  </Link>
-</div>
+        <div className="grid grid-cols-5 gap-4 mb-10">
+          <div className="bg-white rounded-card p-5 flex items-center gap-3">
+            <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
+              <Users className="w-5 h-5 text-lantern-amber" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-2xl">{totalUsers || 0}</p>
+              <p className="text-deep-ink/50 text-xs">Users</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-card p-5 flex items-center gap-3">
+            <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
+              <DollarSign className="w-5 h-5 text-maple-green" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-2xl">{totalLeads || 0}</p>
+              <p className="text-deep-ink/50 text-xs">Leads</p>
+            </div>
+          </div>
+          <Link
+            href={`/admin/conversations?key=${key}`}
+            className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
+          >
+            <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-lantern-amber" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-2xl">{totalConversations || 0}</p>
+              <p className="text-deep-ink/50 text-xs">Chats →</p>
+            </div>
+          </Link>
+          <Link
+            href={`/admin/professionals?key=${key}`}
+            className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
+          >
+            <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
+              <Users className="w-5 h-5 text-maple-green" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-2xl">Pros</p>
+              <p className="text-deep-ink/50 text-xs">Directory →</p>
+            </div>
+          </Link>
+          <Link
+            href={`/admin/referrals?key=${key}`}
+            className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
+          >
+            <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-lantern-amber" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-2xl">Refs</p>
+              <p className="text-deep-ink/50 text-xs">Referrals →</p>
+            </div>
+          </Link>
+        </div>
 
         {/* USERS TABLE */}
         <div className="bg-white rounded-card p-6 mb-8 overflow-x-auto">
