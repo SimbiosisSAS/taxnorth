@@ -2,6 +2,7 @@ import { Flashlight, Users, MessageCircle, DollarSign, TrendingUp } from 'lucide
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
+import { UsersTable, LeadsTable } from '@/components/admin/AdminTables'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +17,8 @@ export default async function AdminPage({
   searchParams: Promise<{ key?: string }>
 }) {
   const params = await searchParams
-  if (params.key !== process.env.ADMIN_KEY) redirect('/')
+  const key = params.key
+  if (key !== process.env.ADMIN_KEY) redirect('/')
 
   const [
     { count: totalUsers },
@@ -29,7 +31,7 @@ export default async function AdminPage({
     supabase.from('leads').select('*', { count: 'exact', head: true }),
     supabase.from('conversations').select('*', { count: 'exact', head: true }),
     supabase.from('users').select('id, email, source, created_at, last_seen').order('created_at', { ascending: false }).limit(50),
-    supabase.from('leads').select('full_name, email, phone, province, language, situation, status, created_at, professional_name').order('created_at', { ascending: false }).limit(20),
+    supabase.from('leads').select('id, full_name, email, phone, province, language, situation, status, created_at, professional_name').order('created_at', { ascending: false }).limit(50),
   ])
 
   const usersWithConversations = await Promise.all(
@@ -38,9 +40,6 @@ export default async function AdminPage({
       return { ...user, conversations: count || 0 }
     })
   )
-
-  const thStyle = { textAlign: 'left' as const, padding: '10px 12px', fontSize: '13px', color: 'white', backgroundColor: '#1A2744' }
-  const tdStyle = { padding: '10px 12px', fontSize: '13px' }
 
   return (
     <div className="min-h-screen bg-fog-gray">
@@ -62,21 +61,36 @@ export default async function AdminPage({
 
         {/* STATS */}
         <div className="grid grid-cols-3 gap-6 mb-10">
-          {[
-            { icon: <Users className="w-6 h-6 text-lantern-amber" />, label: 'Registered users', value: totalUsers || 0 },
-            { icon: <DollarSign className="w-6 h-6 text-maple-green" />, label: 'Total leads', value: totalLeads || 0 },
-            { icon: <MessageCircle className="w-6 h-6 text-lantern-amber" />, label: 'Conversations', value: totalConversations || 0 },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-card p-6 flex items-center gap-4">
-              <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-                {stat.icon}
-              </div>
-              <div>
-                <p className="font-heading font-bold text-midnight-north text-3xl">{stat.value}</p>
-                <p className="text-deep-ink/50 text-sm">{stat.label}</p>
-              </div>
+          <div className="bg-white rounded-card p-6 flex items-center gap-4">
+            <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
+              <Users className="w-6 h-6 text-lantern-amber" />
             </div>
-          ))}
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-3xl">{totalUsers || 0}</p>
+              <p className="text-deep-ink/50 text-sm">Registered users</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-card p-6 flex items-center gap-4">
+            <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
+              <DollarSign className="w-6 h-6 text-maple-green" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-3xl">{totalLeads || 0}</p>
+              <p className="text-deep-ink/50 text-sm">Total leads</p>
+            </div>
+          </div>
+          <Link
+            href={`/admin/conversations?key=${key}`}
+            className="bg-white rounded-card p-6 flex items-center gap-4 hover:border-lantern-amber border-2 border-transparent transition-colors"
+          >
+            <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
+              <MessageCircle className="w-6 h-6 text-lantern-amber" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-3xl">{totalConversations || 0}</p>
+              <p className="text-deep-ink/50 text-sm">Conversations →</p>
+            </div>
+          </Link>
         </div>
 
         {/* USERS TABLE */}
@@ -85,34 +99,7 @@ export default async function AdminPage({
             <Users className="w-5 h-5 text-lantern-amber" />
             Registered Users ({totalUsers || 0})
           </h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Email</th>
-                <th style={thStyle}>Source</th>
-                <th style={thStyle}>Conversations</th>
-                <th style={thStyle}>Registered</th>
-                <th style={thStyle}>Last seen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usersWithConversations.map((user, i) => (
-                <tr key={user.id} style={{ backgroundColor: i % 2 === 0 ? '#FAF8F5' : 'white' }}>
-                  <td style={{ ...tdStyle, color: '#1A2744', fontWeight: 600 }}>{user.email}</td>
-                  <td style={tdStyle}>
-                    <span style={{
-                      background: user.source === 'chat' ? '#EEF1F7' : '#2E7D5E20',
-                      color: user.source === 'chat' ? '#1A2744' : '#2E7D5E',
-                      padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600
-                    }}>{user.source}</span>
-                  </td>
-                  <td style={{ ...tdStyle, color: '#1A2744' }}>{user.conversations}</td>
-                  <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(user.created_at).toLocaleDateString('en-CA')}</td>
-                  <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(user.last_seen).toLocaleDateString('en-CA')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <UsersTable users={usersWithConversations} adminKey={key || ''} />
         </div>
 
         {/* LEADS TABLE */}
@@ -121,38 +108,7 @@ export default async function AdminPage({
             <TrendingUp className="w-5 h-5 text-maple-green" />
             Recent Leads ({totalLeads || 0})
           </h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Name</th>
-                <th style={thStyle}>Email</th>
-                <th style={thStyle}>Phone</th>
-                <th style={thStyle}>Province</th>
-                <th style={thStyle}>Professional</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(recentLeads || []).map((lead, i) => (
-                <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#FAF8F5' : 'white' }}>
-                  <td style={{ ...tdStyle, color: '#1A2744', fontWeight: 600 }}>{lead.full_name || '—'}</td>
-                  <td style={tdStyle}><a href={`mailto:${lead.email}`} style={{ color: '#F4A332' }}>{lead.email}</a></td>
-                  <td style={tdStyle}><a href={`tel:${lead.phone}`} style={{ color: '#F4A332' }}>{lead.phone || '—'}</a></td>
-                  <td style={{ ...tdStyle, color: '#666' }}>{lead.province || '—'}</td>
-                  <td style={{ ...tdStyle, color: '#666' }}>{lead.professional_name || 'TaxNorth match'}</td>
-                  <td style={tdStyle}>
-                    <span style={{
-                      background: lead.status === 'new' ? '#F4A33220' : '#2E7D5E20',
-                      color: lead.status === 'new' ? '#F4A332' : '#2E7D5E',
-                      padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600
-                    }}>{lead.status}</span>
-                  </td>
-                  <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(lead.created_at).toLocaleDateString('en-CA')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <LeadsTable leads={recentLeads || []} adminKey={key || ''} />
         </div>
 
       </div>
