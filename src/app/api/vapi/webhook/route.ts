@@ -7,28 +7,28 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
+    console.log('Vapi webhook type:', body.type)
+    console.log('Vapi webhook preview:', JSON.stringify(body).substring(0, 300))
+
     const { type, call } = body
 
-    if (type !== 'end-of-call-report' || !call) {
+    if (!call) {
       return NextResponse.json({ received: true })
     }
 
     const transcript = call.transcript || ''
-    const summary = call.summary || ''
+    const summary = call.summary || call.analysis?.summary || ''
     const customerPhone = call.customer?.number || ''
     const customerName = call.customer?.name || ''
     const durationSeconds = call.duration || 0
     const callId = call.id || ''
 
-    // Detect if interested based on transcript keywords
-    const interestedKeywords = ['interested', 'yes', 'tell me more', 'sounds good', 'website', 'partners', 'email', 'sign up']
+    const interestedKeywords = ['interested', 'yes', 'sounds good', 'website', 'partners', 'email', 'sign up', 'tell me more']
     const interested = interestedKeywords.some(kw => transcript.toLowerCase().includes(kw))
 
-    // Extract email from transcript
     const emailMatch = transcript.match(/[\w.-]+@[\w.-]+\.\w+/)
     const emailCaptured = emailMatch ? emailMatch[0] : null
 
-    // Save to Supabase
     await supabaseAdmin.from('sales_calls').insert({
       vapi_call_id: callId,
       customer_name: customerName,
@@ -41,7 +41,8 @@ export async function POST(req: NextRequest) {
       status: 'completed'
     })
 
-    // Send email notification if interested or email captured
+    console.log('Saved to Supabase — interested:', interested, 'email:', emailCaptured)
+
     if (interested || emailCaptured) {
       await resend.emails.send({
         from: 'TaxNorth <hello@taxnorth.ca>',
@@ -66,17 +67,17 @@ export async function POST(req: NextRequest) {
                 </tr>
                 <tr style="border-top: 1px solid #EEF1F7;">
                   <td style="padding: 8px 0; color: #666; font-size: 14px;">Duration</td>
-                  <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${Math.round(durationSeconds / 60)} minutes</td>
+                  <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${Math.round(durationSeconds / 60)} min</td>
                 </tr>
                 ${emailCaptured ? `
                 <tr style="border-top: 1px solid #EEF1F7;">
-                  <td style="padding: 8px 0; color: #666; font-size: 14px;">Email captured</td>
+                  <td style="padding: 8px 0; color: #666; font-size: 14px;">Email</td>
                   <td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${emailCaptured}" style="color: #F4A332; font-weight: 600;">${emailCaptured}</a></td>
                 </tr>` : ''}
                 <tr style="border-top: 1px solid #EEF1F7;">
                   <td style="padding: 8px 0; color: #666; font-size: 14px;">Interested</td>
-                  <td style="padding: 8px 0; font-size: 14px;">
-                    <span style="background: ${interested ? '#2E7D5E20' : '#EEF1F7'}; color: ${interested ? '#2E7D5E' : '#999'}; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
+                  <td style="padding: 8px 0;">
+                    <span style="background: ${interested ? '#2E7D5E20' : '#EEF1F7'}; color: ${interested ? '#2E7D5E' : '#999'}; padding: 2px 8px; border-radius: 4px; font-size: 13px; font-weight: 600;">
                       ${interested ? 'Yes' : 'Not yet'}
                     </span>
                   </td>
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
                 <tr style="border-top: 1px solid #EEF1F7;">
                   <td colspan="2" style="padding: 16px 0 8px;">
                     <p style="color: #1A2744; font-size: 14px; font-weight: 700; margin: 0 0 8px;">Transcript</p>
-                    <div style="background: white; border: 1px solid #EEF1F7; padding: 12px; border-radius: 8px; font-size: 12px; color: #666; line-height: 1.6; max-height: 300px; overflow-y: auto; white-space: pre-wrap;">${transcript}</div>
+                    <div style="background: white; border: 1px solid #EEF1F7; padding: 12px; border-radius: 8px; font-size: 12px; color: #666; line-height: 1.6; white-space: pre-wrap;">${transcript}</div>
                   </td>
                 </tr>` : ''}
               </table>
