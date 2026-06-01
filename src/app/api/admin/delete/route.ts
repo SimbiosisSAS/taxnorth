@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (!['leads', 'users'].includes(table)) {
+  if (!['leads', 'users', 'conversations'].includes(table)) {
     return NextResponse.json({ error: 'Invalid table' }, { status: 400 })
   }
 

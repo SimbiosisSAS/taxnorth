@@ -2,6 +2,7 @@ import { Flashlight, ArrowLeft, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
+import { ConversationsTable } from '@/components/admin/AdminTables'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,9 +45,6 @@ export default async function AdminConversationsPage({
     })
   )
 
-  const thStyle = { textAlign: 'left' as const, padding: '10px 12px', fontSize: '13px', color: 'white', backgroundColor: '#1A2744' }
-  const tdStyle = { padding: '10px 12px', fontSize: '13px' }
-
   return (
     <div className="min-h-screen bg-fog-gray">
       <nav className="bg-midnight-north px-6 py-4">
@@ -76,50 +74,11 @@ export default async function AdminConversationsPage({
           All Conversations ({conversations?.length || 0})
         </h1>
 
-        <div className="bg-white rounded-card overflow-x-auto">
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={thStyle}>First message</th>
-                <th style={thStyle}>Messages</th>
-                <th style={thStyle}>Language</th>
-                <th style={thStyle}>Has account</th>
-                <th style={thStyle}>Date</th>
-                <th style={thStyle}>View</th>
-              </tr>
-            </thead>
-            <tbody>
-              {conversationsWithData.map((conv, i) => (
-                <tr key={conv.id} style={{ backgroundColor: i % 2 === 0 ? '#FAF8F5' : 'white' }}>
-                  <td style={{ ...tdStyle, maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#1A2744' }}>
-                    {conv.firstMessage}
-                  </td>
-                  <td style={{ ...tdStyle, color: '#1A2744', fontWeight: 600 }}>{conv.messageCount}</td>
-                  <td style={{ ...tdStyle, color: '#666' }}>{conv.language || 'en'}</td>
-                  <td style={tdStyle}>
-                    <span style={{
-                      background: conv.user_id ? '#2E7D5E20' : '#EEF1F7',
-                      color: conv.user_id ? '#2E7D5E' : '#999',
-                      padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600
-                    }}>
-                      {conv.user_id ? 'Yes' : 'Anonymous'}
-                    </span>
-                  </td>
-                  <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>
-                    {new Date(conv.created_at).toLocaleDateString('en-CA')}
-                  </td>
-                  <td style={tdStyle}>
-                    <Link
-                      href={`/admin/conversations/${conv.id}?key=${params.key}`}
-                      style={{ color: '#F4A332', fontSize: '13px', fontWeight: 600 }}
-                    >
-                      View →
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="bg-white rounded-card p-6 overflow-x-auto">
+          <ConversationsTable
+            conversations={conversationsWithData}
+            adminKey={params.key || ''}
+          />
         </div>
       </div>
     </div>
