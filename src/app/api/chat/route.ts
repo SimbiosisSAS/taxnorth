@@ -12,11 +12,12 @@ export async function POST(req: NextRequest) {
       return new Response('Missing required fields', { status: 400 })
     }
 
-    // 1. Crear o recuperar conversación
+    const refCode = req.cookies.get('taxnorth_ref')?.value || null
+
     const { data: conversation, error: convError } = await supabaseAdmin
       .from('conversations')
       .upsert(
-        { session_id: sessionId },
+        { session_id: sessionId, referral_code: refCode },
         { onConflict: 'session_id' }
       )
       .select('id')
@@ -27,14 +28,12 @@ export async function POST(req: NextRequest) {
       return new Response('Failed to create conversation', { status: 500 })
     }
 
-    // 2. Guardar mensaje del usuario
     await supabaseAdmin.from('messages').insert({
       conversation_id: conversation.id,
       role: 'user',
       content: message,
     })
 
-    // 3. Obtener historial
     const { data: history } = await supabaseAdmin
       .from('messages')
       .select('role, content')
@@ -42,10 +41,8 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: true })
       .limit(10)
 
-    // 4. Buscar contexto relevante en la base de conocimiento
     const context = await getRelevantContext(message)
 
-    // 5. Construir system prompt con contexto RAG
     const systemWithContext = context
       ? `${TAXNORTH_SYSTEM_PROMPT}
 
@@ -56,7 +53,6 @@ Always prefer this over general knowledge when available.
 ${context}`
       : TAXNORTH_SYSTEM_PROMPT
 
-    // 6. Llamar a DeepSeek con streaming
     const stream = await openrouter.chat.completions.create({
       model: DEEPSEEK_MODEL,
       stream: true,
@@ -69,7 +65,6 @@ ${context}`
       ],
     })
 
-    // 7. Stream la respuesta y guardar en Supabase
     let fullResponse = ''
 
     const readableStream = new ReadableStream({
