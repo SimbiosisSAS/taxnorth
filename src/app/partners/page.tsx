@@ -1,4 +1,4 @@
-import { Flashlight, Users, MapPin, Languages, CheckCircle, Star, ArrowRight } from 'lucide-react'
+import { Flashlight, Users, MapPin, Languages, CheckCircle, Star, ArrowRight, Monitor, FileText, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata = {
@@ -9,6 +9,18 @@ export const metadata = {
 const HELCIM_MONTHLY = 'https://subscriptions.helcim.com/subscribe/f7z5gxyqylvg0sq09shzlahqe7ot4'
 const HELCIM_ANNUAL_MONTHLY = 'https://subscriptions.helcim.com/subscribe/favedrob2savk535dxncthk4a5ixi'
 const HELCIM_ANNUAL_UPFRONT = 'https://subscriptions.helcim.com/subscribe/ffn1bzi9l6yvez72qtc31jkqgh15z'
+
+const ALL_FEATURES = [
+  "Profile in the TaxNorth directory",
+  "Matched to clients by province, language, and specialty",
+  "Receive full client details — name, email, phone, and situation",
+  "Access to Partner Portal dashboard",
+  "CRM — manage clients and add private notes",
+  "Multilingual email templates in 12 languages",
+  "Monthly performance report",
+  "TaxNorth Verified badge",
+  "No per-client fees ever",
+]
 
 export default function PartnersPage() {
   return (
@@ -46,8 +58,8 @@ export default function PartnersPage() {
           </p>
           <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
             TaxNorth educates people about Canadian taxes for free — newcomers, first-time filers,
-self-employed workers, and more. When they need a professional, we match them to you
-by province, language, and specialty. You focus on the work. We handle the rest.
+            self-employed workers, and more. When they need a professional, we match them to you
+            by province, language, and specialty. You focus on the work. We handle the rest.
           </p>
           <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity text-base">
@@ -84,7 +96,7 @@ by province, language, and specialty. You focus on the work. We handle the rest.
           <p className="text-deep-ink/60 text-center text-lg mb-12">Simple. Transparent. Built around your growth.</p>
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { step: "01", title: "Subscribe", body: "Choose your plan and complete payment. We contact you within 24 hours to set up your profile." },
+              { step: "01", title: "Subscribe", body: "Choose your billing plan and complete payment. We contact you within 24 hours to set up your profile." },
               { step: "02", title: "Get listed", body: "Your profile appears in the TaxNorth directory, matched to clients by province, language, and specialty." },
               { step: "03", title: "Client connects", body: "A newcomer pays $19.99 to connect with you. You receive their full details — name, email, phone, and situation." },
               { step: "04", title: "You reach out", body: "Contact the client within 24 hours with your TaxNorth rate. They are pre-educated and ready to hire." },
@@ -99,17 +111,63 @@ by province, language, and specialty. You focus on the work. We handle the rest.
         </div>
       </section>
 
+      {/* EVERYTHING INCLUDED */}
+      <section className="bg-midnight-north py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="font-heading font-bold text-white text-3xl md:text-4xl text-center mb-4">
+            Everything included. Every plan.
+          </h2>
+          <p className="text-white/60 text-center text-lg mb-12">
+            No feature tiers. No hidden upgrades. Every subscriber gets the full TaxNorth platform.
+          </p>
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
+            {[
+              {
+                icon: <Users className="w-6 h-6 text-lantern-amber" />,
+                title: "Directory + Leads",
+                features: ["Profile in directory", "Matched by province & language", "Full client details on arrival", "No per-client fees"]
+              },
+              {
+                icon: <Monitor className="w-6 h-6 text-lantern-amber" />,
+                title: "Partner Portal",
+                features: ["CRM dashboard", "Client status tracking", "Private notes per client", "Monthly performance report"]
+              },
+              {
+                icon: <FileText className="w-6 h-6 text-lantern-amber" />,
+                title: "Templates + Badge",
+                features: ["Email templates in 12 languages", "Initial contact, documents, completion", "TaxNorth Verified badge", "Copy with one click"]
+              },
+            ].map((card) => (
+              <div key={card.title} className="bg-white/5 border border-white/10 rounded-card p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  {card.icon}
+                  <h3 className="font-heading font-semibold text-white">{card.title}</h3>
+                </div>
+                <div className="space-y-2">
+                  {card.features.map(f => (
+                    <div key={f} className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-maple-green flex-shrink-0 mt-0.5" />
+                      <span className="text-white/70 text-sm">{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* PRICING */}
       <section className="bg-fog-gray py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl text-center mb-2">
-            Simple pricing.
+            Choose how you pay.
           </h2>
           <p className="text-lantern-amber font-semibold text-sm text-center mb-3">
             Founding Member Rate — join now and lock in this price forever.
           </p>
           <p className="text-deep-ink/60 text-center text-lg mb-12">
-            No per-client fees. No commissions. Just a flat directory listing.
+            Same features in every plan. The only difference is your billing cycle.
           </p>
           <div className="grid md:grid-cols-3 gap-6">
 
@@ -120,15 +178,9 @@ by province, language, and specialty. You focus on the work. We handle the rest.
               <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$29</p>
               <p className="text-deep-ink/60 text-sm mb-6">CAD / month</p>
               <div className="space-y-2 mb-8">
-                {[
-                  "Profile in the TaxNorth directory",
-                  "Matched by province and language",
-                  "Receive full client details",
-                  "No per-client fees",
-                  "Cancel anytime",
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-maple-green flex-shrink-0" />
+                {ALL_FEATURES.map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-maple-green flex-shrink-0 mt-0.5" />
                     <span className="text-deep-ink text-sm">{item}</span>
                   </div>
                 ))}
@@ -149,15 +201,9 @@ by province, language, and specialty. You focus on the work. We handle the rest.
               <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$19</p>
               <p className="text-white/60 text-sm mb-6">CAD / month</p>
               <div className="space-y-2 mb-6">
-                {[
-                  "Everything in Monthly",
-                  "35% savings vs monthly",
-                  "Priority placement in results",
-                  "TaxNorth Verified badge",
-                  "Monthly performance report",
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-lantern-amber flex-shrink-0" />
+                {ALL_FEATURES.map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-lantern-amber flex-shrink-0 mt-0.5" />
                     <span className="text-white text-sm">{item}</span>
                   </div>
                 ))}
@@ -183,15 +229,9 @@ by province, language, and specialty. You focus on the work. We handle the rest.
               <p className="font-heading font-bold text-lantern-amber text-5xl mb-1">$149</p>
               <p className="text-deep-ink/60 text-sm mb-6">CAD / year — less than $12.50/month</p>
               <div className="space-y-2 mb-6">
-                {[
-                  "Everything in Annual plan",
-                  "Lowest price available",
-                  "One payment, no renewals",
-                  "Priority placement in results",
-                  "TaxNorth Verified badge",
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-maple-green flex-shrink-0" />
+                {ALL_FEATURES.map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-maple-green flex-shrink-0 mt-0.5" />
                     <span className="text-deep-ink text-sm">{item}</span>
                   </div>
                 ))}
@@ -215,9 +255,7 @@ by province, language, and specialty. You focus on the work. We handle the rest.
               <Star className="w-5 h-5 text-lantern-amber" />
             </div>
             <div>
-              <h3 className="font-heading font-semibold text-white mb-1">
-                Annual plan guarantee — zero risk.
-              </h3>
+              <h3 className="font-heading font-semibold text-white mb-1">Annual plan guarantee — zero risk.</h3>
               <p className="text-white/70 text-sm leading-relaxed">
                 If TaxNorth does not send you at least one new client during your 12-month subscription,
                 we refund your full payment at the end of the year. No questions asked.
@@ -291,7 +329,7 @@ by province, language, and specialty. You focus on the work. We handle the rest.
             Founding Member Rate — lock in your price today.
           </p>
           <p className="text-white/70 text-lg mb-8">
-            Choose your plan and get listed. We contact you within 24 hours to set up your profile.
+            Choose your billing option and get listed. We contact you within 24 hours.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={HELCIM_MONTHLY} target="_blank" rel="noopener noreferrer"
