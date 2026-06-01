@@ -1,17 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export default async function ReferralPage({
-  params,
-}: {
-  params: Promise<{ code: string }>
-}) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ code: string }> }
+) {
   const { code } = await params
 
   const { data: source } = await supabase
@@ -21,14 +19,15 @@ export default async function ReferralPage({
     .single()
 
   if (!source || !source.is_active) {
-    redirect('/')
+    return NextResponse.redirect(new URL('/', req.url))
   }
 
-  const cookieStore = await cookies()
-  cookieStore.set('taxnorth_ref', code, {
+  const response = NextResponse.redirect(new URL('/chat', req.url))
+  response.cookies.set('taxnorth_ref', code, {
     maxAge: 30 * 24 * 60 * 60,
     path: '/',
+    sameSite: 'lax',
   })
 
-  redirect('/chat')
+  return response
 }
