@@ -60,38 +60,50 @@ export default async function AdminPage({
       <div className="max-w-7xl mx-auto px-6 py-10">
 
         {/* STATS */}
-        <div className="grid grid-cols-3 gap-6 mb-10">
-          <div className="bg-white rounded-card p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-lantern-amber" />
-            </div>
-            <div>
-              <p className="font-heading font-bold text-midnight-north text-3xl">{totalUsers || 0}</p>
-              <p className="text-deep-ink/50 text-sm">Registered users</p>
-            </div>
-          </div>
-          <div className="bg-white rounded-card p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-maple-green" />
-            </div>
-            <div>
-              <p className="font-heading font-bold text-midnight-north text-3xl">{totalLeads || 0}</p>
-              <p className="text-deep-ink/50 text-sm">Total leads</p>
-            </div>
-          </div>
-          <Link
-            href={`/admin/conversations?key=${key}`}
-            className="bg-white rounded-card p-6 flex items-center gap-4 hover:border-lantern-amber border-2 border-transparent transition-colors"
-          >
-            <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
-              <MessageCircle className="w-6 h-6 text-lantern-amber" />
-            </div>
-            <div>
-              <p className="font-heading font-bold text-midnight-north text-3xl">{totalConversations || 0}</p>
-              <p className="text-deep-ink/50 text-sm">Conversations →</p>
-            </div>
-          </Link>
-        </div>
+        <div className="grid grid-cols-4 gap-6 mb-10">
+  <div className="bg-white rounded-card p-6 flex items-center gap-4">
+    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
+      <Users className="w-6 h-6 text-lantern-amber" />
+    </div>
+    <div>
+      <p className="font-heading font-bold text-midnight-north text-3xl">{totalUsers || 0}</p>
+      <p className="text-deep-ink/50 text-sm">Registered users</p>
+    </div>
+  </div>
+  <div className="bg-white rounded-card p-6 flex items-center gap-4">
+    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
+      <DollarSign className="w-6 h-6 text-maple-green" />
+    </div>
+    <div>
+      <p className="font-heading font-bold text-midnight-north text-3xl">{totalLeads || 0}</p>
+      <p className="text-deep-ink/50 text-sm">Total leads</p>
+    </div>
+  </div>
+  <Link
+    href={`/admin/conversations?key=${key}`}
+    className="bg-white rounded-card p-6 flex items-center gap-4 hover:border-lantern-amber border-2 border-transparent transition-colors"
+  >
+    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
+      <MessageCircle className="w-6 h-6 text-lantern-amber" />
+    </div>
+    <div>
+      <p className="font-heading font-bold text-midnight-north text-3xl">{totalConversations || 0}</p>
+      <p className="text-deep-ink/50 text-sm">Conversations →</p>
+    </div>
+  </Link>
+  <Link
+    href={`/admin/professionals?key=${key}`}
+    className="bg-white rounded-card p-6 flex items-center gap-4 hover:border-lantern-amber border-2 border-transparent transition-colors"
+  >
+    <div className="w-12 h-12 bg-fog-gray rounded-xl flex items-center justify-center">
+      <Users className="w-6 h-6 text-maple-green" />
+    </div>
+    <div>
+      <p className="font-heading font-bold text-midnight-north text-3xl">Pros →</p>
+      <p className="text-deep-ink/50 text-sm">Manage directory</p>
+    </div>
+  </Link>
+</div>
 
         {/* USERS TABLE */}
         <div className="bg-white rounded-card p-6 mb-8 overflow-x-auto">
