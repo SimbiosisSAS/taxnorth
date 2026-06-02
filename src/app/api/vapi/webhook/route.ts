@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     if (dbError) console.error('Supabase error:', dbError)
     else console.log('Saved to Supabase — interested:', interested, 'email:', emailCaptured)
 
-    if (interested || emailCaptured) {
+    if (true) {
       await resend.emails.send({
         from: 'TaxNorth <hello@taxnorth.ca>',
         to: process.env.ADMIN_EMAIL!,
