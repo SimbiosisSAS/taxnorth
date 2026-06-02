@@ -7,8 +7,14 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    console.log('Vapi webhook type:', body.type)
-    console.log('Vapi webhook preview:', JSON.stringify(body).substring(0, 300))
+console.log('Vapi webhook preview:', JSON.stringify(body).substring(0, 200))
+
+// Vapi wraps events in a "message" object
+const payload = body.message || body
+const { type, call } = payload
+
+console.log('Event type:', type)
+console.log('Has call:', !!call)
 
     const { type, call } = body
 
