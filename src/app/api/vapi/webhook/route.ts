@@ -7,16 +7,15 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-console.log('Vapi webhook preview:', JSON.stringify(body).substring(0, 200))
+    console.log('Vapi raw body:', JSON.stringify(body).substring(0, 500))
 
-// Vapi wraps events in a "message" object
-const payload = body.message || body
-const { type, call } = payload
+    // Vapi wraps events in a "message" object
+    const payload = body.message || body
+    const eventType = payload.type || 'unknown'
+    const call = payload.call || null
 
-console.log('Event type:', type)
-console.log('Has call:', !!call)
-
-    const { type, call } = body
+    console.log('Event type:', eventType)
+    console.log('Has call:', !!call)
 
     if (!call) {
       return NextResponse.json({ received: true })
@@ -35,7 +34,7 @@ console.log('Has call:', !!call)
     const emailMatch = transcript.match(/[\w.-]+@[\w.-]+\.\w+/)
     const emailCaptured = emailMatch ? emailMatch[0] : null
 
-    await supabaseAdmin.from('sales_calls').insert({
+    const { error: dbError } = await supabaseAdmin.from('sales_calls').insert({
       vapi_call_id: callId,
       customer_name: customerName,
       customer_phone: customerPhone,
@@ -47,7 +46,8 @@ console.log('Has call:', !!call)
       status: 'completed'
     })
 
-    console.log('Saved to Supabase — interested:', interested, 'email:', emailCaptured)
+    if (dbError) console.error('Supabase error:', dbError)
+    else console.log('Saved to Supabase — interested:', interested, 'email:', emailCaptured)
 
     if (interested || emailCaptured) {
       await resend.emails.send({
@@ -91,7 +91,7 @@ console.log('Has call:', !!call)
                 ${summary ? `
                 <tr style="border-top: 2px solid #1A2744;">
                   <td colspan="2" style="padding: 16px 0 8px;">
-                    <p style="color: #1A2744; font-size: 14px; font-weight: 700; margin: 0 0 8px;">Call Summary</p>
+                    <p style="color: #1A2744; font-size: 14px; font-weight: 700; margin: 0 0 8px;">Summary</p>
                     <div style="background: #EEF1F7; padding: 12px; border-radius: 8px; font-size: 13px; color: #444; line-height: 1.6;">${summary}</div>
                   </td>
                 </tr>` : ''}
