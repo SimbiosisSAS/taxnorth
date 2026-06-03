@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Phone, Mail, Globe, ChevronRight, X, Clock, MessageSquare, Video, Linkedin, Send } from 'lucide-react'
+import { Plus, Phone, Mail, Globe, ChevronRight, X, Clock, MessageSquare, Video, Link2, Send } from 'lucide-react'
 
 interface Activity {
   id: string
@@ -40,7 +40,7 @@ const ACTIVITY_ICONS: Record<string, JSX.Element> = {
   vapi_call: <Phone className="w-4 h-4" />,
   human_call: <Phone className="w-4 h-4" />,
   meeting: <Video className="w-4 h-4" />,
-  linkedin: <Linkedin className="w-4 h-4" />,
+  linkedin: <Link2 className="w-4 h-4" />,
   sms: <MessageSquare className="w-4 h-4" />,
   other: <Clock className="w-4 h-4" />,
 }
