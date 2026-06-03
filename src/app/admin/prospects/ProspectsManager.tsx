@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Plus, Phone, Mail, Globe, ChevronRight, X, Clock, MessageSquare, Video, Link2, Send } from 'lucide-react'
 
 interface Activity {
@@ -35,7 +35,7 @@ const STATUS_COLORS: Record<string, string> = {
   rejected: 'bg-red-100 text-red-500',
 }
 
-const ACTIVITY_ICONS: Record<string, JSX.Element> = {
+const ACTIVITY_ICONS: Record<string, React.ReactElement> = {
   email: <Mail className="w-4 h-4" />,
   vapi_call: <Phone className="w-4 h-4" />,
   human_call: <Phone className="w-4 h-4" />,
@@ -160,7 +160,7 @@ export default function ProspectsManager() {
         </div>
 
         {/* FILTER */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4 flex-wrap">
           {['all', 'prospect', 'contacted', 'follow_up', 'negotiating', 'partner', 'rejected'].map(s => (
             <button
               key={s}
@@ -293,7 +293,6 @@ export default function ProspectsManager() {
                 <Plus className="w-4 h-4" /> Log Activity
               </button>
 
-              {/* TIMELINE */}
               <h4 className="font-heading font-semibold text-midnight-north text-sm mb-3">Activity Timeline</h4>
               {(selected.prospect_activities?.length || 0) === 0 ? (
                 <p className="text-deep-ink/40 text-xs">No activities yet.</p>
