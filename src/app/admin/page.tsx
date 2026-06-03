@@ -1,4 +1,4 @@
-import { Flashlight, Users, MessageCircle, DollarSign, TrendingUp } from 'lucide-react'
+import { Flashlight, Users, MessageCircle, DollarSign, TrendingUp, Target } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
@@ -24,12 +24,14 @@ export default async function AdminPage({
     { count: totalUsers },
     { count: totalLeads },
     { count: totalConversations },
+    { count: totalProspects },
     { data: users },
     { data: recentLeads },
   ] = await Promise.all([
     supabase.from('users').select('*', { count: 'exact', head: true }),
     supabase.from('leads').select('*', { count: 'exact', head: true }),
     supabase.from('conversations').select('*', { count: 'exact', head: true }),
+    supabase.from('prospects').select('*', { count: 'exact', head: true }),
     supabase.from('users').select('id, email, source, created_at, last_seen').order('created_at', { ascending: false }).limit(50),
     supabase.from('leads').select('id, full_name, email, phone, province, language, situation, status, created_at, professional_name').order('created_at', { ascending: false }).limit(50),
   ])
@@ -60,7 +62,7 @@ export default async function AdminPage({
       <div className="max-w-7xl mx-auto px-6 py-10">
 
         {/* STATS */}
-        <div className="grid grid-cols-5 gap-4 mb-10">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-10">
           <div className="bg-white rounded-card p-5 flex items-center gap-3">
             <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
               <Users className="w-5 h-5 text-lantern-amber" />
@@ -70,6 +72,7 @@ export default async function AdminPage({
               <p className="text-deep-ink/50 text-xs">Users</p>
             </div>
           </div>
+
           <div className="bg-white rounded-card p-5 flex items-center gap-3">
             <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-maple-green" />
@@ -79,6 +82,7 @@ export default async function AdminPage({
               <p className="text-deep-ink/50 text-xs">Leads</p>
             </div>
           </div>
+
           <Link
             href={`/admin/conversations?key=${key}`}
             className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
@@ -91,6 +95,7 @@ export default async function AdminPage({
               <p className="text-deep-ink/50 text-xs">Chats →</p>
             </div>
           </Link>
+
           <Link
             href={`/admin/professionals?key=${key}`}
             className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
@@ -103,6 +108,7 @@ export default async function AdminPage({
               <p className="text-deep-ink/50 text-xs">Directory →</p>
             </div>
           </Link>
+
           <Link
             href={`/admin/referrals?key=${key}`}
             className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
@@ -113,6 +119,19 @@ export default async function AdminPage({
             <div>
               <p className="font-heading font-bold text-midnight-north text-2xl">Refs</p>
               <p className="text-deep-ink/50 text-xs">Referrals →</p>
+            </div>
+          </Link>
+
+          <Link
+            href={`/admin/prospects?key=${key}`}
+            className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
+          >
+            <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
+              <Target className="w-5 h-5 text-midnight-north" />
+            </div>
+            <div>
+              <p className="font-heading font-bold text-midnight-north text-2xl">{totalProspects || 0}</p>
+              <p className="text-deep-ink/50 text-xs">Prospects →</p>
             </div>
           </Link>
         </div>
