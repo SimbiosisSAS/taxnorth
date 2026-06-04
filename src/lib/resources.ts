@@ -101,7 +101,7 @@ export const resources: Resource[] = [
         content: 'The amount varies based on your income, marital status, and number of children. For a single individual with no children and low income, the annual credit is typically between $300 and $500. For families with children, it can be significantly higher. The lower your income, the higher the credit.'
       }
     ],
-    cta: 'Not sure if you qualify for the GST/HST credit? Ask TaxNorth — free guidance in any language.'
+    cta: 'Not sure if you qualify for the GST/HST credit? Ask TaxNorth — free answers in any language.'
   },
   {
     slug: 'tax-filing-deadline-canada',
@@ -191,7 +191,7 @@ export const resources: Resource[] = [
         content: 'If you also earned income in your home country while living in Canada, you generally must report it on your Canadian tax return. However, Canada has tax treaties with many countries to prevent double taxation. A foreign tax credit allows you to offset Canadian taxes with taxes you paid abroad on the same income.'
       }
     ],
-    cta: 'Have questions about taxes on your work permit? Ask TaxNorth — free guidance in any language.'
+    cta: 'Have questions about taxes on your work permit? Ask TaxNorth — free answers in any language.'
   },
   {
     slug: 'canada-child-benefit-newcomers',
@@ -256,7 +256,7 @@ export const resources: Resource[] = [
         content: 'Your available RRSP contribution room is shown on your Notice of Assessment, which the CRA sends after processing your tax return. You can also check it anytime in My Account at canada.ca. If you over-contribute by more than $2,000 above your limit, you are subject to a penalty tax of 1 percent per month on the excess amount.'
       }
     ],
-    cta: 'Have questions about RRSP as a newcomer? Ask TaxNorth — free guidance in any language.'
+    cta: 'Have questions about RRSP as a newcomer? Ask TaxNorth — free answers in any language.'
   },
   {
     slug: 'what-to-do-if-you-owe-taxes-canada',
@@ -290,7 +290,7 @@ export const resources: Resource[] = [
         content: 'Unpaid taxes generally do not directly affect your immigration status, but they can affect your ability to receive certain benefits and government services. The CRA can also take collection actions including garnishing wages or bank accounts if a debt remains unpaid for an extended period. It is always better to communicate with the CRA and arrange payment rather than ignore the situation.'
       }
     ],
-    cta: 'Worried about what you owe the CRA? Ask TaxNorth — free guidance in any language.'
+    cta: 'Worried about what you owe the CRA? Ask TaxNorth — free answers in any language.'
   },
   {
     slug: 'provincial-tax-differences-canada',
@@ -324,7 +324,7 @@ export const resources: Resource[] = [
         content: 'There is no single answer — it depends on your income level, family situation, and priorities. Alberta is often best for workers without children due to low taxes and no provincial sales tax. Quebec can be best for families with children due to subsidized childcare. Ontario offers the most job opportunities in finance, technology, and government. British Columbia attracts many from Asia-Pacific countries due to established communities. Consider the total picture including housing costs, job market, and community when choosing where to settle.'
       }
     ],
-    cta: 'Questions about taxes in your province? Ask TaxNorth — free guidance in any language.'
+    cta: 'Questions about taxes in your province? Ask TaxNorth — free answers in any language.'
   },
   {
     slug: 'reading-your-notice-of-assessment-canada',
@@ -358,7 +358,7 @@ export const resources: Resource[] = [
         content: 'Your Notice of Assessment is required to register for My CRA Account for the first time, to apply for certain loans where income verification is needed, and as proof of your tax status for various purposes. If you lose it, you can request a copy through My Account or by calling the CRA at 1-800-959-8281. Keep all NOAs for at least six years.'
       }
     ],
-    cta: 'Questions about your Notice of Assessment or tax return? Ask TaxNorth — free guidance in any language.'
+    cta: 'Questions about your Notice of Assessment or tax return? Ask TaxNorth — free answers in any language.'
   }
 ]
 

@@ -72,7 +72,7 @@ export default function ResourcesPage() {
             Still have questions?
           </h2>
           <p className="text-white/70 mb-6">
-            Ask TaxNorth directly — free AI tax guidance in any language.
+            Ask TaxNorth directly — free AI tax answers in any language.
           </p>
           <Link
             href="/chat"
