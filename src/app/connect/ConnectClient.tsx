@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Flashlight, Shield, Lock, CheckCircle, ArrowLeft, Star, User } from 'lucide-react'
+import { Flashlight, Shield, Lock, CheckCircle, ArrowLeft, Star, User, X } from 'lucide-react'
 import Link from 'next/link'
 
 const PROVINCES = [
@@ -44,9 +44,20 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
     situation: [] as string[],
     notes: '',
   })
+
+  const [showConsent, setShowConsent] = useState(false)
+  const [consents, setConsents] = useState({
+    educational: false,
+    independent: false,
+    sharing: false,
+    terms: false,
+  })
+
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [etransferConfirmed, setEtransferConfirmed] = useState(false)
+
+  const allConsentsChecked = Object.values(consents).every(Boolean)
 
   function handleSituation(item: string) {
     setForm(prev => ({
@@ -57,9 +68,15 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
     }))
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.email || !form.phone) return
+    setShowConsent(true)
+  }
+
+  async function handleConsentConfirm() {
+    if (!allConsentsChecked) return
+    setShowConsent(false)
     setLoading(true)
     try {
       const sessionId = localStorage.getItem('taxnorth_session') || ''
@@ -99,80 +116,74 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           </div>
 
           {/* INTERAC OPTION */}
-<div className="bg-white border border-fog-gray rounded-card p-6 mb-4">
-  <div className="flex items-center justify-between mb-4">
-    <h3 className="font-heading font-semibold text-midnight-north">Interac e-Transfer</h3>
-  </div>
-
-  {!etransferConfirmed ? (
-    <>
-      <div className="space-y-3 mb-4">
-        <div className="bg-fog-gray rounded-button p-3">
-          <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
-          <p className="font-semibold text-midnight-north text-sm">billing@asce.ca</p>
-        </div>
-        <div className="bg-fog-gray rounded-button p-3">
-          <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
-          <p className="font-semibold text-midnight-north text-sm">$19.99 CAD</p>
-        </div>
-        <div className="bg-fog-gray rounded-button p-3">
-          <p className="text-deep-ink/50 text-xs mb-1">Message / Memo</p>
-          <p className="font-semibold text-midnight-north text-sm">
-            {form.fullName || 'Your name'} — TaxNorth
-          </p>
-        </div>
-      </div>
-      <button
-        onClick={() => setEtransferConfirmed(true)}
-        className="w-full bg-midnight-north text-white font-semibold py-3 rounded-button hover:opacity-90 transition-opacity text-sm"
-      >
-        I've sent my e-Transfer ✓
-      </button>
-    </>
-  ) : (
-    <div className="text-center py-4">
-      <div className="w-12 h-12 bg-maple-green/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-        <CheckCircle className="w-6 h-6 text-maple-green" />
-      </div>
-      <p className="font-heading font-semibold text-midnight-north mb-1">
-        Payment confirmed.
-      </p>
-      <p className="text-deep-ink/60 text-sm">
-        We'll verify your transfer and send a confirmation to <strong>{form.email}</strong> within 1 business hour. Your professional will reach out within 24 hours.
-      </p>
-    </div>
-  )}
-</div>
+          <div className="bg-white border border-fog-gray rounded-card p-6 mb-4">
+            <h3 className="font-heading font-semibold text-midnight-north mb-4">Interac e-Transfer</h3>
+            {!etransferConfirmed ? (
+              <>
+                <div className="space-y-3 mb-4">
+                  <div className="bg-fog-gray rounded-button p-3">
+                    <p className="text-deep-ink/50 text-xs mb-1">Send to</p>
+                    <p className="font-semibold text-midnight-north text-sm">billing@asce.ca</p>
+                  </div>
+                  <div className="bg-fog-gray rounded-button p-3">
+                    <p className="text-deep-ink/50 text-xs mb-1">Amount</p>
+                    <p className="font-semibold text-midnight-north text-sm">$19.99 CAD</p>
+                  </div>
+                  <div className="bg-fog-gray rounded-button p-3">
+                    <p className="text-deep-ink/50 text-xs mb-1">Message / Memo</p>
+                    <p className="font-semibold text-midnight-north text-sm">
+                      {form.fullName || 'Your name'} — TaxNorth
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setEtransferConfirmed(true)}
+                  className="w-full bg-midnight-north text-white font-semibold py-3 rounded-button hover:opacity-90 transition-opacity text-sm"
+                >
+                  I've sent my e-Transfer ✓
+                </button>
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <div className="w-12 h-12 bg-maple-green/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <CheckCircle className="w-6 h-6 text-maple-green" />
+                </div>
+                <p className="font-heading font-semibold text-midnight-north mb-2">
+                  Thank you. Your request has been received.
+                </p>
+                <p className="text-deep-ink/60 text-sm leading-relaxed">
+                  TaxNorth will identify a suitable independent professional based on your preferences.
+                  A confirmation will be sent to <strong>{form.email}</strong> within 1 business hour.
+                  Any engagement for professional services will be directly between you and the selected accountant.
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* CARD OPTION */}
-<a
-  href="https://taxnorth.myhelcim.com/hosted/?token=5449fe12da0aa7f12c5574&amount=19.99&amountHash=2b8216946cd1838aae12f0958b4cb6a4148b4d9d8a3019d905d825cb785f7342"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="block bg-white border border-fog-gray rounded-card p-6 mb-4 hover:border-lantern-amber transition-colors"
->
-  <div className="flex items-center justify-between mb-3">
-    <h3 className="font-heading font-semibold text-midnight-north">Credit / Debit Card</h3>
-  </div>
-  <p className="text-deep-ink/50 text-sm mb-3">
-    Pay securely with Visa, Mastercard, or debit card via Helcim.
-  </p>
-  <span className="inline-flex items-center gap-1 text-lantern-amber font-semibold text-sm">
-    Pay $19.99 with card →
-  </span>
-</a>
+          <a
+            href="https://taxnorth.myhelcim.com/hosted/?token=5449fe12da0aa7f12c5574&amount=19.99&amountHash=2b8216946cd1838aae12f0958b4cb6a4148b4d9d8a3019d905d825cb785f7342"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block bg-white border border-fog-gray rounded-card p-6 mb-4 hover:border-lantern-amber transition-colors"
+          >
+            <h3 className="font-heading font-semibold text-midnight-north mb-2">Credit / Debit Card</h3>
+            <p className="text-deep-ink/50 text-sm mb-3">
+              Pay securely with Visa, Mastercard, or debit card via Helcim.
+            </p>
+            <span className="inline-flex items-center gap-1 text-lantern-amber font-semibold text-sm">
+              Pay $19.99 with card →
+            </span>
+          </a>
 
-<div className="text-center">
-  <p className="text-deep-ink/40 text-xs mb-4">
-    Not satisfied? Email hello@taxnorth.ca — we'll re-match you at no extra charge.
-  </p>
-  <Link
-    href="/chat"
-    className="text-lantern-amber font-medium text-sm hover:opacity-80 transition-opacity"
-  >
-    Back to TaxNorth
-  </Link>
-</div>
+          <div className="text-center">
+            <p className="text-deep-ink/40 text-xs mb-4">
+              Not satisfied? Email hello@taxnorth.ca — we'll re-match you at no extra charge.
+            </p>
+            <Link href="/chat" className="text-lantern-amber font-medium text-sm hover:opacity-80 transition-opacity">
+              Back to TaxNorth
+            </Link>
+          </div>
 
         </div>
       </div>
@@ -181,6 +192,111 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
 
   return (
     <div className="min-h-screen bg-warm-white">
+
+      {/* CONSENT MODAL */}
+      {showConsent && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-card p-6 w-full max-w-lg max-h-screen overflow-y-auto">
+
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h3 className="font-heading font-bold text-midnight-north text-lg">
+                  Connect with a Licensed Accountant
+                </h3>
+                <p className="text-deep-ink/50 text-xs mt-1">One last step before your connection</p>
+              </div>
+              <button
+                onClick={() => setShowConsent(false)}
+                className="text-deep-ink/40 hover:text-deep-ink transition-colors flex-shrink-0 ml-4"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-fog-gray rounded-button p-4 mb-5">
+              <p className="text-deep-ink text-sm leading-relaxed">
+                You're one step away from speaking with a licensed accountant who speaks your
+                preferred language. For a one-time fee of <strong>CAD $19.99</strong>, TaxNorth
+                will match you with an independent accounting professional based on your language,
+                province, and tax situation.
+              </p>
+            </div>
+
+            <p className="font-medium text-midnight-north text-sm mb-4">
+              Before continuing, please confirm:
+            </p>
+
+            <div className="space-y-3 mb-6">
+              {[
+                {
+                  key: 'educational' as const,
+                  text: 'I understand that TaxNorth.ca is an educational platform and does not provide tax, legal, or accounting advice.'
+                },
+                {
+                  key: 'independent' as const,
+                  text: 'I understand that any accountant I am connected with is an independent professional and not an employee or representative of TaxNorth.ca.'
+                },
+                {
+                  key: 'sharing' as const,
+                  text: 'I consent to TaxNorth.ca sharing the information I submitted (including my language preference, province, and description of my tax situation) with a selected independent accountant for the purpose of providing services.'
+                },
+                {
+                  key: 'terms' as const,
+                  text: '',
+                },
+              ].map((item) => (
+                <label
+                  key={item.key}
+                  className={`flex items-start gap-3 p-3 rounded-button border cursor-pointer transition-colors ${
+                    consents[item.key]
+                      ? 'border-maple-green bg-maple-green/5'
+                      : 'border-fog-gray hover:border-deep-ink/30'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={consents[item.key]}
+                    onChange={() => setConsents(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+                    className="w-4 h-4 accent-maple-green mt-0.5 flex-shrink-0"
+                  />
+                  <span className="text-sm text-deep-ink leading-relaxed">
+                    {item.key === 'terms' ? (
+                      <>
+                        I have read and agree to the{' '}
+                        <Link href="/privacy" target="_blank" className="text-lantern-amber hover:opacity-80">
+                          Privacy Policy
+                        </Link>
+                        {' '}and{' '}
+                        <Link href="/terms" target="_blank" className="text-lantern-amber hover:opacity-80">
+                          Terms of Service
+                        </Link>
+                        {' '}of TaxNorth.ca.
+                      </>
+                    ) : (
+                      item.text
+                    )}
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            <button
+              onClick={handleConsentConfirm}
+              disabled={!allConsentsChecked || loading}
+              className="w-full bg-lantern-amber text-midnight-north font-semibold py-3.5 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40 text-base"
+            >
+              {loading ? 'Processing...' : 'Continue to Payment →'}
+            </button>
+
+            {!allConsentsChecked && (
+              <p className="text-deep-ink/40 text-xs text-center mt-2">
+                Please confirm all statements above to continue.
+              </p>
+            )}
+
+          </div>
+        </div>
+      )}
 
       <nav className="border-b border-fog-gray bg-white px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -263,7 +379,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
 
           <div>
             <label className="block text-deep-ink font-medium text-sm mb-2">Full name</label>
