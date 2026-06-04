@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Find a Tax Professional — TaxNorth.ca',
-  description: 'Browse verified tax professionals in Canada who specialize in newcomers. Filter by province, language, and location.',
+  description: 'Browse licensed CPA tax professionals in Canada who specialize in newcomers. Filter by province, language, and location.',
 }
 
 const supabase = createClient(
@@ -55,7 +55,7 @@ export default async function ProfessionalsPage() {
             Find your tax professional.
           </h1>
           <p className="text-white/70 text-lg">
-            Browse verified professionals who specialize in newcomers to Canada.
+            Browse licensed CPAs who specialize in newcomers to Canada.
             Filter by province and language. Connect for $19.99.
           </p>
         </div>

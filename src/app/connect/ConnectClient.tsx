@@ -369,7 +369,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
               Let's find you the right tax professional.
             </h1>
             <p className="text-deep-ink/70 text-lg">
-              Tell us about your situation. We'll match you with the best licensed
+              Tell us about your situation. We'll match you with a licensed
               accountant for your province, language, and needs.
             </p>
             <div className="flex items-center gap-2 mt-4">

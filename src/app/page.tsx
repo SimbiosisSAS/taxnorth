@@ -226,12 +226,12 @@ export default function HomePage() {
         </div>
         <div className="mt-8 md:mt-0">
           <h3 className="font-heading font-bold text-white text-2xl mb-4">
-            TaxNorth verifies who we work with.
+            TaxNorth connects you with licensed CPAs across Canada.
           </h3>
           <div className="space-y-3">
             {[
               "We know their background and years of experience",
-              "We verify their expertise matches your specific situation",
+              "All professionals in our directory are licensed CPAs",
               "We confirm they offer fair, transparent pricing",
               "We stand behind every connection we make"
             ].map((item) => (

@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     gather.say({
       voice: 'Polly.Joanna-Neural',
       language: 'en-US',
-    }, greeting + ' TaxNorth connects newcomers to Canada with verified tax professionals. Do you have a moment to hear how it works?')
+    }, greeting + ' TaxNorth connects newcomers to Canada with licensed CPA tax professionals. Do you have a moment to hear how it works?')
 
     twiml.say({ voice: 'Polly.Joanna-Neural' }, 'I did not hear a response. Please visit taxnorth dot ca slash partners. Thank you.')
     twiml.hangup()
