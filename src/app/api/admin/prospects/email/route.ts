@@ -13,27 +13,35 @@ PROSPECT INFO:
 - Firm: ${prospect.firm_name}
 - Contact: ${prospect.contact_name || 'there'}
 - Province: ${prospect.province || 'Canada'}
-- Website: ${prospect.website || 'N/A'}
 
-ABOUT TAXNORTH:
-TaxNorth.ca is an AI-powered educational platform that guides newcomers to Canada through the tax system in 12 languages. When users need a professional, we connect them with a licensed CPA for a $19.99 connection fee. CPAs join our directory for $29/month and receive pre-qualified leads matched by province, language, and specialty.
+ABOUT TAXNORTH FOR CPAs:
+TaxNorth.ca is an AI-powered educational platform that guides newcomers to Canada through the tax system in 12 languages. When users need a professional CPA, TaxNorth matches them by province, language, and specialty and connects them for a $19.99 fee paid by the client.
 
-GOAL: Get a 15-minute call to explain the partnership.
+CPAs join the TaxNorth directory for $29/month (founding rate, locked forever). Benefits:
+- Pre-qualified leads matched to your province and languages
+- Full client details: name, email, phone, and tax situation
+- Access to Partner Portal dashboard to manage clients
+- No marketing effort required — clients come to you
+
+GOAL: Get the CPA to click the link and sign up directly. No call needed.
+
+CTA: Direct them to sign up at https://www.taxnorth.ca/partners
 
 RULES:
 - Maximum 150 words in the body
-- Professional but warm tone
-- One clear call to action at the end
-- Do NOT use generic phrases like "I hope this email finds you well"
-- Mention the specific province if not empty
-- Subject line should be specific and intriguing, not salesy
+- Lead with the benefit for them (more clients, no marketing)
+- Mention the $29/month founding rate and that it locks in forever
+- End with a clear, single CTA: sign up at taxnorth.ca/partners
+- Do NOT ask for a call or meeting
+- Do NOT use "I hope this email finds you well"
+- Subject line should be benefit-focused, not salesy
 
 Return ONLY a JSON object with this exact format:
 {"subject": "...", "body": "..."}
 `,
 
   followup: (prospect: Record<string, string>) => `
-Write a short follow-up email from Andrés at TaxNorth.ca. This is a second touchpoint — the prospect has not responded to the first email.
+Write a short follow-up email from Andrés at TaxNorth.ca. The prospect has not responded to the first email.
 
 PROSPECT INFO:
 - Firm: ${prospect.firm_name}
@@ -41,37 +49,41 @@ PROSPECT INFO:
 - Province: ${prospect.province || 'Canada'}
 
 CONTEXT:
-TaxNorth connects newcomers to Canada (500K+ per year) with licensed CPAs. The platform matches clients by province, language, and specialty. CPAs pay $29/month and receive pre-qualified leads — no marketing effort required.
+TaxNorth connects newcomers to Canada (500K+ per year) with licensed CPAs. CPAs pay $29/month (founding rate, locked forever) and receive pre-qualified leads matched by province, language, and specialty — no marketing needed. Sign up at taxnorth.ca/partners.
 
-GOAL: Re-engage with a different angle. Use the stat that most newcomers don't know they're owed money by the government.
+GOAL: Re-engage with a different angle. Use the stat that 500,000+ newcomers arrive in Canada every year and most don't know they need a CPA. This is an untapped client base.
 
 RULES:
-- Maximum 80 words in the body
-- Very short — respect their time
+- Maximum 80 words
+- Different angle from the first email — focus on the size of the newcomer market
 - Acknowledge they may be busy
-- One question at the end to invite reply
-- Do NOT repeat what was said in the first email verbatim
+- End with the same CTA: taxnorth.ca/partners
+- Do NOT ask for a call
+- One soft question to invite a reply if they're not ready to sign up
 
 Return ONLY a JSON object with this exact format:
 {"subject": "...", "body": "..."}
 `,
 
   final: (prospect: Record<string, string>) => `
-Write a final "break-up" email from Andrés at TaxNorth.ca. This is the last touchpoint after no response to previous emails.
+Write a final "last chance" email from Andrés at TaxNorth.ca. This is the last email before moving on.
 
 PROSPECT INFO:
 - Firm: ${prospect.firm_name}
 - Contact: ${prospect.contact_name || 'there'}
 - Province: ${prospect.province || 'Canada'}
 
-GOAL: Leave the door open gracefully. These emails paradoxically get high response rates because they create urgency without pressure.
+CONTEXT:
+TaxNorth is filling its CPA directory by province. Once a province has enough CPAs, new spots are limited. CPAs pay $29/month founding rate, locked forever. taxnorth.ca/partners
+
+GOAL: Create gentle urgency around limited spots in their province and leave the door open.
 
 RULES:
-- Maximum 60 words in the body
-- Acknowledge the lack of response without blame
-- Say you're moving on but the door remains open
-- Leave contact info for when the timing is right
-- Warm, not passive-aggressive
+- Maximum 60 words
+- Mention that spots in their province are filling up
+- Leave the link: taxnorth.ca/partners
+- Warm, not aggressive
+- Do NOT ask for a call
 
 Return ONLY a JSON object with this exact format:
 {"subject": "...", "body": "..."}
@@ -86,7 +98,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Obtener datos del prospecto
     const { data: prospect, error } = await supabaseAdmin
       .from('prospects')
       .select('*')
@@ -97,7 +108,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Prospect not found' }, { status: 404 })
     }
 
-    // Generar email con DeepSeek
     const promptFn = EMAIL_PROMPTS[templateType as keyof typeof EMAIL_PROMPTS]
     if (!promptFn) {
       return NextResponse.json({ error: 'Invalid template type' }, { status: 400 })
@@ -119,12 +129,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 })
     }
 
-    // Si solo es preview, devolver sin enviar
     if (!send) {
       return NextResponse.json({ subject: emailData.subject, body: emailData.body })
     }
 
-    // Enviar el email
     const recipientEmail = prospect.email
     if (!recipientEmail) {
       return NextResponse.json({ error: 'Prospect has no email' }, { status: 400 })
@@ -135,25 +143,32 @@ export async function POST(req: NextRequest) {
       to: recipientEmail,
       subject: emailData.subject,
       text: emailData.body,
-      html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#1A2744;line-height:1.6">
-        ${emailData.body.split('\n').map((line: string) => line.trim() ? `<p>${line}</p>` : '').join('')}
-        <hr style="border:none;border-top:1px solid #EEF1F7;margin:24px 0"/>
-        <p style="font-size:12px;color:#aaa">
-          Andrés Castaneda — TaxNorth.ca<br/>
-          <a href="https://www.taxnorth.ca/partners" style="color:#F4A332">taxnorth.ca/partners</a>
-        </p>
-      </div>`
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#1A2744;line-height:1.6">
+          ${emailData.body.split('\n').map((line: string) =>
+            line.trim() ? `<p style="margin:0 0 12px">${line}</p>` : ''
+          ).join('')}
+          <hr style="border:none;border-top:1px solid #EEF1F7;margin:24px 0"/>
+          <p style="font-size:12px;color:#aaa;margin:0">
+            Andrés Castaneda — TaxNorth.ca<br/>
+            <a href="https://www.taxnorth.ca/partners" style="color:#F4A332">
+              taxnorth.ca/partners
+            </a>
+          </p>
+        </div>
+      `
     })
 
-    // Registrar actividad
     await supabaseAdmin.from('prospect_activities').insert({
       prospect_id: prospectId,
       type: 'email',
-      description: `${templateType === 'cold' ? 'Cold outreach' : templateType === 'followup' ? 'Follow-up' : 'Final'} email sent: "${emailData.subject}"`,
+      description: `${
+        templateType === 'cold' ? 'Cold outreach' :
+        templateType === 'followup' ? 'Follow-up' : 'Final'
+      } email sent: "${emailData.subject}"`,
       activity_date: new Date().toISOString(),
     })
 
-    // Actualizar last_contact y status
     await supabaseAdmin
       .from('prospects')
       .update({
