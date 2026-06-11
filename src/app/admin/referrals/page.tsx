@@ -1,7 +1,6 @@
 import { Flashlight, ArrowLeft, TrendingUp, Users, DollarSign } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
-import { redirect } from 'next/navigation'
 import ReferralsManager from './ReferralsManager'
 
 export const dynamic = 'force-dynamic'
@@ -11,13 +10,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export default async function AdminReferralsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ key?: string }>
-}) {
-  const params = await searchParams
-  if (params.key !== process.env.ADMIN_KEY) redirect('/')
+export default async function AdminReferralsPage() {
 
   const { data: sources } = await supabase
     .from('referral_sources')
@@ -45,7 +38,7 @@ export default async function AdminReferralsPage({
     <div className="min-h-screen bg-fog-gray">
       <nav className="bg-midnight-north px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href={`/admin?key=${params.key}`} className="flex items-center gap-2">
+          <Link href="/admin" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
               <Flashlight className="w-4 h-4 text-lantern-amber" />
             </div>
@@ -57,7 +50,7 @@ export default async function AdminReferralsPage({
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-10">
-        <Link href={`/admin?key=${params.key}`}
+        <Link href="/admin"
           className="inline-flex items-center gap-1.5 text-lantern-amber font-medium text-sm mb-8 hover:opacity-80 transition-opacity">
           <ArrowLeft className="w-4 h-4" /> Back to dashboard
         </Link>
@@ -100,7 +93,7 @@ export default async function AdminReferralsPage({
 
         <ReferralsManager
           sources={sourcesWithStats}
-          adminKey={params.key || ''}
+          adminKey=""
         />
       </div>
     </div>
