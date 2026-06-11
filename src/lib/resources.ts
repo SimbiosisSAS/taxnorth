@@ -360,6 +360,47 @@ export const resources: Resource[] = [
     ],
     cta: 'Questions about your Notice of Assessment or tax return? Ask TaxNorth — free answers in any language.'
   }
+
+  ,
+  {
+    slug: 'canada-groceries-essentials-benefit-newcomers-2026',
+    title: 'Canada Groceries and Essentials Benefit 2026: What Newcomers Need to Know',
+    metaTitle: 'Canada Groceries and Essentials Benefit 2026 — Guide for Newcomers | TaxNorth',
+    description: 'The GST/HST credit is being replaced by the Canada Groceries and Essentials Benefit in July 2026. Learn what changed, how much you receive, and how newcomers can apply.',
+    intro: 'If you heard about the GST/HST credit when you arrived in Canada, here is important news: starting July 2026, it is being replaced by a new program called the Canada Groceries and Essentials Benefit — and it pays 25% more than before. Here is everything you need to know.',
+    sections: [
+      {
+        heading: 'What is the Canada Groceries and Essentials Benefit?',
+        content: 'The Canada Groceries and Essentials Benefit (CGEB) is a new federal program that replaces the GST/HST credit starting July 2026. Like the GST/HST credit, it is a tax-free quarterly payment from the Canadian government designed to help people with low and modest incomes. The key difference is that the new benefit pays 25% more than the old credit — and that increase is guaranteed for five years, through 2031. Approximately 12 million Canadians are expected to receive this benefit.'
+      },
+      {
+        heading: 'What changed from the GST/HST credit?',
+        content: 'The GST/HST credit and the new Groceries and Essentials Benefit work in the same way — you do not apply separately, the CRA calculates it automatically when you file your tax return, and payments arrive quarterly. The main changes are: the name is different, the payment amount is 25% higher, and the purpose is explicitly tied to helping with the cost of groceries and everyday essentials. A one-time transitional top-up payment was sent on June 5, 2026 to bridge the transition from the old system to the new one.'
+      },
+      {
+        heading: 'Who is eligible?',
+        content: 'Eligibility follows the same rules as the old GST/HST credit. You must be a Canadian resident for tax purposes, be 19 years of age or older, or have a spouse or common-law partner, or be a parent living with your child. Eligibility for the 2026-2027 benefit year is based on your 2025 net income reported on your tax return. Lower income means higher payments. As a newcomer, you may be eligible from the moment you become a Canadian resident for tax purposes — even before you file your first tax return.'
+      },
+      {
+        heading: 'How much do you receive?',
+        content: 'Exact amounts depend on your family net income and the number of children you have. As a reference, a single person with low income who previously received the GST/HST credit will receive approximately $136 more per year under the new benefit. Payments are made quarterly — in July, October, January, and April. The 25% increase over the old credit amounts is locked in for five years from 2026 to 2031.'
+      },
+      {
+        heading: 'How do newcomers apply?',
+        content: 'If you arrived in Canada recently and have not yet filed a tax return, you must apply manually using Form RC151, called the GST/HST Credit and Groceries and Essentials Benefit Application for Individuals Who Become Residents of Canada. Download this form from canada.ca and mail it to the CRA. If you have children under 18, use Form RC66 (Canada Child Benefits Application) instead — it covers both the Groceries and Essentials Benefit and the Canada Child Benefit in one form. Once you start filing annual tax returns, the CRA will automatically evaluate your eligibility every year.'
+      },
+      {
+        heading: 'What if you already receive the GST/HST credit?',
+        content: 'No action is required. If you were already receiving the GST/HST credit, your payments will automatically continue under the new name starting July 2026 — and you will notice the amount is 25% higher. You do not need to reapply or contact the CRA. Just continue filing your annual tax return to maintain eligibility.'
+      },
+      {
+        heading: 'Why this matters for newcomers especially',
+        content: 'Many newcomers to Canada miss this benefit entirely because they do not know they need to file a tax return even with no income. Every year you do not file, you lose the quarterly payments you are entitled to receive. For a newcomer with low or modest income, the Groceries and Essentials Benefit can mean $400 to $700 or more per year — money the government has set aside for you that only gets activated when you file. The deadline to file for the 2025 tax year was April 30, 2026. If you missed it, file as soon as possible — the CRA can still issue retroactive payments.'
+      }
+    ],
+    cta: 'Questions about the Groceries and Essentials Benefit or any other Canadian tax topic? Ask TaxNorth — free answers in any language.'
+  }
+
 ]
 
 export function getResource(slug: string): Resource | undefined {
