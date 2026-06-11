@@ -1,7 +1,6 @@
 import { Flashlight, ArrowLeft, User } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
-import { redirect } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 
 export const dynamic = 'force-dynamic'
@@ -13,14 +12,10 @@ const supabase = createClient(
 
 export default async function AdminConversationDetailPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ key?: string }>
 }) {
   const { id } = await params
-  const { key } = await searchParams
-  if (key !== process.env.ADMIN_KEY) redirect('/')
 
   const { data: messages } = await supabase
     .from('messages')
@@ -38,7 +33,7 @@ export default async function AdminConversationDetailPage({
     <div className="min-h-screen bg-fog-gray">
       <nav className="bg-midnight-north px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href={`/admin/conversations?key=${key}`} className="flex items-center gap-2">
+          <Link href="/admin/conversations" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
               <Flashlight className="w-4 h-4 text-lantern-amber" />
             </div>
@@ -51,7 +46,7 @@ export default async function AdminConversationDetailPage({
 
       <div className="max-w-4xl mx-auto px-6 py-10">
         <Link
-          href={`/admin/conversations?key=${key}`}
+          href="/admin/conversations"
           className="inline-flex items-center gap-1.5 text-lantern-amber font-medium text-sm mb-8 hover:opacity-80 transition-opacity"
         >
           <ArrowLeft className="w-4 h-4" />
