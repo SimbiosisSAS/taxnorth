@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 import { UsersTable, LeadsTable } from '@/components/admin/AdminTables'
+import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,14 +12,11 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export default async function AdminPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ key?: string }>
-}) {
-  const params = await searchParams
-  const key = params.key
-  if (key !== process.env.ADMIN_KEY) redirect('/')
+export default async function AdminPage() {
+
+  const cookieStore = await cookies()
+  const adminCookie = cookieStore.get('taxnorth_admin')?.value
+  if (adminCookie !== process.env.ADMIN_KEY) redirect('/admin/login')
 
   const [
     { count: totalUsers },
@@ -63,6 +61,7 @@ export default async function AdminPage({
 
         {/* STATS */}
         <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-10">
+
           <div className="bg-white rounded-card p-5 flex items-center gap-3">
             <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
               <Users className="w-5 h-5 text-lantern-amber" />
@@ -84,7 +83,7 @@ export default async function AdminPage({
           </div>
 
           <Link
-            href={`/admin/conversations?key=${key}`}
+            href="/admin/conversations"
             className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
           >
             <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
@@ -97,7 +96,7 @@ export default async function AdminPage({
           </Link>
 
           <Link
-            href={`/admin/professionals?key=${key}`}
+            href="/admin/professionals"
             className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
           >
             <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
@@ -110,7 +109,7 @@ export default async function AdminPage({
           </Link>
 
           <Link
-            href={`/admin/referrals?key=${key}`}
+            href="/admin/referrals"
             className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
           >
             <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
@@ -123,7 +122,7 @@ export default async function AdminPage({
           </Link>
 
           <Link
-            href={`/admin/prospects?key=${key}`}
+            href="/admin/prospects"
             className="bg-white rounded-card p-5 flex items-center gap-3 hover:border-lantern-amber border-2 border-transparent transition-colors"
           >
             <div className="w-10 h-10 bg-fog-gray rounded-xl flex items-center justify-center">
@@ -134,6 +133,7 @@ export default async function AdminPage({
               <p className="text-deep-ink/50 text-xs">Prospects →</p>
             </div>
           </Link>
+
         </div>
 
         {/* USERS TABLE */}
@@ -142,7 +142,7 @@ export default async function AdminPage({
             <Users className="w-5 h-5 text-lantern-amber" />
             Registered Users ({totalUsers || 0})
           </h2>
-          <UsersTable users={usersWithConversations} adminKey={key || ''} />
+          <UsersTable users={usersWithConversations} adminKey="" />
         </div>
 
         {/* LEADS TABLE */}
@@ -151,7 +151,7 @@ export default async function AdminPage({
             <TrendingUp className="w-5 h-5 text-maple-green" />
             Recent Leads ({totalLeads || 0})
           </h2>
-          <LeadsTable leads={recentLeads || []} adminKey={key || ''} />
+          <LeadsTable leads={recentLeads || []} adminKey="" />
         </div>
 
       </div>
