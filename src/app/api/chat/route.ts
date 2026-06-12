@@ -4,9 +4,17 @@ import { TAXNORTH_SYSTEM_PROMPT } from '@/lib/prompts'
 import { getRelevantContext } from '@/lib/rag'
 import { NextRequest } from 'next/server'
 
-// Límites de rate limiting
-const SESSION_MESSAGE_LIMIT = 20   // mensajes por sesión en 24 horas
+const SESSION_MESSAGE_LIMIT = 20
 const SESSION_WINDOW_HOURS = 24
+
+function cleanDeepSeekResponse(text: string): string {
+  return text
+    .replace(/<ds_safety>[\s\S]*?<\/ds_safety>/g, '')
+    .replace(/<ds_thinking>[\s\S]*?<\/ds_thinking>/g, '')
+    .replace(/<\/?(ds_safety|ds_thinking|think|thinking)[^>]*>/g, '')
+    .replace(/^N\/A\s*/i, '')
+    .trim()
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,7 +24,6 @@ export async function POST(req: NextRequest) {
       return new Response('Missing required fields', { status: 400 })
     }
 
-    // Capturar IP para monitoreo
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || req.headers.get('x-real-ip')
       || 'unknown'
@@ -37,7 +44,7 @@ export async function POST(req: NextRequest) {
       return new Response('Failed to create conversation', { status: 500 })
     }
 
-    // ── RATE LIMITING POR SESIÓN ──────────────────────────────
+    // Rate limiting
     const windowStart = new Date(
       Date.now() - SESSION_WINDOW_HOURS * 60 * 60 * 1000
     ).toISOString()
@@ -57,23 +64,14 @@ export async function POST(req: NextRequest) {
         }),
         {
           status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'Retry-After': '86400',
-          }
+          headers: { 'Content-Type': 'application/json', 'Retry-After': '86400' }
         }
       )
     }
-    // ─────────────────────────────────────────────────────────
 
-    // Validar que el mensaje no esté vacío ni sea demasiado largo
     const trimmedMessage = message.trim()
-    if (!trimmedMessage) {
-      return new Response('Message cannot be empty', { status: 400 })
-    }
-    if (trimmedMessage.length > 2000) {
-      return new Response('Message too long. Maximum 2000 characters.', { status: 400 })
-    }
+    if (!trimmedMessage) return new Response('Message cannot be empty', { status: 400 })
+    if (trimmedMessage.length > 2000) return new Response('Message too long. Maximum 2000 characters.', { status: 400 })
 
     await supabaseAdmin.from('messages').insert({
       conversation_id: conversation.id,
@@ -112,24 +110,32 @@ ${context}`
       ],
     })
 
-    let fullResponse = ''
+    // Acumular respuesta completa primero
+    let rawResponse = ''
+    for await (const chunk of stream) {
+      const text = chunk.choices[0]?.delta?.content || ''
+      if (text) rawResponse += text
+    }
 
+    // Limpiar etiquetas internas de DeepSeek
+    const cleanedResponse = cleanDeepSeekResponse(rawResponse)
+
+    // Guardar en Supabase
+    await supabaseAdmin.from('messages').insert({
+      conversation_id: conversation.id,
+      role: 'assistant',
+      content: cleanedResponse,
+    })
+
+    // Enviar al cliente en chunks pequeños para mantener UX fluida
     const readableStream = new ReadableStream({
-      async start(controller) {
-        for await (const chunk of stream) {
-          const text = chunk.choices[0]?.delta?.content || ''
-          if (text) {
-            fullResponse += text
-            controller.enqueue(new TextEncoder().encode(text))
-          }
+      start(controller) {
+        const chunkSize = 30
+        for (let i = 0; i < cleanedResponse.length; i += chunkSize) {
+          controller.enqueue(
+            new TextEncoder().encode(cleanedResponse.slice(i, i + chunkSize))
+          )
         }
-
-        await supabaseAdmin.from('messages').insert({
-          conversation_id: conversation.id,
-          role: 'assistant',
-          content: fullResponse,
-        })
-
         controller.close()
       },
     })
