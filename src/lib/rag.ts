@@ -74,9 +74,9 @@ export async function getRelevantContext(
         .filter((s: string) => !s.includes('hrblock') && !s.includes('turbotax') && !s.includes('software-vs'))
     )]
 
-    const sourceLabels = uniqueSources
-      .map((s: string) => SOURCE_LABELS[s] || s)
-      .filter(Boolean)
+    const sourceLabels = (uniqueSources as string[])
+  .map((s: string) => SOURCE_LABELS[s] || s)
+  .filter(Boolean)
 
     const context = results
       .map((r: { source: string; content: string }) =>
