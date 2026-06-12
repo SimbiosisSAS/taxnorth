@@ -5,7 +5,6 @@ const ALLOWED_TABLES = ['leads', 'users', 'conversations'] as const
 type AllowedTable = typeof ALLOWED_TABLES[number]
 
 export async function POST(req: NextRequest) {
-  // Verifica la cookie admin — nunca el body
   const adminCookie = req.cookies.get('taxnorth_admin')?.value
   if (adminCookie !== process.env.ADMIN_KEY) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -21,7 +20,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No IDs provided' }, { status: 400 })
   }
 
-  // Máximo 100 deletes por request — previene abuso
   if (ids.length > 100) {
     return NextResponse.json({ error: 'Too many IDs' }, { status: 400 })
   }
