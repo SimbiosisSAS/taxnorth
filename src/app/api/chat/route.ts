@@ -86,6 +86,8 @@ export async function POST(req: NextRequest) {
       .limit(10)
 
     const { context, sources } = await getRelevantContext(trimmedMessage)
+    console.log('RAG sources found:', sources)
+console.log('RAG context length:', context.length)
 
     const systemWithContext = context
       ? `${TAXNORTH_SYSTEM_PROMPT}
