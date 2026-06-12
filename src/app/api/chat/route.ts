@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
       return new Response('Failed to create conversation', { status: 500 })
     }
 
-    // Rate limiting
     const windowStart = new Date(
       Date.now() - SESSION_WINDOW_HOURS * 60 * 60 * 1000
     ).toISOString()
@@ -60,7 +59,7 @@ export async function POST(req: NextRequest) {
       console.warn(`Rate limit hit — session: ${sessionId}, IP: ${ip}`)
       return new Response(
         JSON.stringify({
-          error: 'You have reached the daily message limit for this session. Please try again tomorrow or contact hello@taxnorth.ca for assistance.'
+          error: 'You have reached the daily message limit. Please try again tomorrow or contact hello@taxnorth.ca for assistance.'
         }),
         {
           status: 429,
@@ -88,19 +87,15 @@ export async function POST(req: NextRequest) {
 
     const { context, sources } = await getRelevantContext(trimmedMessage)
 
-const citationInstruction = sources.length > 0
-  ? `\n\nSOURCES USED IN THIS RESPONSE:\n${sources.map(s => `— ${s}`).join('\n')}\nAt the end of your response, add a brief "Sources:" section listing only the sources above that were actually relevant to your answer.`
-  : ''
-
-const systemWithContext = context
-  ? `${TAXNORTH_SYSTEM_PROMPT}
+    const systemWithContext = context
+      ? `${TAXNORTH_SYSTEM_PROMPT}
 
 VERIFIED INFORMATION FROM CRA DOCUMENTS:
 Use the following verified information to answer accurately.
 Always prefer this over general knowledge when available.
 
-${context}${citationInstruction}`
-  : TAXNORTH_SYSTEM_PROMPT
+${context}`
+      : TAXNORTH_SYSTEM_PROMPT
 
     const stream = await openrouter.chat.completions.create({
       model: DEEPSEEK_MODEL,
@@ -114,7 +109,6 @@ ${context}${citationInstruction}`
       ],
     })
 
-    // Acumular respuesta completa primero
     let rawResponse = ''
     for await (const chunk of stream) {
       const text = chunk.choices[0]?.delta?.content || ''
@@ -122,16 +116,19 @@ ${context}${citationInstruction}`
     }
 
     // Limpiar etiquetas internas de DeepSeek
-    const cleanedResponse = cleanDeepSeekResponse(rawResponse)
+    let cleanedResponse = cleanDeepSeekResponse(rawResponse)
 
-    // Guardar en Supabase
+    // Agregar fuentes automáticamente
+    if (sources.length > 0) {
+      cleanedResponse += `\n\n---\n**Sources:** ${sources.join(' · ')}`
+    }
+
     await supabaseAdmin.from('messages').insert({
       conversation_id: conversation.id,
       role: 'assistant',
       content: cleanedResponse,
     })
 
-    // Enviar al cliente en chunks pequeños para mantener UX fluida
     const readableStream = new ReadableStream({
       start(controller) {
         const chunkSize = 30
