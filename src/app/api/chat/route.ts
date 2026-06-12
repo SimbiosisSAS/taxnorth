@@ -7,14 +7,8 @@ import { NextRequest } from 'next/server'
 const SESSION_MESSAGE_LIMIT = 20
 const SESSION_WINDOW_HOURS = 24
 
-function cleanDeepSeekResponse(text: string): string {
-  return text
-    .replace(/<ds_safety>[\s\S]*?<\/ds_safety>/g, '')
-    .replace(/<ds_thinking>[\s\S]*?<\/ds_thinking>/g, '')
-    .replace(/<\/?(ds_safety|ds_thinking|think|thinking)[^>]*>/g, '')
-    .replace(/^N\/A\s*/i, '')
-    .trim()
-}
+const THINK_OPEN = ['<ds_thinking>', '<think>', '<thinking>']
+const THINK_CLOSE = ['</ds_thinking>', '</think>', '</thinking>']
 
 export async function POST(req: NextRequest) {
   try {
@@ -58,13 +52,8 @@ export async function POST(req: NextRequest) {
     if ((messageCount || 0) >= SESSION_MESSAGE_LIMIT) {
       console.warn(`Rate limit hit — session: ${sessionId}, IP: ${ip}`)
       return new Response(
-        JSON.stringify({
-          error: 'You have reached the daily message limit. Please try again tomorrow or contact hello@taxnorth.ca for assistance.'
-        }),
-        {
-          status: 429,
-          headers: { 'Content-Type': 'application/json', 'Retry-After': '86400' }
-        }
+        JSON.stringify({ error: 'You have reached the daily message limit. Please try again tomorrow or contact hello@taxnorth.ca for assistance.' }),
+        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': '86400' } }
       )
     }
 
@@ -86,8 +75,6 @@ export async function POST(req: NextRequest) {
       .limit(10)
 
     const { context, sources } = await getRelevantContext(trimmedMessage)
-    console.log('RAG sources found:', sources)
-console.log('RAG context length:', context.length)
 
     const systemWithContext = context
       ? `${TAXNORTH_SYSTEM_PROMPT}
@@ -99,7 +86,7 @@ Always prefer this over general knowledge when available.
 ${context}`
       : TAXNORTH_SYSTEM_PROMPT
 
-    const stream = await openrouter.chat.completions.create({
+    const openrouterStream = await openrouter.chat.completions.create({
       model: DEEPSEEK_MODEL,
       stream: true,
       messages: [
@@ -111,34 +98,84 @@ ${context}`
       ],
     })
 
-    let rawResponse = ''
-    for await (const chunk of stream) {
-      const text = chunk.choices[0]?.delta?.content || ''
-      if (text) rawResponse += text
-    }
-
-    // Limpiar etiquetas internas de DeepSeek
-    let cleanedResponse = cleanDeepSeekResponse(rawResponse)
-
-    // Agregar fuentes automáticamente
-    if (sources.length > 0) {
-      cleanedResponse += `\n\n---\n**Sources:** ${sources.join(' · ')}`
-    }
-
-    await supabaseAdmin.from('messages').insert({
-      conversation_id: conversation.id,
-      role: 'assistant',
-      content: cleanedResponse,
-    })
+    const enc = new TextEncoder()
+    let fullRaw = ''
+    let fullCleaned = ''
+    let sourcesText = ''
 
     const readableStream = new ReadableStream({
-      start(controller) {
-        const chunkSize = 30
-        for (let i = 0; i < cleanedResponse.length; i += chunkSize) {
-          controller.enqueue(
-            new TextEncoder().encode(cleanedResponse.slice(i, i + chunkSize))
-          )
+      async start(controller) {
+        let preBuffer = ''
+        let streamingStarted = false
+        let inThinkBlock = false
+
+        for await (const chunk of openrouterStream) {
+          const text = chunk.choices[0]?.delta?.content || ''
+          if (!text) continue
+
+          fullRaw += text
+
+          if (streamingStarted) {
+            // Check for inline think tags
+            if (THINK_OPEN.some(t => text.includes(t))) inThinkBlock = true
+            if (inThinkBlock) {
+              if (THINK_CLOSE.some(t => text.includes(t))) inThinkBlock = false
+              continue
+            }
+            fullCleaned += text
+            controller.enqueue(enc.encode(text))
+          } else {
+            preBuffer += text
+            const hasOpen = THINK_OPEN.some(t => preBuffer.includes(t))
+            const hasClose = THINK_CLOSE.some(t => preBuffer.includes(t))
+
+            if (!hasOpen || hasClose) {
+              // No thinking block or it's complete — start streaming
+              streamingStarted = true
+              let toSend = preBuffer
+              THINK_OPEN.forEach((open, i) => {
+                const close = THINK_CLOSE[i]
+                const regex = new RegExp(open.replace(/[<>]/g, c => `\\${c}`) + '[\\s\\S]*?' + close.replace(/[<>\/]/g, c => `\\${c}`), 'gi')
+                toSend = toSend.replace(regex, '')
+              })
+              toSend = toSend.replace(/^N\/A\s*/i, '').trim()
+              if (toSend) {
+                fullCleaned += toSend
+                controller.enqueue(enc.encode(toSend))
+              }
+              preBuffer = ''
+            }
+          }
         }
+
+        // Flush preBuffer if stream ended before starting
+        if (!streamingStarted && preBuffer) {
+          let toSend = preBuffer
+          THINK_OPEN.forEach((open, i) => {
+            const close = THINK_CLOSE[i]
+            const regex = new RegExp(open.replace(/[<>]/g, c => `\\${c}`) + '[\\s\\S]*?' + close.replace(/[<>\/]/g, c => `\\${c}`), 'gi')
+            toSend = toSend.replace(regex, '')
+          })
+          toSend = toSend.replace(/^N\/A\s*/i, '').trim()
+          if (toSend) {
+            fullCleaned += toSend
+            controller.enqueue(enc.encode(toSend))
+          }
+        }
+
+        // Append sources once
+        if (sources.length > 0) {
+          sourcesText = `\n\n---\n**Sources:** ${sources.join(' · ')}`
+          controller.enqueue(enc.encode(sourcesText))
+        }
+
+        // Save to Supabase
+        await supabaseAdmin.from('messages').insert({
+          conversation_id: conversation.id,
+          role: 'assistant',
+          content: fullCleaned + sourcesText,
+        })
+
         controller.close()
       },
     })
