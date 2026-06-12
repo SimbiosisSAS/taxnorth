@@ -74,8 +74,22 @@ export async function getRelevantContext(
         .filter((s: string) => !s.includes('hrblock') && !s.includes('turbotax') && !s.includes('software-vs'))
     )]
 
-    const sourceLabels = (uniqueSources as string[])
-  .map((s: string) => SOURCE_LABELS[s] || s)
+    function slugToLabel(slug: string): string {
+  if (SOURCE_LABELS[slug]) return SOURCE_LABELS[slug]
+  
+  // Auto-format unknown slugs
+  const clean = slug
+    .replace(/-\d{4}$/, '')  // remove year suffix like -2026
+    .replace(/-fr$/, ' (FR)') // mark french versions
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+  
+  return `CRA — ${clean} (canada.ca)`
+}
+
+const sourceLabels = (uniqueSources as string[])
+  .map((s: string) => slugToLabel(s))
   .filter(Boolean)
 
     const context = results
