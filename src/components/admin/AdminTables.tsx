@@ -265,7 +265,7 @@ export function ConversationsTable({ conversations }: { conversations: Conversat
               </td>
               <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(conv.created_at).toLocaleDateString('en-CA')}</td>
               <td style={tdStyle}>
-                <a href={`/admin/conversations/${conv.id}?key=${adminKey}`} style={{ color: '#F4A332', fontSize: '13px', fontWeight: 600 }}>
+                <a href={`/admin/conversations/${conv.id}`} style={{ color: '#F4A332', fontSize: '13px', fontWeight: 600 }}>
                   View →
                 </a>
               </td>
