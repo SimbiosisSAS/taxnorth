@@ -26,7 +26,7 @@ interface Lead {
   created_at: string
 }
 
-export function UsersTable({ users, adminKey }: { users: User[], adminKey: string }) {
+export function UsersTable({ users }: { users: User[] }) {
   const [selected, setSelected] = useState<string[]>([])
   const [data, setData] = useState(users)
   const [loading, setLoading] = useState(false)
@@ -44,10 +44,10 @@ export function UsersTable({ users, adminKey }: { users: User[], adminKey: strin
     if (!confirm(`Delete ${selected.length} user(s)?`)) return
     setLoading(true)
     await fetch('/api/admin/delete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: adminKey, table: 'users', ids: selected })
-    })
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ table: 'users', ids: selected })
+})
     setData(prev => prev.filter(u => !selected.includes(u.id)))
     setSelected([])
     setLoading(false)

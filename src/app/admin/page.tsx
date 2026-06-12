@@ -1,16 +1,11 @@
 import { Flashlight, Users, MessageCircle, DollarSign, TrendingUp, Target } from 'lucide-react'
 import Link from 'next/link'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin as supabase } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
 import { UsersTable, LeadsTable } from '@/components/admin/AdminTables'
 import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 export default async function AdminPage() {
 
