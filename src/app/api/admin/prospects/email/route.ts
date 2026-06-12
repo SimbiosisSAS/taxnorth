@@ -7,41 +7,50 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 const EMAIL_PROMPTS = {
   cold: (prospect: Record<string, string>) => `
-Write a concise, professional cold outreach email from Andrés at TaxNorth.ca to a Canadian CPA firm.
+Write a concise cold outreach email from Andrés at TaxNorth.ca to a Canadian CPA firm.
 
 PROSPECT INFO:
 - Firm: ${prospect.firm_name}
 - Contact: ${prospect.contact_name || 'there'}
 - Province: ${prospect.province || 'Canada'}
 
-ABOUT TAXNORTH FOR CPAs:
-TaxNorth.ca is an AI-powered educational platform that guides newcomers to Canada through the tax system in 12 languages. When users need a professional CPA, TaxNorth matches them by province, language, and specialty and connects them for a $19.99 fee paid by the client.
+ABOUT TAXNORTH:
+TaxNorth.ca guides newcomers to Canada through the tax system for free, 
+in 12 languages. Over 500,000 newcomers arrive in Canada every year. 
+When they are ready to hire a professional, they pay $19.99 CAD to connect 
+with a CPA in our directory — they arrive committed, with their full tax 
+situation already explained.
 
-CPAs join the TaxNorth directory for $29/month (founding rate, locked forever). Benefits:
-- Pre-qualified leads matched to your province and languages
-- Full client details: name, email, phone, and tax situation
-- Access to Partner Portal dashboard to manage clients
-- No marketing effort required — clients come to you
-
-GOAL: Get the CPA to click the link and sign up directly. No call needed.
-
-CTA: Direct them to sign up at https://www.taxnorth.ca/partners
+DIRECTORY PRICING:
+- $149/year flat — no per-lead fees, no commissions
+- Monthly plans available for those who prefer flexibility
+- Money-back guarantee: if we don't send at least one new client 
+  in 12 months, full refund, no questions asked
 
 RULES:
-- Maximum 150 words in the body
-- Lead with the benefit for them (more clients, no marketing)
-- Mention the $29/month founding rate and that it locks in forever
-- End with a clear, single CTA: sign up at taxnorth.ca/partners
-- Do NOT ask for a call or meeting
+- Maximum 120 words in the body
+- Open with the contact name only — no "Hi" or "Dear"
+- Lead with the market opportunity for the CPA, not with TaxNorth
+- Mention that clients pay $19.99 to connect — they are not cold leads
+- Include the money-back guarantee
+- End with a soft CTA — a question inviting a reply, not a signup link
+- Tone: direct, peer-to-peer, not salesy
 - Do NOT use "I hope this email finds you well"
-- Subject line should be benefit-focused, not salesy
+- Do NOT use "No effort required" or "perfect fit"
+- Do NOT use "locked forever"
 
-Return ONLY a JSON object with this exact format:
+Subject line rules:
+- Reference leads or clients and the province
+- Maximum 8 words
+- No emojis
+
+Return ONLY a JSON object:
 {"subject": "...", "body": "..."}
 `,
 
   followup: (prospect: Record<string, string>) => `
-Write a short follow-up email from Andrés at TaxNorth.ca. The prospect has not responded to the first email.
+Write a short follow-up email from Andrés at TaxNorth.ca. 
+The CPA has not responded to the first email.
 
 PROSPECT INFO:
 - Firm: ${prospect.firm_name}
@@ -49,24 +58,29 @@ PROSPECT INFO:
 - Province: ${prospect.province || 'Canada'}
 
 CONTEXT:
-TaxNorth connects newcomers to Canada (500K+ per year) with licensed CPAs. CPAs pay $29/month (founding rate, locked forever) and receive pre-qualified leads matched by province, language, and specialty — no marketing needed. Sign up at taxnorth.ca/partners.
+TaxNorth connects newcomers (500K+ per year) with licensed CPAs. 
+Clients pay $19.99 to connect — they arrive pre-qualified.
+Directory: $149/year, money-back guarantee if no clients in 12 months.
 
-GOAL: Re-engage with a different angle. Use the stat that 500,000+ newcomers arrive in Canada every year and most don't know they need a CPA. This is an untapped client base.
+GOAL: Re-engage with a different angle. Focus on the fact that most 
+newcomers don't know they need a CPA — this is an untapped client base 
+that actively searches by language and province.
 
 RULES:
 - Maximum 80 words
-- Different angle from the first email — focus on the size of the newcomer market
-- Acknowledge they may be busy
-- End with the same CTA: taxnorth.ca/partners
+- Different angle from cold email — focus on untapped market size
+- Acknowledge they may be busy — one sentence maximum
+- End with one soft question inviting a reply
+- Do NOT include a signup link in this email
 - Do NOT ask for a call
-- One soft question to invite a reply if they're not ready to sign up
 
-Return ONLY a JSON object with this exact format:
+Return ONLY a JSON object:
 {"subject": "...", "body": "..."}
 `,
 
   final: (prospect: Record<string, string>) => `
-Write a final "last chance" email from Andrés at TaxNorth.ca. This is the last email before moving on.
+Write a final "last touch" email from Andrés at TaxNorth.ca. 
+This is the last outreach before moving on.
 
 PROSPECT INFO:
 - Firm: ${prospect.firm_name}
@@ -74,18 +88,21 @@ PROSPECT INFO:
 - Province: ${prospect.province || 'Canada'}
 
 CONTEXT:
-TaxNorth is filling its CPA directory by province. Once a province has enough CPAs, new spots are limited. CPAs pay $29/month founding rate, locked forever. taxnorth.ca/partners
+TaxNorth is filling its CPA directory province by province. 
+$149/year, money-back guarantee. taxnorth.ca/partners
 
-GOAL: Create gentle urgency around limited spots in their province and leave the door open.
+GOAL: Create gentle urgency around limited spots in their province 
+and leave the door completely open for the future.
 
 RULES:
 - Maximum 60 words
-- Mention that spots in their province are filling up
-- Leave the link: taxnorth.ca/partners
-- Warm, not aggressive
+- Mention that the directory in their province is nearly full
+- No pressure — warm and respectful tone
+- Include the link: taxnorth.ca/partners
+- Leave the door open — "no worries if the timing isn't right"
 - Do NOT ask for a call
 
-Return ONLY a JSON object with this exact format:
+Return ONLY a JSON object:
 {"subject": "...", "body": "..."}
 `
 }

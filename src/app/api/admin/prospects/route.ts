@@ -1,7 +1,16 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+function isAuthorized(req: NextRequest): boolean {
+  const adminCookie = req.cookies.get('taxnorth_admin')?.value
+  return adminCookie === process.env.ADMIN_KEY
+}
+
+export async function GET(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { data } = await supabaseAdmin
     .from('prospects')
     .select('*, prospect_activities(id, type, description, activity_date)')
@@ -10,6 +19,10 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const body = await req.json()
   const { data, error } = await supabaseAdmin
     .from('prospects')
@@ -21,6 +34,10 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const body = await req.json()
   const { id, ...updates } = body
   const { data, error } = await supabaseAdmin
