@@ -124,7 +124,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
     await fetch('/api/admin/delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: adminKey, table: 'leads', ids: selected })
+      body: JSON.stringify({ table: 'leads', ids: selected })
     })
     setData(prev => prev.filter(l => !selected.includes(l.id)))
     setSelected([])
