@@ -14,12 +14,6 @@ export async function POST(req: NextRequest) {
   try {
     const { message, sessionId } = await req.json()
 
-    if (!message || !sessionId) {
-      return new Response('Missing required fields', { status: 400 })
-    }
-
-const { message, sessionId } = await req.json()
-
 // AGREGAR ESTO — validación de formato UUID
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 if (!message || !sessionId || !uuidRegex.test(sessionId)) {
