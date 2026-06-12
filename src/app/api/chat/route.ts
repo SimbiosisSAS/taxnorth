@@ -86,17 +86,21 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: true })
       .limit(10)
 
-    const context = await getRelevantContext(trimmedMessage)
+    const { context, sources } = await getRelevantContext(trimmedMessage)
 
-    const systemWithContext = context
-      ? `${TAXNORTH_SYSTEM_PROMPT}
+const citationInstruction = sources.length > 0
+  ? `\n\nSOURCES USED IN THIS RESPONSE:\n${sources.map(s => `— ${s}`).join('\n')}\nAt the end of your response, add a brief "Sources:" section listing only the sources above that were actually relevant to your answer.`
+  : ''
+
+const systemWithContext = context
+  ? `${TAXNORTH_SYSTEM_PROMPT}
 
 VERIFIED INFORMATION FROM CRA DOCUMENTS:
 Use the following verified information to answer accurately.
 Always prefer this over general knowledge when available.
 
-${context}`
-      : TAXNORTH_SYSTEM_PROMPT
+${context}${citationInstruction}`
+  : TAXNORTH_SYSTEM_PROMPT
 
     const stream = await openrouter.chat.completions.create({
       model: DEEPSEEK_MODEL,
