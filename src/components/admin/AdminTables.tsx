@@ -104,7 +104,7 @@ export function UsersTable({ users }: { users: User[] }) {
   )
 }
 
-export function LeadsTable({ leads, adminKey }: { leads: Lead[], adminKey: string }) {
+export function LeadsTable({ leads }: { leads: Lead[] }) {
   const [selected, setSelected] = useState<string[]>([])
   const [data, setData] = useState(leads)
   const [loading, setLoading] = useState(false)
@@ -194,7 +194,7 @@ interface Conversation {
   created_at: string
 }
 
-export function ConversationsTable({ conversations, adminKey }: { conversations: Conversation[], adminKey: string }) {
+export function ConversationsTable({ leads }: { leads: Lead[] }) {
   const [selected, setSelected] = useState<string[]>([])
   const [data, setData] = useState(conversations)
   const [loading, setLoading] = useState(false)
