@@ -137,7 +137,7 @@ export default async function AdminPage() {
             <Users className="w-5 h-5 text-lantern-amber" />
             Registered Users ({totalUsers || 0})
           </h2>
-          <UsersTable users={usersWithConversations} adminKey="" />
+          <UsersTable users={usersWithConversations} />
         </div>
 
         {/* LEADS TABLE */}
@@ -146,7 +146,7 @@ export default async function AdminPage() {
             <TrendingUp className="w-5 h-5 text-maple-green" />
             Recent Leads ({totalLeads || 0})
           </h2>
-          <LeadsTable leads={recentLeads || []} adminKey="" />
+          <LeadsTable leads={recentLeads || []} />
         </div>
 
       </div>
