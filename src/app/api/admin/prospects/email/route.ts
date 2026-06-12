@@ -109,7 +109,7 @@ Return ONLY a JSON object:
 
 export async function POST(req: NextRequest) {
   try {
-    const { prospectId, templateType, send } = await req.json()
+    const { prospectId, templateType, send, subject: providedSubject, body: providedBody } = await req.json()
 
     if (!prospectId || !templateType) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -125,25 +125,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Prospect not found' }, { status: 404 })
     }
 
-    const promptFn = EMAIL_PROMPTS[templateType as keyof typeof EMAIL_PROMPTS]
-    if (!promptFn) {
-      return NextResponse.json({ error: 'Invalid template type' }, { status: 400 })
-    }
-
-    const completion = await openrouter.chat.completions.create({
-      model: 'deepseek/deepseek-v4-flash',
-      messages: [{ role: 'user', content: promptFn(prospect) }],
-      temperature: 0.7,
-    })
-
-    const content = completion.choices[0]?.message?.content || ''
-
     let emailData: { subject: string; body: string }
-    try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/)
-      emailData = JSON.parse(jsonMatch?.[0] || content)
-    } catch {
-      return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 })
+
+    // Si el cliente envía contenido editado y es un envío real, úsalo directamente
+    if (send && providedSubject && providedBody) {
+      emailData = { subject: providedSubject, body: providedBody }
+    } else {
+      const promptFn = EMAIL_PROMPTS[templateType as keyof typeof EMAIL_PROMPTS]
+      if (!promptFn) {
+        return NextResponse.json({ error: 'Invalid template type' }, { status: 400 })
+      }
+
+      const completion = await openrouter.chat.completions.create({
+        model: 'deepseek/deepseek-v4-flash',
+        messages: [{ role: 'user', content: promptFn(prospect) }],
+        temperature: 0.7,
+      })
+
+      const content = completion.choices[0]?.message?.content || ''
+
+      try {
+        const jsonMatch = content.match(/\{[\s\S]*\}/)
+        emailData = JSON.parse(jsonMatch?.[0] || content)
+      } catch {
+        return NextResponse.json({ error: 'Failed to parse AI response' }, { status: 500 })
+      }
     }
 
     if (!send) {
@@ -160,32 +166,17 @@ export async function POST(req: NextRequest) {
       to: recipientEmail,
       subject: emailData.subject,
       text: emailData.body,
-      html: `
-        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;color:#1A2744;line-height:1.6">
-          ${emailData.body.split('\n').map((line: string) =>
-            line.trim() ? `<p style="margin:0 0 12px">${line}</p>` : ''
-          ).join('')}
-          <hr style="border:none;border-top:1px solid #EEF1F7;margin:24px 0"/>
-          <p style="font-size:12px;color:#aaa;margin:0">
-            Andrés Castaneda — TaxNorth.ca<br/>
-            <a href="https://www.taxnorth.ca/partners" style="color:#F4A332">
-              taxnorth.ca/partners
-            </a>
-          </p>
-        </div>
-      `
     })
 
+    // Log activity automáticamente
     await supabaseAdmin.from('prospect_activities').insert({
       prospect_id: prospectId,
       type: 'email',
-      description: `${
-        templateType === 'cold' ? 'Cold outreach' :
-        templateType === 'followup' ? 'Follow-up' : 'Final'
-      } email sent: "${emailData.subject}"`,
+      description: `${templateType === 'cold' ? 'Cold email' : templateType === 'followup' ? 'Follow-up email' : 'Final email'} sent: "${emailData.subject}"`,
       activity_date: new Date().toISOString(),
     })
 
+    // Actualizar last_contact y status si estaba en prospect
     await supabaseAdmin
       .from('prospects')
       .update({
@@ -194,10 +185,10 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', prospectId)
 
-    return NextResponse.json({ success: true, subject: emailData.subject })
+    return NextResponse.json({ success: true })
 
   } catch (error) {
-    console.error('Email agent error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Email error:', error)
+    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
   }
 }

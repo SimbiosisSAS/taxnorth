@@ -48,6 +48,18 @@ const ACTIVITY_ICONS: Record<string, React.ReactElement> = {
 const PROVINCES = ['Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
   'Newfoundland and Labrador', 'Nova Scotia', 'Ontario', 'Quebec', 'Saskatchewan']
 
+const FOLLOW_UP_DAYS = 5
+
+function needsFollowUp(prospect: Prospect): boolean {
+  if (!['contacted', 'follow_up', 'negotiating'].includes(prospect.status)) return false
+  if (prospect.status === 'follow_up') return true
+  if (!prospect.last_contact_at) return false
+  const daysSince = Math.floor(
+    (Date.now() - new Date(prospect.last_contact_at).getTime()) / (1000 * 60 * 60 * 24)
+  )
+  return daysSince >= FOLLOW_UP_DAYS
+}
+
 export default function ProspectsManager() {
   const [prospects, setProspects] = useState<Prospect[]>([])
   const [selected, setSelected] = useState<Prospect | null>(null)
@@ -56,7 +68,6 @@ export default function ProspectsManager() {
   const [loading, setLoading] = useState(true)
   const [filterStatus, setFilterStatus] = useState('all')
 
-  // Email agent states
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [emailTemplate, setEmailTemplate] = useState<'cold' | 'followup' | 'final'>('cold')
   const [generatedEmail, setGeneratedEmail] = useState<{ subject: string; body: string } | null>(null)
@@ -152,6 +163,8 @@ export default function ProspectsManager() {
         prospectId: selected.id,
         templateType: emailTemplate,
         send: true,
+        subject: generatedEmail.subject,
+        body: generatedEmail.body,
       }),
     })
     setEmailSending(false)
@@ -166,13 +179,15 @@ export default function ProspectsManager() {
 
   const filtered = filterStatus === 'all'
     ? prospects
+    : filterStatus === 'needs_followup'
+    ? prospects.filter(needsFollowUp)
     : prospects.filter(p => p.status === filterStatus)
 
   const stats = {
     total: prospects.length,
     contacted: prospects.filter(p => ['contacted', 'follow_up', 'negotiating'].includes(p.status)).length,
     partners: prospects.filter(p => p.status === 'partner').length,
-    follow_up: prospects.filter(p => p.status === 'follow_up').length,
+    follow_up: prospects.filter(needsFollowUp).length,
   }
 
   const templateLabels = {
@@ -207,11 +222,13 @@ export default function ProspectsManager() {
           {[
             { label: 'Total Prospects', value: stats.total },
             { label: 'In Pipeline', value: stats.contacted },
-            { label: 'Follow Up Needed', value: stats.follow_up },
+            { label: 'Follow Up Needed', value: stats.follow_up, highlight: stats.follow_up > 0 },
             { label: 'Became Partners', value: stats.partners },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-card p-4">
-              <p className="font-heading font-bold text-midnight-north text-2xl">{s.value}</p>
+            <div key={s.label} className={`bg-white rounded-card p-4 ${s.highlight ? 'border-2 border-lantern-amber' : ''}`}>
+              <p className={`font-heading font-bold text-2xl ${s.highlight ? 'text-lantern-amber' : 'text-midnight-north'}`}>
+                {s.value}
+              </p>
               <p className="text-deep-ink/50 text-xs">{s.label}</p>
             </div>
           ))}
@@ -230,6 +247,18 @@ export default function ProspectsManager() {
               {s === 'all' ? 'All' : s.replace('_', ' ')}
             </button>
           ))}
+          {stats.follow_up > 0 && (
+            <button
+              onClick={() => setFilterStatus('needs_followup')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                filterStatus === 'needs_followup'
+                  ? 'bg-lantern-amber text-midnight-north'
+                  : 'bg-lantern-amber/20 text-lantern-amber hover:bg-lantern-amber/30'
+              }`}
+            >
+              ⚡ Follow up needed ({stats.follow_up})
+            </button>
+          )}
         </div>
 
         <div className="flex gap-6">
@@ -286,10 +315,16 @@ export default function ProspectsManager() {
                       <td className="px-4 py-3 text-sm text-deep-ink/60">
                         {prospect.prospect_activities?.length || 0}
                       </td>
-                      <td className="px-4 py-3 text-xs text-deep-ink/40">
-                        {prospect.last_contact_at
-                          ? new Date(prospect.last_contact_at).toLocaleDateString('en-CA')
-                          : '—'}
+                      <td className="px-4 py-3 text-xs">
+                        {prospect.last_contact_at ? (
+                          <span className={needsFollowUp(prospect)
+                            ? 'text-lantern-amber font-semibold'
+                            : 'text-deep-ink/40'
+                          }>
+                            {new Date(prospect.last_contact_at).toLocaleDateString('en-CA')}
+                            {needsFollowUp(prospect) && ' ⚡'}
+                          </span>
+                        ) : '—'}
                       </td>
                       <td className="px-4 py-3">
                         <ChevronRight className="w-4 h-4 text-deep-ink/30" />
@@ -337,6 +372,18 @@ export default function ProspectsManager() {
                   <p className="text-deep-ink/60 text-xs bg-fog-gray rounded p-2">{selected.notes}</p>
                 )}
               </div>
+
+              {needsFollowUp(selected) && (
+                <div className="bg-lantern-amber/10 border border-lantern-amber/30 rounded-button px-3 py-2 mb-3">
+                  <p className="text-lantern-amber text-xs font-semibold">⚡ Follow up needed</p>
+                  <p className="text-lantern-amber/70 text-xs">
+                    Last contact was{' '}
+                    {selected.last_contact_at
+                      ? `${Math.floor((Date.now() - new Date(selected.last_contact_at).getTime()) / (1000 * 60 * 60 * 24))} days ago`
+                      : 'unknown'}
+                  </p>
+                </div>
+              )}
 
               {/* LOG ACTIVITY */}
               <button
