@@ -214,7 +214,7 @@ export function ConversationsTable({ conversations }: { conversations: Conversat
     await fetch('/api/admin/delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: adminKey, table: 'conversations', ids: selected })
+      body: JSON.stringify({ table: 'conversations', ids: selected })
     })
     setData(prev => prev.filter(c => !selected.includes(c.id)))
     setSelected([])
