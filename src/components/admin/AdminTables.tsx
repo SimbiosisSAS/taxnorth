@@ -194,7 +194,7 @@ interface Conversation {
   created_at: string
 }
 
-export function ConversationsTable({ leads }: { leads: Lead[] }) {
+export function ConversationsTable({ conversations }: { conversations: Conversation[] }) {
   const [selected, setSelected] = useState<string[]>([])
   const [data, setData] = useState(conversations)
   const [loading, setLoading] = useState(false)

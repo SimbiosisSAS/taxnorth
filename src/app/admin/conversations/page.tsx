@@ -69,9 +69,8 @@ export default async function AdminConversationsPage() {
 
         <div className="bg-white rounded-card p-6 overflow-x-auto">
           <ConversationsTable
-            conversations={conversationsWithData}
-            adminKey=""
-          />
+  conversations={conversationsWithData}
+/>
         </div>
       </div>
     </div>
