@@ -6,43 +6,41 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
 const PDF_MODEL = 'anthropic/claude-3-haiku'
 
-const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Extract all information from this document.
+const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Your task is to carefully read this document and extract the actual data.
 
-First identify the document type: T4, T4A, T4E, T5, T3, T2202, RRSP Receipt, Notice of Assessment, T1135, T2200, T5018, or other.
+STEP 1: Identify the exact document type by reading the document title or header:
+- T4: Statement of Remuneration Paid
+- T4A: Statement of Pension, Retirement, Annuity, and Other Income
+- T4E: Statement of Employment Insurance Benefits
+- T5: Statement of Investment Income
+- T3: Statement of Trust Income
+- T2202: Tuition and Enrolment Certificate
+- T5018: Statement of Contract Payments
+- Notice of Assessment: CRA assessment notice
+- RRSP Receipt: RRSP contribution receipt
+- Other: describe exactly what you see
 
-Extract ALL fields visible in the document. For T4 documents extract:
-- Employer name and address
-- Employee name
-- Tax year
-- Box 14 (Employment income)
-- Box 22 (Income tax deducted)
-- Box 16 (CPP contributions)
-- Box 18 (EI premiums)
-- Box 24 (EI insurable earnings)
-- Box 26 (CPP/QPP pensionable earnings)
-- Any other boxes that have values
+STEP 2: Extract the tax year from the document.
 
-For T5018 documents extract:
-- Payer name and business number
-- Recipient name and SIN
-- Tax year
-- Total payments made
-- Any other fields present
+STEP 3: Extract ALL fields that actually appear in this document. Do NOT invent or assume values. Only extract what you can actually read from the document.
 
-Return ONLY a valid JSON object, no other text:
+For T5018 documents extract: payer name, payer business number, recipient name, recipient SIN or business number, total contract payments, year, province code, and any other visible fields.
+
+For T4 documents extract: employer name, employee name, tax year, and all boxes that have actual values.
+
+For all other documents: extract every field and value visible.
+
+Return ONLY a valid JSON object with the ACTUAL extracted values — no placeholders, no examples:
 {
-  "document_type": "T4",
-  "tax_year": "2025",
-  "issuer_name": "Employer or institution name",
-  "recipient_name": "Employee or taxpayer name",
+  "document_type": "ACTUAL TYPE FROM DOCUMENT HEADER",
+  "tax_year": "ACTUAL YEAR FOUND IN DOCUMENT",
+  "issuer_name": "ACTUAL ISSUER NAME",
+  "recipient_name": "ACTUAL RECIPIENT NAME",
   "fields": {
-    "box_14_employment_income": "52431.00",
-    "box_22_income_tax_deducted": "8124.50",
-    "box_16_cpp_contributions": "1234.00",
-    "box_18_ei_premiums": "987.00"
+    "field_name": "ACTUAL VALUE FROM DOCUMENT"
   },
-  "confidence": "high",
-  "notes": "Any relevant observations"
+  "confidence": "high|medium|low",
+  "notes": "any relevant observations about document quality or missing data"
 }`
 
 async function extractFromImage(
@@ -81,7 +79,7 @@ async function extractFromImage(
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-  console.log('Image extraction response:', content.substring(0, 300))
+  console.log('Image extraction:', content.substring(0, 400))
 
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in image response')
@@ -127,7 +125,7 @@ async function extractFromPDF(
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-  console.log('PDF extraction response:', content.substring(0, 300))
+  console.log('PDF extraction:', content.substring(0, 400))
 
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in PDF response')
@@ -220,7 +218,7 @@ export async function POST(req: NextRequest) {
       } else {
         extractedData = await extractFromImage(base64, file.type)
       }
-      console.log('Extraction success:', JSON.stringify(extractedData).substring(0, 200))
+      console.log('Extraction success:', JSON.stringify(extractedData).substring(0, 300))
     } catch (extractionError) {
       console.error('Extraction failed:', extractionError)
       extractionStatus = 'error'
