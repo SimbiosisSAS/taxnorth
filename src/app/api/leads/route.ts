@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
         notes,
         professional_name: professionalName || null,
         conversation_id: conversationId,
+        session_id: sessionId || null,
         referral_code: refCode,
         status: 'new',
       })
