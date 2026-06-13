@@ -65,12 +65,13 @@ export default function ChatClient() {
   const [isLoading, setIsLoading] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState(() => {
-    const newId = generateSessionId()
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('taxnorth_session', newId)
-    }
-    return newId
-  })
+  if (typeof window === 'undefined') return generateSessionId()
+  const existing = localStorage.getItem('taxnorth_session')
+  if (existing && uuidRegex.test(existing)) return existing
+  const newId = generateSessionId()
+  localStorage.setItem('taxnorth_session', newId)
+  return newId
+})
   const [recents, setRecents] = useState<RecentConversation[]>([])
   const [showReferral, setShowReferral] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
