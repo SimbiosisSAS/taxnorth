@@ -6,14 +6,24 @@ import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { useLanguage } from '@/context/LanguageContext'
 import { translations, languageNames, SupportedLanguage } from '@/lib/translations'
+import { trackEvent, trackMetaStandard } from '@/lib/analytics'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
 }
 
-function generateSessionId() {
-  return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function generateSessionId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
 }
 
 export default function ChatClient() {
@@ -23,27 +33,27 @@ export default function ChatClient() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId] = useState(() => {
-  if (typeof window !== 'undefined') {
-    const existing = localStorage.getItem('taxnorth_session')
-    if (existing) return existing
-    const newId = generateSessionId()
-    localStorage.setItem('taxnorth_session', newId)
-    return newId
-  }
-  return generateSessionId()
-})
+    if (typeof window !== 'undefined') {
+      const existing = localStorage.getItem('taxnorth_session')
+      if (existing && uuidRegex.test(existing)) return existing
+      const newId = generateSessionId()
+      localStorage.setItem('taxnorth_session', newId)
+      return newId
+    }
+    return generateSessionId()
+  })
   const [showReferral, setShowReferral] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
-const [showEmailCapture, setShowEmailCapture] = useState(false)
-const [captureEmail, setCaptureEmail] = useState('')
-const [emailSaved, setEmailSaved] = useState(false)
-const [savingEmail, setSavingEmail] = useState(false)
+  const [showEmailCapture, setShowEmailCapture] = useState(false)
+  const [captureEmail, setCaptureEmail] = useState('')
+  const [emailSaved, setEmailSaved] = useState(false)
+  const [savingEmail, setSavingEmail] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-  if (messages.length >= 6) setShowReferral(true)
-  if (messages.length === 4 && !emailSaved) setShowEmailCapture(true)
-}, [messages, emailSaved])
+    if (messages.length >= 6) setShowReferral(true)
+    if (messages.length === 4 && !emailSaved) setShowEmailCapture(true)
+  }, [messages, emailSaved])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -52,6 +62,16 @@ const [savingEmail, setSavingEmail] = useState(false)
   async function sendMessage(content: string) {
     if (!content.trim() || isLoading) return
     const userMessage: Message = { role: 'user', content }
+
+    if (messages.length === 0) {
+      trackEvent('chat_started', { language })
+    }
+
+    const userMessageCount = messages.filter(m => m.role === 'user').length
+    if (userMessageCount === 2) {
+      trackEvent('chat_engaged', { language, message_count: 3 })
+    }
+
     setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsLoading(true)
@@ -83,23 +103,31 @@ const [savingEmail, setSavingEmail] = useState(false)
       setIsLoading(false)
     }
   }
-async function saveEmail() {
-  if (!captureEmail || savingEmail) return
-  setSavingEmail(true)
-  try {
-    await fetch('/api/auth/request-link', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: captureEmail, sessionId }),
-    })
-    setEmailSaved(true)
-    setShowEmailCapture(false)
-  } catch (e) {
-    console.error(e)
-  } finally {
-    setSavingEmail(false)
+
+  function handleConnectClick() {
+    trackEvent('connect_clicked', { language, message_count: messages.length })
+    trackMetaStandard('InitiateCheckout', { value: 19.99, currency: 'CAD' })
   }
-}
+
+  async function saveEmail() {
+    if (!captureEmail || savingEmail) return
+    setSavingEmail(true)
+    try {
+      await fetch('/api/auth/request-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: captureEmail, sessionId }),
+      })
+      setEmailSaved(true)
+      setShowEmailCapture(false)
+      trackEvent('email_captured', { language })
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setSavingEmail(false)
+    }
+  }
+
   return (
     <div className="flex h-screen bg-warm-white">
 
@@ -158,7 +186,6 @@ async function saveEmail() {
         <div className="flex items-center justify-between px-6 py-3 border-b border-fog-gray bg-white">
           <span className="text-deep-ink/50 text-sm hidden md:block">{t.disclaimer}</span>
           <div className="flex items-center gap-3 ml-auto">
-            {/* Mobile language switcher */}
             <div className="relative md:hidden">
               <button
                 onClick={() => setShowLangMenu(!showLangMenu)}
@@ -181,11 +208,12 @@ async function saveEmail() {
               )}
             </div>
             <Link
-  href="/connect"
-  className="text-maple-green border border-maple-green text-xs font-semibold px-4 py-2.5 rounded-button hover:bg-maple-green hover:text-white transition-colors min-h-[44px] flex items-center"
->
-  {t.connectPro}
-</Link>
+              href="/connect"
+              onClick={handleConnectClick}
+              className="text-maple-green border border-maple-green text-xs font-semibold px-4 py-2.5 rounded-button hover:bg-maple-green hover:text-white transition-colors min-h-[44px] flex items-center"
+            >
+              {t.connectPro}
+            </Link>
           </div>
         </div>
 
@@ -194,7 +222,11 @@ async function saveEmail() {
           <div className="flex items-center justify-between px-6 py-3 bg-maple-green/10 border-l-4 border-maple-green">
             <p className="text-deep-ink text-sm font-medium">{t.referralText}</p>
             <div className="flex items-center gap-3">
-              <Link href="/connect" className="bg-maple-green text-white text-xs font-semibold px-3 py-1.5 rounded-button hover:opacity-90 transition-opacity">
+              <Link
+                href="/connect"
+                onClick={handleConnectClick}
+                className="bg-maple-green text-white text-xs font-semibold px-3 py-1.5 rounded-button hover:opacity-90 transition-opacity"
+              >
                 {t.referralButton}
               </Link>
               <button onClick={() => setShowReferral(false)}>
@@ -254,52 +286,53 @@ async function saveEmail() {
           </div>
         </div>
 
-        {/* INPUT */}
         {/* Mobile sticky CTA */}
-<div className="md:hidden px-6 py-2 bg-white border-t border-fog-gray">
-  <Link
-    href="/connect"
-    className="w-full flex items-center justify-center gap-2 bg-maple-green text-white font-semibold py-3 rounded-button text-sm hover:opacity-90 transition-opacity"
-  >
-    Connect with a licensed tax professional →
-  </Link>
-</div>
+        <div className="md:hidden px-6 py-2 bg-white border-t border-fog-gray">
+          <Link
+            href="/connect"
+            onClick={handleConnectClick}
+            className="w-full flex items-center justify-center gap-2 bg-maple-green text-white font-semibold py-3 rounded-button text-sm hover:opacity-90 transition-opacity"
+          >
+            Connect with a licensed tax professional →
+          </Link>
+        </div>
 
-{/* EMAIL CAPTURE */}
-{showEmailCapture && !emailSaved && (
-  <div className="px-6 py-3 bg-midnight-north/5 border-t border-fog-gray">
-    <div className="max-w-2xl mx-auto">
-      <p className="text-deep-ink font-medium text-sm mb-2">
-        💾 Save this conversation and get a reminder next tax season?
-      </p>
-      <div className="flex gap-2">
-        <input
-          type="email"
-          value={captureEmail}
-          onChange={(e) => setCaptureEmail(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && saveEmail()}
-          placeholder="your@email.com"
-          className="flex-1 border border-fog-gray rounded-button px-3 py-2 text-sm text-deep-ink outline-none focus:border-lantern-amber transition-colors placeholder:text-deep-ink/40"
-        />
-        <button
-          onClick={saveEmail}
-          disabled={savingEmail || !captureEmail}
-          className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40"
-        >
-          {savingEmail ? 'Saving...' : 'Save'}
-        </button>
-        <button
-          onClick={() => setShowEmailCapture(false)}
-          className="text-deep-ink/40 text-sm px-2 hover:text-deep-ink transition-colors"
-        >
-          Skip
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+        {/* EMAIL CAPTURE */}
+        {showEmailCapture && !emailSaved && (
+          <div className="px-6 py-3 bg-midnight-north/5 border-t border-fog-gray">
+            <div className="max-w-2xl mx-auto">
+              <p className="text-deep-ink font-medium text-sm mb-2">
+                💾 Save this conversation and get a reminder next tax season?
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={captureEmail}
+                  onChange={(e) => setCaptureEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && saveEmail()}
+                  placeholder="your@email.com"
+                  className="flex-1 border border-fog-gray rounded-button px-3 py-2 text-sm text-deep-ink outline-none focus:border-lantern-amber transition-colors placeholder:text-deep-ink/40"
+                />
+                <button
+                  onClick={saveEmail}
+                  disabled={savingEmail || !captureEmail}
+                  className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity disabled:opacity-40"
+                >
+                  {savingEmail ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  onClick={() => setShowEmailCapture(false)}
+                  className="text-deep-ink/40 text-sm px-2 hover:text-deep-ink transition-colors"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
-<div className="border-t border-fog-gray bg-white px-6 py-4">
+        {/* INPUT */}
+        <div className="border-t border-fog-gray bg-white px-6 py-4">
           <div className="max-w-2xl mx-auto flex items-center gap-3">
             <div className="flex-1 flex items-center gap-2 border border-fog-gray rounded-button px-4 py-2.5 focus-within:border-lantern-amber transition-colors">
               <input
