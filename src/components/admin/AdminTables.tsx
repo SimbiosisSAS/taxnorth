@@ -26,6 +26,15 @@ interface Lead {
   created_at: string
 }
 
+interface Conversation {
+  id: string
+  firstMessage: string
+  messageCount: number
+  language: string
+  user_id: string | null
+  created_at: string
+}
+
 export function UsersTable({ users }: { users: User[] }) {
   const [selected, setSelected] = useState<string[]>([])
   const [data, setData] = useState(users)
@@ -43,63 +52,69 @@ export function UsersTable({ users }: { users: User[] }) {
     if (!selected.length) return
     if (!confirm(`Delete ${selected.length} user(s)?`)) return
     setLoading(true)
-    await fetch('/api/admin/delete', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ table: 'users', ids: selected })
-})
-    setData(prev => prev.filter(u => !selected.includes(u.id)))
-    setSelected([])
+    const res = await fetch('/api/admin/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'users', ids: selected })
+    })
+    if (res.ok) {
+      setData(prev => prev.filter(u => !selected.includes(u.id)))
+      setSelected([])
+    } else {
+      alert('Delete failed. Please refresh and try again.')
+    }
     setLoading(false)
   }
 
   return (
-    <div>
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       {selected.length > 0 && (
-        <div className="flex items-center gap-3 mb-4 p-3 bg-red-50 border border-red-200 rounded-button">
-          <span className="text-red-600 text-sm font-medium">{selected.length} selected</span>
+        <div className="bg-slate-50 p-3 border-b flex justify-between items-center">
+          <span className="text-sm font-medium">{selected.length} selected</span>
           <button
             onClick={deleteSelected}
             disabled={loading}
-            className="flex items-center gap-1.5 bg-red-600 text-white text-sm font-semibold px-3 py-1.5 rounded-button hover:opacity-90 disabled:opacity-50"
+            className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 hover:bg-red-700 disabled:opacity-50"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 size={14} />
             {loading ? 'Deleting...' : 'Delete selected'}
           </button>
         </div>
       )}
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ ...thStyle, width: 40 }}>
-              <input type="checkbox" onChange={toggleAll} checked={selected.length === data.length && data.length > 0} />
-            </th>
-            <th style={thStyle}>Email</th>
-            <th style={thStyle}>Source</th>
-            <th style={thStyle}>Conversations</th>
-            <th style={thStyle}>Registered</th>
-            <th style={thStyle}>Last seen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user, i) => (
-            <tr key={user.id} style={{ backgroundColor: selected.includes(user.id) ? '#FEF2F2' : i % 2 === 0 ? '#FAF8F5' : 'white' }}>
-              <td style={tdStyle}>
-                <input type="checkbox" checked={selected.includes(user.id)} onChange={() => toggle(user.id)} />
-              </td>
-              <td style={{ ...tdStyle, color: '#1A2744', fontWeight: 600 }}>{user.email}</td>
-              <td style={tdStyle}>
-                <span style={{ background: '#EEF1F7', color: '#1A2744', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>
-                  {user.source}
-                </span>
-              </td>
-              <td style={{ ...tdStyle, color: '#1A2744' }}>{user.conversations}</td>
-              <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(user.created_at).toLocaleDateString('en-CA')}</td>
-              <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(user.last_seen).toLocaleDateString('en-CA')}</td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th style={thStyle} className="w-10">
+                <input type="checkbox" onChange={toggleAll} checked={selected.length === data.length && data.length > 0} />
+              </th>
+              <th style={thStyle}>Email</th>
+              <th style={thStyle}>Source</th>
+              <th style={thStyle}>Conversations</th>
+              <th style={thStyle}>Registered</th>
+              <th style={thStyle}>Last seen</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {data.map((user) => (
+              <tr key={user.id} className="hover:bg-slate-50">
+                <td style={tdStyle}>
+                  <input type="checkbox" checked={selected.includes(user.id)} onChange={() => toggle(user.id)} />
+                </td>
+                <td style={tdStyle} className="font-medium">{user.email}</td>
+                <td style={tdStyle}>
+                  <span className="px-2 py-0.5 bg-slate-100 rounded text-[11px] uppercase tracking-wider text-slate-600">
+                    {user.source}
+                  </span>
+                </td>
+                <td style={tdStyle}>{user.conversations}</td>
+                <td style={tdStyle}>{new Date(user.created_at).toLocaleDateString('en-CA')}</td>
+                <td style={tdStyle}>{new Date(user.last_seen).toLocaleDateString('en-CA')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
@@ -121,77 +136,75 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
     if (!selected.length) return
     if (!confirm(`Delete ${selected.length} lead(s)?`)) return
     setLoading(true)
-    await fetch('/api/admin/delete', {
+    const res = await fetch('/api/admin/delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'leads', ids: selected })
     })
-    setData(prev => prev.filter(l => !selected.includes(l.id)))
-    setSelected([])
+    if (res.ok) {
+      setData(prev => prev.filter(l => !selected.includes(l.id)))
+      setSelected([])
+    } else {
+      alert('Delete failed. Please refresh and try again.')
+    }
     setLoading(false)
   }
 
   return (
-    <div>
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       {selected.length > 0 && (
-        <div className="flex items-center gap-3 mb-4 p-3 bg-red-50 border border-red-200 rounded-button">
-          <span className="text-red-600 text-sm font-medium">{selected.length} selected</span>
+        <div className="bg-slate-50 p-3 border-b flex justify-between items-center">
+          <span className="text-sm font-medium">{selected.length} selected</span>
           <button
             onClick={deleteSelected}
             disabled={loading}
-            className="flex items-center gap-1.5 bg-red-600 text-white text-sm font-semibold px-3 py-1.5 rounded-button hover:opacity-90 disabled:opacity-50"
+            className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 hover:bg-red-700 disabled:opacity-50"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 size={14} />
             {loading ? 'Deleting...' : 'Delete selected'}
           </button>
         </div>
       )}
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ ...thStyle, width: 40 }}>
-              <input type="checkbox" onChange={toggleAll} checked={selected.length === data.length && data.length > 0} />
-            </th>
-            <th style={thStyle}>Name</th>
-            <th style={thStyle}>Email</th>
-            <th style={thStyle}>Phone</th>
-            <th style={thStyle}>Province</th>
-            <th style={thStyle}>Professional</th>
-            <th style={thStyle}>Status</th>
-            <th style={thStyle}>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((lead, i) => (
-            <tr key={lead.id} style={{ backgroundColor: selected.includes(lead.id) ? '#FEF2F2' : i % 2 === 0 ? '#FAF8F5' : 'white' }}>
-              <td style={tdStyle}>
-                <input type="checkbox" checked={selected.includes(lead.id)} onChange={() => toggle(lead.id)} />
-              </td>
-              <td style={{ ...tdStyle, color: '#1A2744', fontWeight: 600 }}>{lead.full_name || '—'}</td>
-              <td style={tdStyle}><a href={`mailto:${lead.email}`} style={{ color: '#F4A332' }}>{lead.email}</a></td>
-              <td style={tdStyle}><a href={`tel:${lead.phone}`} style={{ color: '#F4A332' }}>{lead.phone || '—'}</a></td>
-              <td style={{ ...tdStyle, color: '#666' }}>{lead.province || '—'}</td>
-              <td style={{ ...tdStyle, color: '#666' }}>{lead.professional_name || 'TaxNorth match'}</td>
-              <td style={tdStyle}>
-                <span style={{ background: '#F4A33220', color: '#F4A332', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>
-                  {lead.status}
-                </span>
-              </td>
-              <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(lead.created_at).toLocaleDateString('en-CA')}</td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th style={thStyle} className="w-10">
+                <input type="checkbox" onChange={toggleAll} checked={selected.length === data.length && data.length > 0} />
+              </th>
+              <th style={thStyle}>Name</th>
+              <th style={thStyle}>Email</th>
+              <th style={thStyle}>Phone</th>
+              <th style={thStyle}>Province</th>
+              <th style={thStyle}>Professional</th>
+              <th style={thStyle}>Status</th>
+              <th style={thStyle}>Date</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {data.map((lead) => (
+              <tr key={lead.id} className="hover:bg-slate-50">
+                <td style={tdStyle}>
+                  <input type="checkbox" checked={selected.includes(lead.id)} onChange={() => toggle(lead.id)} />
+                </td>
+                <td style={tdStyle} className="font-medium">{lead.full_name || '—'}</td>
+                <td style={tdStyle}>{lead.email}</td>
+                <td style={tdStyle}>{lead.phone || '—'}</td>
+                <td style={tdStyle}>{lead.province || '—'}</td>
+                <td style={tdStyle}>{lead.professional_name || 'TaxNorth match'}</td>
+                <td style={tdStyle}>
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-[11px] font-medium uppercase">
+                    {lead.status}
+                  </span>
+                </td>
+                <td style={tdStyle}>{new Date(lead.created_at).toLocaleDateString('en-CA')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
-}
-interface Conversation {
-  id: string
-  firstMessage: string
-  messageCount: number
-  language: string
-  user_id: string | null
-  created_at: string
 }
 
 export function ConversationsTable({ conversations }: { conversations: Conversation[] }) {
@@ -211,68 +224,77 @@ export function ConversationsTable({ conversations }: { conversations: Conversat
     if (!selected.length) return
     if (!confirm(`Delete ${selected.length} conversation(s)?`)) return
     setLoading(true)
-    await fetch('/api/admin/delete', {
+    const res = await fetch('/api/admin/delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'conversations', ids: selected })
     })
-    setData(prev => prev.filter(c => !selected.includes(c.id)))
-    setSelected([])
+    if (res.ok) {
+      setData(prev => prev.filter(c => !selected.includes(c.id)))
+      setSelected([])
+    } else {
+      alert('Delete failed. Please refresh and try again.')
+    }
     setLoading(false)
   }
 
   return (
-    <div>
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       {selected.length > 0 && (
-        <div className="flex items-center gap-3 mb-4 p-3 bg-red-50 border border-red-200 rounded-button">
-          <span className="text-red-600 text-sm font-medium">{selected.length} selected</span>
-          <button onClick={deleteSelected} disabled={loading}
-            className="flex items-center gap-1.5 bg-red-600 text-white text-sm font-semibold px-3 py-1.5 rounded-button hover:opacity-90 disabled:opacity-50">
-            <Trash2 className="w-3.5 h-3.5" />
+        <div className="bg-slate-50 p-3 border-b flex justify-between items-center">
+          <span className="text-sm font-medium">{selected.length} selected</span>
+          <button
+            onClick={deleteSelected}
+            disabled={loading}
+            className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 hover:bg-red-700 disabled:opacity-50"
+          >
+            <Trash2 size={14} />
             {loading ? 'Deleting...' : 'Delete selected'}
           </button>
         </div>
       )}
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ ...thStyle, width: 40 }}>
-              <input type="checkbox" onChange={toggleAll} checked={selected.length === data.length && data.length > 0} />
-            </th>
-            <th style={thStyle}>First message</th>
-            <th style={thStyle}>Messages</th>
-            <th style={thStyle}>Language</th>
-            <th style={thStyle}>Has account</th>
-            <th style={thStyle}>Date</th>
-            <th style={thStyle}>View</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((conv, i) => (
-            <tr key={conv.id} style={{ backgroundColor: selected.includes(conv.id) ? '#FEF2F2' : i % 2 === 0 ? '#FAF8F5' : 'white' }}>
-              <td style={tdStyle}>
-                <input type="checkbox" checked={selected.includes(conv.id)} onChange={() => toggle(conv.id)} />
-              </td>
-              <td style={{ ...tdStyle, maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#1A2744' }}>
-                {conv.firstMessage}
-              </td>
-              <td style={{ ...tdStyle, color: '#1A2744', fontWeight: 600 }}>{conv.messageCount}</td>
-              <td style={{ ...tdStyle, color: '#666' }}>{conv.language || 'en'}</td>
-              <td style={tdStyle}>
-                <span style={{ background: conv.user_id ? '#2E7D5E20' : '#EEF1F7', color: conv.user_id ? '#2E7D5E' : '#999', padding: '2px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>
-                  {conv.user_id ? 'Yes' : 'Anonymous'}
-                </span>
-              </td>
-              <td style={{ ...tdStyle, color: '#666', fontSize: '12px' }}>{new Date(conv.created_at).toLocaleDateString('en-CA')}</td>
-              <td style={tdStyle}>
-                <a href={`/admin/conversations/${conv.id}`} style={{ color: '#F4A332', fontSize: '13px', fontWeight: 600 }}>
-                  View →
-                </a>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th style={thStyle} className="w-10">
+                <input type="checkbox" onChange={toggleAll} checked={selected.length === data.length && data.length > 0} />
+              </th>
+              <th style={thStyle}>First message</th>
+              <th style={thStyle}>Messages</th>
+              <th style={thStyle}>Language</th>
+              <th style={thStyle}>Has account</th>
+              <th style={thStyle}>Date</th>
+              <th style={thStyle}>View</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {data.map((conv) => (
+              <tr key={conv.id} className="hover:bg-slate-50">
+                <td style={tdStyle}>
+                  <input type="checkbox" checked={selected.includes(conv.id)} onChange={() => toggle(conv.id)} />
+                </td>
+                <td style={tdStyle} className="max-w-xs truncate italic text-slate-500">
+                  "{conv.firstMessage}"
+                </td>
+                <td style={tdStyle}>{conv.messageCount}</td>
+                <td style={tdStyle}>{conv.language || 'en'}</td>
+                <td style={tdStyle}>
+                  <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${conv.user_id ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
+                    {conv.user_id ? 'Yes' : 'Anonymous'}
+                  </span>
+                </td>
+                <td style={tdStyle}>{new Date(conv.created_at).toLocaleDateString('en-CA')}</td>
+                <td style={tdStyle}>
+                  <a href={`/admin/chat/${conv.id}`} className="text-blue-600 hover:underline">
+                    View →
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
