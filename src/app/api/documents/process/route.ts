@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
-const PDF_MODEL = 'anthropic/claude-3-haiku'
+const TEXT_MODEL = 'deepseek/deepseek-v4-flash'
 
 const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Your task is to carefully read this document and extract the actual data.
 
@@ -22,15 +22,15 @@ STEP 1: Identify the exact document type by reading the document title or header
 
 STEP 2: Extract the tax year from the document.
 
-STEP 3: Extract ALL fields that actually appear in this document. Do NOT invent or assume values. Only extract what you can actually read from the document.
+STEP 3: Extract ALL fields that actually appear in this document. Do NOT invent or assume values. Only extract what you can actually read.
 
-For T5018 documents extract: payer name, payer business number, recipient name, recipient SIN or business number, total contract payments, year, province code, and any other visible fields.
+For T5018 documents extract: payer name, payer business number, recipient name, recipient SIN or business number, total contract payments, year, province code.
 
-For T4 documents extract: employer name, employee name, tax year, and all boxes that have actual values.
+For T4 documents extract: employer name, employee name, tax year, and all boxes with actual values.
 
 For all other documents: extract every field and value visible.
 
-Return ONLY a valid JSON object with the ACTUAL extracted values — no placeholders, no examples:
+Return ONLY a valid JSON object with ACTUAL extracted values:
 {
   "document_type": "ACTUAL TYPE FROM DOCUMENT HEADER",
   "tax_year": "ACTUAL YEAR FOUND IN DOCUMENT",
@@ -40,7 +40,7 @@ Return ONLY a valid JSON object with the ACTUAL extracted values — no placehol
     "field_name": "ACTUAL VALUE FROM DOCUMENT"
   },
   "confidence": "high|medium|low",
-  "notes": "any relevant observations about document quality or missing data"
+  "notes": "observations"
 }`
 
 async function extractFromImage(
@@ -73,22 +73,53 @@ async function extractFromImage(
 
   if (!response.ok) {
     const err = await response.text()
-    console.error('Image API error:', response.status, err)
-    throw new Error(`Image API error: ${response.status}`)
+    throw new Error(`Image API error: ${response.status} ${err}`)
   }
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
   console.log('Image extraction:', content.substring(0, 400))
-
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in image response')
   return JSON.parse(jsonMatch[0])
 }
 
 async function extractFromPDF(
-  base64Content: string
+  buffer: Buffer
 ): Promise<Record<string, unknown>> {
+  // Extract text using pdfjs-dist (pure JS, no native deps)
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js')
+  pdfjsLib.GlobalWorkerOptions.workerSrc = ''
+
+  const data = new Uint8Array(buffer)
+  const loadingTask = pdfjsLib.getDocument({
+    data,
+    disableWorker: true,
+    useSystemFonts: true,
+  })
+
+  const pdfDocument = await loadingTask.promise
+  let fullText = ''
+
+  for (let i = 1; i <= pdfDocument.numPages; i++) {
+    const page = await pdfDocument.getPage(i)
+    const textContent = await page.getTextContent()
+    const pageText = textContent.items
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((item: any) => ('str' in item ? item.str : ''))
+      .join(' ')
+    fullText += pageText + '\n'
+  }
+
+  console.log('PDF text length:', fullText.length)
+  console.log('PDF text preview:', fullText.substring(0, 500))
+
+  if (!fullText || fullText.trim().length < 20) {
+    throw new Error('Could not extract text from PDF')
+  }
+
+  // Send extracted text to DeepSeek
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -98,20 +129,10 @@ async function extractFromPDF(
       'X-Title': 'TaxNorth.ca',
     },
     body: JSON.stringify({
-      model: PDF_MODEL,
+      model: TEXT_MODEL,
       messages: [{
         role: 'user',
-        content: [
-          {
-            type: 'document',
-            source: {
-              type: 'base64',
-              media_type: 'application/pdf',
-              data: base64Content,
-            },
-          },
-          { type: 'text', text: EXTRACTION_PROMPT },
-        ],
+        content: `${EXTRACTION_PROMPT}\n\nDOCUMENT TEXT:\n${fullText}`,
       }],
       max_tokens: 2000,
     }),
@@ -119,13 +140,12 @@ async function extractFromPDF(
 
   if (!response.ok) {
     const err = await response.text()
-    console.error('PDF API error:', response.status, err)
-    throw new Error(`PDF API error: ${response.status}`)
+    throw new Error(`Text extraction API error: ${response.status} ${err}`)
   }
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-  console.log('PDF extraction:', content.substring(0, 400))
+  console.log('PDF DeepSeek response:', content.substring(0, 400))
 
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in PDF response')
@@ -174,10 +194,7 @@ export async function POST(req: NextRequest) {
 
     if (uploadError) {
       console.error('Storage upload error:', uploadError)
-      return NextResponse.json(
-        { error: 'Failed to upload file' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 })
     }
 
     const { data: signedUrlData } = await supabaseAdmin.storage
@@ -202,19 +219,16 @@ export async function POST(req: NextRequest) {
 
     if (docError || !document) {
       console.error('Document insert error:', docError)
-      return NextResponse.json(
-        { error: 'Failed to create document record' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to create document record' }, { status: 500 })
     }
 
-    // 3. Extract — PDF uses Claude, images use GPT-4o-mini
+    // 3. Extract — PDF uses pdfjs + DeepSeek, images use GPT-4o-mini
     let extractedData: Record<string, unknown> = {}
     let extractionStatus = 'completed'
 
     try {
       if (file.type === 'application/pdf') {
-        extractedData = await extractFromPDF(base64)
+        extractedData = await extractFromPDF(buffer)
       } else {
         extractedData = await extractFromImage(base64, file.type)
       }
@@ -321,9 +335,6 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     console.error('Document processing error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
