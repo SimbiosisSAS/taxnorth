@@ -87,39 +87,26 @@ async function extractFromImage(
 async function extractFromPDF(
   buffer: Buffer
 ): Promise<Record<string, unknown>> {
-  // Extract text using pdfjs-dist (pure JS, no native deps)
+  // Load pdf-parse internal module to bypass canvas dependency
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js')
-  pdfjsLib.GlobalWorkerOptions.workerSrc = ''
+  const pdfParse = require('pdf-parse/lib/pdf-parse.js')
 
-  const data = new Uint8Array(buffer)
-  const loadingTask = pdfjsLib.getDocument({
-    data,
-    disableWorker: true,
-    useSystemFonts: true,
-  })
-
-  const pdfDocument = await loadingTask.promise
   let fullText = ''
-
-  for (let i = 1; i <= pdfDocument.numPages; i++) {
-    const page = await pdfDocument.getPage(i)
-    const textContent = await page.getTextContent()
-    const pageText = textContent.items
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((item: any) => ('str' in item ? item.str : ''))
-      .join(' ')
-    fullText += pageText + '\n'
+  try {
+    const data = await pdfParse(buffer)
+    fullText = data.text || ''
+  } catch (parseError) {
+    console.error('pdf-parse error:', parseError)
+    throw new Error('Failed to parse PDF')
   }
 
   console.log('PDF text length:', fullText.length)
   console.log('PDF text preview:', fullText.substring(0, 500))
 
   if (!fullText || fullText.trim().length < 20) {
-    throw new Error('Could not extract text from PDF')
+    throw new Error('Could not extract text from PDF — document may be scanned')
   }
 
-  // Send extracted text to DeepSeek
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -140,15 +127,14 @@ async function extractFromPDF(
 
   if (!response.ok) {
     const err = await response.text()
-    throw new Error(`Text extraction API error: ${response.status} ${err}`)
+    throw new Error(`Text API error: ${response.status} ${err}`)
   }
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-  console.log('PDF DeepSeek response:', content.substring(0, 400))
-
+  console.log('DeepSeek PDF response:', content.substring(0, 400))
   const jsonMatch = content.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('No JSON found in PDF response')
+  if (!jsonMatch) throw new Error('No JSON found in response')
   return JSON.parse(jsonMatch[0])
 }
 
@@ -222,7 +208,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to create document record' }, { status: 500 })
     }
 
-    // 3. Extract — PDF uses pdfjs + DeepSeek, images use GPT-4o-mini
+    // 3. Extract — PDFs use pdf-parse + DeepSeek, images use GPT-4o-mini
     let extractedData: Record<string, unknown> = {}
     let extractionStatus = 'completed'
 
