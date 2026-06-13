@@ -140,15 +140,15 @@ export default function HomePage() {
   { number: "02", icon: <Lightbulb className="w-7 h-7" />, title: "Get clarity", body: "TaxNorth explains what applies to you — simply, without jargon, at your pace." },
   { number: "03", icon: <Users className="w-7 h-7" />, title: "Connect when ready", body: "When your situation needs a professional, we make the introduction." }
 ].map((step) => (
-  <div key={step.number} className="relative">
-    <div className="text-8xl font-bold text-midnight-north/5 absolute -top-12 -left-4">{step.number}</div>
-    <div className="relative z-10">
-      <div className="w-14 h-14 bg-lantern-amber/10 border border-lantern-amber/20 rounded-xl flex items-center justify-center mb-6 text-lantern-amber">
+  <div key={step.number} className="bg-white rounded-2xl p-8 shadow-sm">
+    <div className="flex items-center gap-4 mb-6">
+      <span className="font-heading font-bold text-lantern-amber text-3xl">{step.number}</span>
+      <div className="w-12 h-12 bg-lantern-amber/10 border border-lantern-amber/20 rounded-xl flex items-center justify-center text-lantern-amber">
         {step.icon}
       </div>
-      <h3 className="font-heading font-bold text-midnight-north text-xl mb-4">{step.title}</h3>
-      <p className="text-deep-ink/70 leading-relaxed">{step.body}</p>
     </div>
+    <h3 className="font-heading font-bold text-midnight-north text-xl mb-3">{step.title}</h3>
+    <p className="text-deep-ink/70 leading-relaxed">{step.body}</p>
   </div>
 ))}
           </div>
