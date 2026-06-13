@@ -250,22 +250,23 @@ export default function HomePage() {
 </section>
 
       {/* FINAL CTA */}
-      <section className="bg-midnight-north py-24 px-6 text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="font-heading font-bold text-white text-3xl md:text-4xl mb-4">
-            Your taxes. Finally yours.
-          </h2>
-          <p className="text-white/70 text-lg mb-8">
-            Start a conversation. No account. No commitment. Just clarity.
-          </p>
-          <Link
-            href="/chat"
-            className="inline-block bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity"
-          >
-            Start the conversation →
-          </Link>
-        </div>
-      </section>
+<section className="bg-warm-white py-24 px-6 text-center border-t border-fog-gray">
+  <div className="max-w-2xl mx-auto">
+    <h2 className="font-heading font-bold text-midnight-north text-3xl md:text-4xl mb-4">
+      Your taxes. Finally yours.
+    </h2>
+    <p className="text-deep-ink/60 text-lg mb-8">
+      Start a conversation. No account. No commitment. Just clarity.
+    </p>
+    <Link
+      href="/chat"
+      className="inline-block bg-midnight-north text-white font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity"
+    >
+      Start the conversation →
+    </Link>
+    <p className="mt-4 text-deep-ink/40 text-sm">Free to use. No account required.</p>
+  </div>
+</section>
 
       {/* FOOTER */}
       <footer className="bg-midnight-north border-t border-white/10 py-12 px-6">
