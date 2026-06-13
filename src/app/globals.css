@@ -2,11 +2,15 @@
 
 @theme {
   --color-midnight-north: #1A2744;
+  --color-deep-ink: #2D3A52;
   --color-lantern-amber: #F4A332;
   --color-warm-white: #FAF8F5;
+  --color-off-white: #F5F4F1;
   --color-fog-gray: #EEF1F7;
+  --color-ice-gray: #C8D0E0;
   --color-maple-green: #2E7D5E;
-  --color-deep-ink: #1A2744;
+  --color-error-red: #DC2626;
+  --color-slate-gray: #64748B;
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-heading: var(--font-plus-jakarta), system-ui, sans-serif;
