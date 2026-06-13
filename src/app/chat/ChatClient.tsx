@@ -15,6 +15,8 @@ interface Message {
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
+const RTL_LANGUAGES: SupportedLanguage[] = ['ar', 'fa']
+
 function generateSessionId(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID()
@@ -29,6 +31,9 @@ function generateSessionId(): string {
 export default function ChatClient() {
   const { language, setLanguage } = useLanguage()
   const t = translations[language]
+  const isRTL = RTL_LANGUAGES.includes(language)
+  const textDir = isRTL ? 'rtl' : 'ltr'
+
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -220,7 +225,7 @@ export default function ChatClient() {
         {/* REFERRAL BANNER */}
         {showReferral && (
           <div className="flex items-center justify-between px-6 py-3 bg-maple-green/10 border-l-4 border-maple-green">
-            <p className="text-deep-ink text-sm font-medium">{t.referralText}</p>
+            <p className="text-deep-ink text-sm font-medium" dir={textDir}>{t.referralText}</p>
             <div className="flex items-center gap-3">
               <Link
                 href="/connect"
@@ -239,8 +244,10 @@ export default function ChatClient() {
         {/* MESSAGES */}
         <div className="flex-1 overflow-y-auto px-6 py-6">
           <div className="max-w-2xl mx-auto">
+
+            {/* WELCOME STATE */}
             {messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center min-h-96 text-center">
+              <div className="flex flex-col items-center justify-center min-h-96 text-center" dir={textDir}>
                 <div className="w-16 h-16 bg-midnight-north rounded-2xl flex items-center justify-center mb-4">
                   <Flashlight className="w-8 h-8 text-lantern-amber" />
                 </div>
@@ -254,6 +261,7 @@ export default function ChatClient() {
                       key={q}
                       onClick={() => sendMessage(q)}
                       className="bg-fog-gray text-deep-ink text-sm font-medium px-4 py-2 rounded-full hover:bg-fog-gray/70 transition-colors"
+                      dir={textDir}
                     >
                       {q}
                     </button>
@@ -261,19 +269,27 @@ export default function ChatClient() {
                 </div>
               </div>
             )}
+
+            {/* MESSAGES LIST */}
             <div className="space-y-4">
               {messages.map((message, index) => (
-                <div key={index} className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  key={index}
+                  className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
                   {message.role === 'assistant' && (
                     <div className="w-8 h-8 bg-midnight-north rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                       <Flashlight className="w-4 h-4 text-lantern-amber" />
                     </div>
                   )}
-                  <div className={`max-w-lg px-4 py-3 text-sm leading-relaxed ${
-                    message.role === 'user'
-                      ? 'bg-midnight-north text-white rounded-chat rounded-br-sm'
-                      : 'bg-fog-gray text-deep-ink rounded-chat rounded-tl-sm'
-                  }`}>
+                  <div
+                    dir={textDir}
+                    className={`max-w-lg px-4 py-3 text-sm leading-relaxed ${
+                      message.role === 'user'
+                        ? 'bg-midnight-north text-white rounded-chat rounded-br-sm'
+                        : 'bg-fog-gray text-deep-ink rounded-chat rounded-tl-sm'
+                    }`}
+                  >
                     <ReactMarkdown>{message.content}</ReactMarkdown>
                     {message.role === 'assistant' && message.content === '' && (
                       <span className="inline-block w-2 h-4 bg-deep-ink/40 animate-pulse" />
@@ -341,7 +357,8 @@ export default function ChatClient() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
                 placeholder={t.placeholder}
-                className="flex-1 bg-transparent text-deep-ink text-sm outline-none placeholder:text-deep-ink/40"
+                dir={textDir}
+                className={`flex-1 bg-transparent text-deep-ink text-sm outline-none placeholder:text-deep-ink/40 ${isRTL ? 'text-right' : 'text-left'}`}
                 disabled={isLoading}
               />
               <span className="text-xs font-medium text-deep-ink/40 bg-fog-gray px-2 py-0.5 rounded-full">
