@@ -13,9 +13,16 @@ interface Message {
   content: string
 }
 
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+interface RecentConversation {
+  id: string
+  firstMessage: string
+  date: string
+}
 
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const RTL_LANGUAGES: SupportedLanguage[] = ['ar', 'fa']
+const RECENTS_KEY = 'taxnorth_recents'
+const MAX_RECENTS = 5
 
 function generateSessionId(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -28,6 +35,34 @@ function generateSessionId(): string {
   })
 }
 
+function getInitialSessionId(): string {
+  if (typeof window === 'undefined') return generateSessionId()
+  const existing = localStorage.getItem('taxnorth_session')
+  if (existing && uuidRegex.test(existing)) return existing
+  const newId = generateSessionId()
+  localStorage.setItem('taxnorth_session', newId)
+  return newId
+}
+
+function getRecents(): RecentConversation[] {
+  if (typeof window === 'undefined') return []
+  try {
+    return JSON.parse(localStorage.getItem(RECENTS_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
+
+function saveToRecents(sessionId: string, firstMessage: string) {
+  const existing = getRecents()
+  const filtered = existing.filter(r => r.id !== sessionId)
+  const updated = [
+    { id: sessionId, firstMessage, date: new Date().toISOString() },
+    ...filtered
+  ].slice(0, MAX_RECENTS)
+  localStorage.setItem(RECENTS_KEY, JSON.stringify(updated))
+}
+
 export default function ChatClient() {
   const { language, setLanguage } = useLanguage()
   const t = translations[language]
@@ -37,16 +72,8 @@ export default function ChatClient() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [sessionId] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const existing = localStorage.getItem('taxnorth_session')
-      if (existing && uuidRegex.test(existing)) return existing
-      const newId = generateSessionId()
-      localStorage.setItem('taxnorth_session', newId)
-      return newId
-    }
-    return generateSessionId()
-  })
+  const [currentSessionId, setCurrentSessionId] = useState(getInitialSessionId)
+  const [recents, setRecents] = useState<RecentConversation[]>([])
   const [showReferral, setShowReferral] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
   const [showEmailCapture, setShowEmailCapture] = useState(false)
@@ -54,6 +81,10 @@ export default function ChatClient() {
   const [emailSaved, setEmailSaved] = useState(false)
   const [savingEmail, setSavingEmail] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setRecents(getRecents())
+  }, [])
 
   useEffect(() => {
     if (messages.length >= 6) setShowReferral(true)
@@ -64,12 +95,29 @@ export default function ChatClient() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  function startNewConversation() {
+    const newId = generateSessionId()
+    localStorage.setItem('taxnorth_session', newId)
+    setCurrentSessionId(newId)
+    setMessages([])
+    setInput('')
+    setShowReferral(false)
+    setShowEmailCapture(false)
+    setEmailSaved(false)
+  }
+
+  function openRecent(recent: RecentConversation) {
+    setInput(recent.firstMessage)
+  }
+
   async function sendMessage(content: string) {
     if (!content.trim() || isLoading) return
     const userMessage: Message = { role: 'user', content }
 
     if (messages.length === 0) {
       trackEvent('chat_started', { language })
+      saveToRecents(currentSessionId, content)
+      setRecents(getRecents())
     }
 
     const userMessageCount = messages.filter(m => m.role === 'user').length
@@ -84,7 +132,7 @@ export default function ChatClient() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content, sessionId, language }),
+        body: JSON.stringify({ message: content, sessionId: currentSessionId, language }),
       })
       if (!response.ok) throw new Error('Failed')
       const reader = response.body?.getReader()
@@ -121,7 +169,7 @@ export default function ChatClient() {
       await fetch('/api/auth/request-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: captureEmail, sessionId }),
+        body: JSON.stringify({ email: captureEmail, sessionId: currentSessionId }),
       })
       setEmailSaved(true)
       setShowEmailCapture(false)
@@ -146,20 +194,42 @@ export default function ChatClient() {
             TaxNorth<span className="text-xs">.ca</span>
           </span>
         </Link>
-        <button className="w-full border border-white/20 text-white text-sm font-medium py-2 px-4 rounded-button hover:bg-white/10 transition-colors flex items-center gap-2 mb-6">
+        <button
+          onClick={startNewConversation}
+          className="w-full border border-white/20 text-white text-sm font-medium py-2 px-4 rounded-button hover:bg-white/10 transition-colors flex items-center gap-2 mb-6"
+        >
           <Plus className="w-4 h-4" />
           {t.newConversation}
         </button>
-        <div className="flex-1">
-          <p className="text-white/40 text-xs uppercase tracking-wider mb-3">Recent</p>
-          <div className="space-y-1">
-            {["Filing taxes as a newcomer", "What is a T4 slip?", "GST/HST credit eligibility"].map((item) => (
-              <div key={item} className="text-white/60 text-sm py-2 px-3 rounded-lg hover:bg-white/10 cursor-pointer truncate">
-                {item}
+
+        <div className="flex-1 overflow-y-auto">
+          {recents.length > 0 ? (
+            <>
+              <p className="text-white/40 text-xs uppercase tracking-wider mb-3">Recent</p>
+              <div className="space-y-1">
+                {recents.map((recent) => (
+                  <button
+                    key={recent.id}
+                    onClick={() => openRecent(recent)}
+                    className={`w-full text-left text-white/60 text-sm py-2 px-3 rounded-lg hover:bg-white/10 cursor-pointer truncate transition-colors ${
+                      recent.id === currentSessionId ? 'bg-white/10 text-white/90' : ''
+                    }`}
+                    title={recent.firstMessage}
+                  >
+                    {recent.firstMessage.length > 40
+                      ? recent.firstMessage.slice(0, 40) + '...'
+                      : recent.firstMessage}
+                  </button>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          ) : (
+            <p className="text-white/30 text-xs text-center mt-4">
+              Your conversations will appear here
+            </p>
+          )}
         </div>
+
         <div className="mt-auto relative">
           <button
             onClick={() => setShowLangMenu(!showLangMenu)}
@@ -244,8 +314,6 @@ export default function ChatClient() {
         {/* MESSAGES */}
         <div className="flex-1 overflow-y-auto px-6 py-6">
           <div className="max-w-2xl mx-auto">
-
-            {/* WELCOME STATE */}
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center min-h-96 text-center" dir={textDir}>
                 <div className="w-16 h-16 bg-midnight-north rounded-2xl flex items-center justify-center mb-4">
@@ -269,8 +337,6 @@ export default function ChatClient() {
                 </div>
               </div>
             )}
-
-            {/* MESSAGES LIST */}
             <div className="space-y-4">
               {messages.map((message, index) => (
                 <div
