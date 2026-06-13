@@ -4,6 +4,7 @@ import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { LanguageProvider } from '@/context/LanguageContext'
+import Script from 'next/script'
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -47,7 +48,19 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${plusJakarta.variable} ${inter.variable}`}>
-      <body>
+      <body className="font-sans antialiased bg-warm-white">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-Y6WE0DJXJL"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Y6WE0DJXJL');
+          `}
+        </Script>
         <LanguageProvider>
           {children}
         </LanguageProvider>
