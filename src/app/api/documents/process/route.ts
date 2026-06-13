@@ -9,26 +9,7 @@ const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Extract all
 
 First identify the document type: T4, T4A, T4E, T5, T3, T2202, RRSP Receipt, Notice of Assessment, T1135, T2200, T5018, or other.
 
-Extract ALL fields visible in the document. For T4 documents extract:
-- Employer name and address
-- Employee name
-- Tax year
-- Box 14 (Employment income)
-- Box 22 (Income tax deducted)
-- Box 16 (CPP contributions)
-- Box 18 (EI premiums)
-- Box 24 (EI insurable earnings)
-- Box 26 (CPP/QPP pensionable earnings)
-- Any other boxes that have values
-
-For T5018 documents extract:
-- Payer name and business number
-- Recipient name and SIN
-- Tax year
-- Total payments made
-- Any other fields present
-
-Return ONLY a valid JSON object, no other text:
+Extract ALL fields visible in the document. Return ONLY a valid JSON object, no other text:
 {
   "document_type": "T4",
   "tax_year": "2025",
@@ -36,62 +17,15 @@ Return ONLY a valid JSON object, no other text:
   "recipient_name": "Employee or taxpayer name",
   "fields": {
     "box_14_employment_income": "52431.00",
-    "box_22_income_tax_deducted": "8124.50"
+    "box_22_income_tax_deducted": "8124.50",
+    "box_16_cpp_contributions": "1234.00",
+    "box_18_ei_premiums": "987.00"
   },
   "confidence": "high",
   "notes": "Any relevant observations"
 }`
 
-async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfParse = require('pdf-parse')
-  const data = await pdfParse(buffer)
-  const text = data.text
-
-  console.log('PDF text length:', text.length)
-  console.log('PDF text preview:', text.substring(0, 500))
-
-  if (!text || text.trim().length < 20) {
-    throw new Error('PDF appears to be scanned — no text found')
-  }
-
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://www.taxnorth.ca',
-      'X-Title': 'TaxNorth.ca',
-    },
-    body: JSON.stringify({
-      model: 'deepseek/deepseek-v4-flash',
-      messages: [
-        {
-          role: 'user',
-          content: `${EXTRACTION_PROMPT}\n\nDOCUMENT TEXT:\n${text}`,
-        },
-      ],
-      max_tokens: 2000,
-    }),
-  })
-
-  if (!response.ok) throw new Error(`API error: ${response.status}`)
-
-  const result = await response.json()
-  const content = result.choices[0]?.message?.content || ''
-
-  console.log('DeepSeek raw response:', content.substring(0, 1000))
-
-  const jsonMatch = content.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('No JSON found in response')
-
-  const extractedData = JSON.parse(jsonMatch[0])
-  console.log('Extracted data:', JSON.stringify(extractedData, null, 2))
-
-  return extractedData
-}
-
-async function extractFromImage(
+async function extractDocument(
   base64Content: string,
   mimeType: string
 ): Promise<Record<string, unknown>> {
@@ -126,20 +60,21 @@ async function extractFromImage(
     }),
   })
 
-  if (!response.ok) throw new Error(`Gemini API error: ${response.status}`)
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error('Gemini API error:', response.status, errorText)
+    throw new Error(`Gemini API error: ${response.status}`)
+  }
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
 
-  console.log('Gemini raw response:', content.substring(0, 1000))
+  console.log('Gemini response:', content.substring(0, 500))
 
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in response')
 
-  const extractedData = JSON.parse(jsonMatch[0])
-  console.log('Extracted data:', JSON.stringify(extractedData, null, 2))
-
-  return extractedData
+  return JSON.parse(jsonMatch[0])
 }
 
 export async function POST(req: NextRequest) {
@@ -170,6 +105,8 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     const base64 = buffer.toString('base64')
+
+    console.log('Processing file:', file.name, file.type, buffer.length, 'bytes')
 
     // 1. Upload to Supabase Storage
     const filePath = `${sessionId}/${Date.now()}-${file.name}`
@@ -216,22 +153,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 3. Extract data — PDF vs image
+    // 3. Extract with Gemini Vision (handles both images and PDFs)
     let extractedData: Record<string, unknown> = {}
     let extractionStatus = 'completed'
 
     try {
-      if (file.type === 'application/pdf') {
-        extractedData = await extractFromPDF(buffer)
-      } else {
-        extractedData = await extractFromImage(base64, file.type)
-      }
+      extractedData = await extractDocument(base64, file.type)
+      console.log('Extraction success:', JSON.stringify(extractedData).substring(0, 200))
     } catch (extractionError) {
-      console.error('Extraction error:', extractionError)
+      console.error('Extraction failed:', extractionError)
       extractionStatus = 'error'
     }
 
-    // 4. Update document with extracted data
+    // 4. Update document
     await supabaseAdmin
       .from('documents')
       .update({
@@ -241,7 +175,7 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', document.id)
 
-    // 5. Send package to CPA via email
+    // 5. Send package to CPA
     if (extractionStatus === 'completed' && process.env.ADMIN_EMAIL) {
       const docType = (extractedData.document_type as string) || 'Tax Document'
       const taxYear = (extractedData.tax_year as string) || 'Unknown year'
