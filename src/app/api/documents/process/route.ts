@@ -21,6 +21,13 @@ Extract ALL fields visible in the document. For T4 documents extract:
 - Box 26 (CPP/QPP pensionable earnings)
 - Any other boxes that have values
 
+For T5018 documents extract:
+- Payer name and business number
+- Recipient name and SIN
+- Tax year
+- Total payments made
+- Any other fields present
+
 Return ONLY a valid JSON object, no other text:
 {
   "document_type": "T4",
@@ -29,12 +36,10 @@ Return ONLY a valid JSON object, no other text:
   "recipient_name": "Employee or taxpayer name",
   "fields": {
     "box_14_employment_income": "52431.00",
-    "box_22_income_tax_deducted": "8124.50",
-    "box_16_cpp_contributions": "1234.00",
-    "box_18_ei_premiums": "987.00"
+    "box_22_income_tax_deducted": "8124.50"
   },
   "confidence": "high",
-  "notes": "Any relevant observations about document quality or missing data"
+  "notes": "Any relevant observations"
 }`
 
 async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> {
@@ -42,6 +47,9 @@ async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> 
   const pdfParse = require('pdf-parse')
   const data = await pdfParse(buffer)
   const text = data.text
+
+  console.log('PDF text length:', text.length)
+  console.log('PDF text preview:', text.substring(0, 500))
 
   if (!text || text.trim().length < 20) {
     throw new Error('PDF appears to be scanned — no text found')
@@ -71,10 +79,16 @@ async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> 
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
+
+  console.log('DeepSeek raw response:', content.substring(0, 1000))
+
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in response')
 
-  return JSON.parse(jsonMatch[0])
+  const extractedData = JSON.parse(jsonMatch[0])
+  console.log('Extracted data:', JSON.stringify(extractedData, null, 2))
+
+  return extractedData
 }
 
 async function extractFromImage(
@@ -116,10 +130,16 @@ async function extractFromImage(
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
+
+  console.log('Gemini raw response:', content.substring(0, 1000))
+
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in response')
 
-  return JSON.parse(jsonMatch[0])
+  const extractedData = JSON.parse(jsonMatch[0])
+  console.log('Extracted data:', JSON.stringify(extractedData, null, 2))
+
+  return extractedData
 }
 
 export async function POST(req: NextRequest) {
