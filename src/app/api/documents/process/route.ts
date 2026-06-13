@@ -1,35 +1,3 @@
-// DOM polyfills — must be first, before any imports
-if (typeof globalThis.DOMMatrix === 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(globalThis as any).DOMMatrix = class DOMMatrix {
-    constructor() {}
-    static fromMatrix() { return new (globalThis as any).DOMMatrix() }
-    multiply() { return this }
-    translate() { return this }
-    scale() { return this }
-    rotate() { return this }
-    invertSelf() { return this }
-  }
-}
-if (typeof globalThis.ImageData === 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(globalThis as any).ImageData = class ImageData {
-    width: number; height: number; data: Uint8ClampedArray
-    constructor(sw: number, sh: number) {
-      this.width = sw; this.height = sh
-      this.data = new Uint8ClampedArray(sw * sh * 4)
-    }
-  }
-}
-if (typeof globalThis.Path2D === 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(globalThis as any).Path2D = class Path2D {
-    constructor() {}
-    addPath() {} closePath() {} moveTo() {} lineTo() {}
-    bezierCurveTo() {} quadraticCurveTo() {} arc() {} rect() {}
-  }
-}
-
 import { supabaseAdmin } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
@@ -38,39 +6,23 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
 const TEXT_MODEL = 'deepseek/deepseek-v4-flash'
 
-const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Your task is to carefully read this document and extract the actual data.
+const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Extract all information from this document.
 
-STEP 1: Identify the exact document type by reading the document title or header:
-- T4: Statement of Remuneration Paid
-- T4A: Statement of Pension, Retirement, Annuity, and Other Income
-- T4E: Statement of Employment Insurance Benefits
-- T5: Statement of Investment Income
-- T3: Statement of Trust Income
-- T2202: Tuition and Enrolment Certificate
-- T5018: Statement of Contract Payments
-- Notice of Assessment: CRA assessment notice
-- RRSP Receipt: RRSP contribution receipt
-- Other: describe exactly what you see
+Identify the document type: T4, T4A, T4E, T5, T3, T2202, T5018, Notice of Assessment, RRSP Receipt, or other.
 
-STEP 2: Extract the tax year from the document.
+Extract ALL fields that actually appear. Do NOT invent values.
 
-STEP 3: Extract ALL fields that actually appear in this document. Do NOT invent or assume values. Only extract what you can actually read.
+For T5018: payer name, payer BN, recipient name, recipient SIN/BN, total payments, year, province.
+For T4: employer name, employee name, year, all boxes with values.
+For others: every visible field and value.
 
-For T5018 documents extract: payer name, payer business number, recipient name, recipient SIN or business number, total contract payments, year, province code.
-
-For T4 documents extract: employer name, employee name, tax year, and all boxes with actual values.
-
-For all other documents: extract every field and value visible.
-
-Return ONLY a valid JSON object with ACTUAL extracted values:
+Return ONLY valid JSON:
 {
-  "document_type": "ACTUAL TYPE FROM DOCUMENT HEADER",
-  "tax_year": "ACTUAL YEAR FOUND IN DOCUMENT",
-  "issuer_name": "ACTUAL ISSUER NAME",
-  "recipient_name": "ACTUAL RECIPIENT NAME",
-  "fields": {
-    "field_name": "ACTUAL VALUE FROM DOCUMENT"
-  },
+  "document_type": "actual type",
+  "tax_year": "actual year",
+  "issuer_name": "actual name",
+  "recipient_name": "actual name",
+  "fields": { "field_name": "actual value" },
   "confidence": "high|medium|low",
   "notes": "observations"
 }`
@@ -92,47 +44,29 @@ async function extractFromImage(
       messages: [{
         role: 'user',
         content: [
-          {
-            type: 'image_url',
-            image_url: { url: `data:${mimeType};base64,${base64Content}` },
-          },
+          { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Content}` } },
           { type: 'text', text: EXTRACTION_PROMPT },
         ],
       }],
       max_tokens: 2000,
     }),
   })
-  if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`Image API error: ${response.status} ${err}`)
-  }
+  if (!response.ok) throw new Error(`Image API error: ${response.status}`)
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-  console.log('Image extraction:', content.substring(0, 400))
   const jsonMatch = content.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('No JSON found in image response')
+  if (!jsonMatch) throw new Error('No JSON in image response')
   return JSON.parse(jsonMatch[0])
 }
 
-async function extractFromPDF(
-  buffer: Buffer
-): Promise<Record<string, unknown>> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfParse = require('pdf-parse')
+async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> {
+  const { extractText } = await import('unpdf')
+  const { text } = await extractText(new Uint8Array(buffer), { mergePages: true })
 
-  let fullText = ''
-  try {
-    const data = await pdfParse(buffer)
-    fullText = data.text || ''
-  } catch (parseError) {
-    console.error('pdf-parse error:', parseError)
-    throw new Error('Failed to parse PDF')
-  }
+  console.log('PDF text length:', text.length)
+  console.log('PDF preview:', text.substring(0, 500))
 
-  console.log('PDF text length:', fullText.length)
-  console.log('PDF text preview:', fullText.substring(0, 500))
-
-  if (!fullText || fullText.trim().length < 20) {
+  if (!text || text.trim().length < 20) {
     throw new Error('Could not extract text from PDF')
   }
 
@@ -148,22 +82,17 @@ async function extractFromPDF(
       model: TEXT_MODEL,
       messages: [{
         role: 'user',
-        content: `${EXTRACTION_PROMPT}\n\nDOCUMENT TEXT:\n${fullText}`,
+        content: `${EXTRACTION_PROMPT}\n\nDOCUMENT TEXT:\n${text}`,
       }],
       max_tokens: 2000,
     }),
   })
-
-  if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`Text API error: ${response.status} ${err}`)
-  }
-
+  if (!response.ok) throw new Error(`Text API error: ${response.status}`)
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-  console.log('DeepSeek PDF response:', content.substring(0, 400))
+  console.log('DeepSeek response:', content.substring(0, 400))
   const jsonMatch = content.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('No JSON found in response')
+  if (!jsonMatch) throw new Error('No JSON in PDF response')
   return JSON.parse(jsonMatch[0])
 }
 
@@ -180,10 +109,7 @@ export async function POST(req: NextRequest) {
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf']
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: 'File type not supported. Please upload a JPG, PNG, WebP, or PDF.' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Unsupported file type.' }, { status: 400 })
     }
 
     const arrayBuffer = await file.arrayBuffer()
@@ -198,7 +124,7 @@ export async function POST(req: NextRequest) {
       .upload(filePath, buffer, { contentType: file.type, upsert: false })
 
     if (uploadError) {
-      console.error('Storage upload error:', uploadError)
+      console.error('Storage error:', uploadError)
       return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 })
     }
 
@@ -222,7 +148,6 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (docError || !document) {
-      console.error('Document insert error:', docError)
       return NextResponse.json({ error: 'Failed to create document record' }, { status: 500 })
     }
 
@@ -230,14 +155,12 @@ export async function POST(req: NextRequest) {
     let extractionStatus = 'completed'
 
     try {
-      if (file.type === 'application/pdf') {
-        extractedData = await extractFromPDF(buffer)
-      } else {
-        extractedData = await extractFromImage(base64, file.type)
-      }
-      console.log('Extraction success:', JSON.stringify(extractedData).substring(0, 300))
-    } catch (extractionError) {
-      console.error('Extraction failed:', extractionError)
+      extractedData = file.type === 'application/pdf'
+        ? await extractFromPDF(buffer)
+        : await extractFromImage(base64, file.type)
+      console.log('Success:', JSON.stringify(extractedData).substring(0, 300))
+    } catch (err) {
+      console.error('Extraction failed:', err)
       extractionStatus = 'error'
     }
 
@@ -269,32 +192,27 @@ export async function POST(req: NextRequest) {
             </div>
             <div style="background: #FAF8F5; padding: 24px; border-radius: 0 0 8px 8px;">
               <table style="width: 100%; border-collapse: collapse;">
-                <tr><td style="padding: 8px 0; color: #666; font-size: 14px; width: 160px;">Document type</td><td style="padding: 8px 0; color: #1A2744; font-weight: 600; font-size: 14px;">${docType}</td></tr>
-                <tr style="border-top: 1px solid #EEF1F7;"><td style="padding: 8px 0; color: #666; font-size: 14px;">Tax year</td><td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${taxYear}</td></tr>
-                <tr style="border-top: 1px solid #EEF1F7;"><td style="padding: 8px 0; color: #666; font-size: 14px;">Issuer</td><td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${issuer}</td></tr>
-                <tr style="border-top: 1px solid #EEF1F7;"><td style="padding: 8px 0; color: #666; font-size: 14px;">Recipient</td><td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${recipient}</td></tr>
+                <tr><td style="padding:8px 0;color:#666;font-size:14px;width:160px">Document type</td><td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${docType}</td></tr>
+                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Tax year</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${taxYear}</td></tr>
+                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Issuer</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${issuer}</td></tr>
+                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Recipient</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${recipient}</td></tr>
               </table>
-              <h3 style="color: #1A2744; font-size: 14px; margin: 20px 0 12px;">Extracted Fields</h3>
-              <table style="width: 100%; border-collapse: collapse;">
-                ${Object.entries(fields).map(([key, value]) => `
-                  <tr style="border-top: 1px solid #EEF1F7;">
-                    <td style="padding: 6px 0; color: #666; font-size: 13px; width: 200px;">${key.replace(/_/g, ' ').replace(/box /gi, 'Box ')}</td>
-                    <td style="padding: 6px 0; color: #1A2744; font-size: 13px; font-weight: 500;">${value}</td>
-                  </tr>
-                `).join('')}
+              <h3 style="color:#1A2744;font-size:14px;margin:20px 0 12px">Extracted Fields</h3>
+              <table style="width:100%;border-collapse:collapse">
+                ${Object.entries(fields).map(([k, v]) => `
+                  <tr style="border-top:1px solid #EEF1F7">
+                    <td style="padding:6px 0;color:#666;font-size:13px;width:200px">${k.replace(/_/g,' ').replace(/box /gi,'Box ')}</td>
+                    <td style="padding:6px 0;color:#1A2744;font-size:13px;font-weight:500">${v}</td>
+                  </tr>`).join('')}
               </table>
-              ${fileUrl ? `
-              <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #EEF1F7;">
-                <a href="${fileUrl}" style="background: #F4A332; color: #1A2744; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">View Original Document →</a>
-                <p style="color: #999; font-size: 11px; margin: 8px 0 0;">Link expires in 7 days</p>
+              ${fileUrl ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid #EEF1F7">
+                <a href="${fileUrl}" style="background:#F4A332;color:#1A2744;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px">View Original Document →</a>
+                <p style="color:#999;font-size:11px;margin:8px 0 0">Link expires in 7 days</p>
               </div>` : ''}
-              <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #EEF1F7;">
-                <p style="color: #999; font-size: 11px; margin: 0;">Session: ${sessionId} · Document ID: ${document.id}</p>
-              </div>
+              <p style="color:#999;font-size:11px;margin:16px 0 0">Session: ${sessionId} · ID: ${document.id}</p>
             </div>
-          </div>
-        `,
-      }).catch(err => console.error('Email send error:', err))
+          </div>`,
+      }).catch(err => console.error('Email error:', err))
 
       await supabaseAdmin
         .from('documents')
