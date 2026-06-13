@@ -286,9 +286,9 @@ export function ConversationsTable({ conversations }: { conversations: Conversat
                 </td>
                 <td style={tdStyle}>{new Date(conv.created_at).toLocaleDateString('en-CA')}</td>
                 <td style={tdStyle}>
-                  <a href={`/admin/chat/${conv.id}`} className="text-blue-600 hover:underline">
-                    View →
-                  </a>
+                  <a href={`/admin/conversations/${conv.id}`} className="text-blue-600 hover:underline">
+  View →
+</a>
                 </td>
               </tr>
             ))}
