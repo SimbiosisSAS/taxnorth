@@ -3,13 +3,33 @@ import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const VISION_MODEL = 'openai/gpt-4o-mini'
+const IMAGE_MODEL = 'openai/gpt-4o-mini'
+const PDF_MODEL = 'anthropic/claude-3-haiku'
 
 const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Extract all information from this document.
 
 First identify the document type: T4, T4A, T4E, T5, T3, T2202, RRSP Receipt, Notice of Assessment, T1135, T2200, T5018, or other.
 
-Extract ALL fields visible in the document. Return ONLY a valid JSON object, no other text:
+Extract ALL fields visible in the document. For T4 documents extract:
+- Employer name and address
+- Employee name
+- Tax year
+- Box 14 (Employment income)
+- Box 22 (Income tax deducted)
+- Box 16 (CPP contributions)
+- Box 18 (EI premiums)
+- Box 24 (EI insurable earnings)
+- Box 26 (CPP/QPP pensionable earnings)
+- Any other boxes that have values
+
+For T5018 documents extract:
+- Payer name and business number
+- Recipient name and SIN
+- Tax year
+- Total payments made
+- Any other fields present
+
+Return ONLY a valid JSON object, no other text:
 {
   "document_type": "T4",
   "tax_year": "2025",
@@ -25,7 +45,7 @@ Extract ALL fields visible in the document. Return ONLY a valid JSON object, no 
   "notes": "Any relevant observations"
 }`
 
-async function extractDocument(
+async function extractFromImage(
   base64Content: string,
   mimeType: string
 ): Promise<Record<string, unknown>> {
@@ -38,42 +58,79 @@ async function extractDocument(
       'X-Title': 'TaxNorth.ca',
     },
     body: JSON.stringify({
-      model: VISION_MODEL,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:${mimeType};base64,${base64Content}`,
-              },
-            },
-            {
-              type: 'text',
-              text: EXTRACTION_PROMPT,
-            },
-          ],
-        },
-      ],
+      model: IMAGE_MODEL,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image_url',
+            image_url: { url: `data:${mimeType};base64,${base64Content}` },
+          },
+          { type: 'text', text: EXTRACTION_PROMPT },
+        ],
+      }],
       max_tokens: 2000,
     }),
   })
 
   if (!response.ok) {
-    const errorText = await response.text()
-    console.error('Gemini API error:', response.status, errorText)
-    throw new Error(`Gemini API error: ${response.status}`)
+    const err = await response.text()
+    console.error('Image API error:', response.status, err)
+    throw new Error(`Image API error: ${response.status}`)
   }
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-
-  console.log('Gemini response:', content.substring(0, 500))
+  console.log('Image extraction response:', content.substring(0, 300))
 
   const jsonMatch = content.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error('No JSON found in response')
+  if (!jsonMatch) throw new Error('No JSON found in image response')
+  return JSON.parse(jsonMatch[0])
+}
 
+async function extractFromPDF(
+  base64Content: string
+): Promise<Record<string, unknown>> {
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://www.taxnorth.ca',
+      'X-Title': 'TaxNorth.ca',
+    },
+    body: JSON.stringify({
+      model: PDF_MODEL,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'document',
+            source: {
+              type: 'base64',
+              media_type: 'application/pdf',
+              data: base64Content,
+            },
+          },
+          { type: 'text', text: EXTRACTION_PROMPT },
+        ],
+      }],
+      max_tokens: 2000,
+    }),
+  })
+
+  if (!response.ok) {
+    const err = await response.text()
+    console.error('PDF API error:', response.status, err)
+    throw new Error(`PDF API error: ${response.status}`)
+  }
+
+  const result = await response.json()
+  const content = result.choices[0]?.message?.content || ''
+  console.log('PDF extraction response:', content.substring(0, 300))
+
+  const jsonMatch = content.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) throw new Error('No JSON found in PDF response')
   return JSON.parse(jsonMatch[0])
 }
 
@@ -106,7 +163,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer)
     const base64 = buffer.toString('base64')
 
-    console.log('Processing file:', file.name, file.type, buffer.length, 'bytes')
+    console.log('Processing:', file.name, file.type, buffer.length, 'bytes')
 
     // 1. Upload to Supabase Storage
     const filePath = `${sessionId}/${Date.now()}-${file.name}`
@@ -153,19 +210,23 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 3. Extract with Gemini Vision (handles both images and PDFs)
+    // 3. Extract — PDF uses Claude, images use GPT-4o-mini
     let extractedData: Record<string, unknown> = {}
     let extractionStatus = 'completed'
 
     try {
-      extractedData = await extractDocument(base64, file.type)
+      if (file.type === 'application/pdf') {
+        extractedData = await extractFromPDF(base64)
+      } else {
+        extractedData = await extractFromImage(base64, file.type)
+      }
       console.log('Extraction success:', JSON.stringify(extractedData).substring(0, 200))
     } catch (extractionError) {
       console.error('Extraction failed:', extractionError)
       extractionStatus = 'error'
     }
 
-    // 4. Update document
+    // 4. Update document record
     await supabaseAdmin
       .from('documents')
       .update({
