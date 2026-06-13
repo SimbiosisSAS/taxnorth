@@ -73,12 +73,12 @@ export default function ChatClient() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState(() => {
-  const newId = generateSessionId()
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('taxnorth_session', newId)
-  }
-  return newId
-})
+    const newId = generateSessionId()
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('taxnorth_session', newId)
+    }
+    return newId
+  })
   const [recents, setRecents] = useState<RecentConversation[]>([])
   const [showReferral, setShowReferral] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
@@ -236,6 +236,19 @@ export default function ChatClient() {
           )}
         </div>
 
+        {/* Data wall-off notice */}
+        <div className="flex items-start gap-2 mb-4 px-1">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F4A332" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 flex-shrink-0">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <p className="text-white/40 text-xs leading-relaxed">
+            Your data is never used to train AI models.{' '}
+            <a href="/privacy" className="text-white/60 hover:text-white underline transition-colors">
+              Privacy Policy
+            </a>
+          </p>
+        </div>
+
         <div className="mt-auto relative">
           <button
             onClick={() => setShowLangMenu(!showLangMenu)}
@@ -340,6 +353,19 @@ export default function ChatClient() {
                       {q}
                     </button>
                   ))}
+                </div>
+
+                {/* Data wall-off badge */}
+                <div className="flex items-center gap-2 mt-6 px-4 py-2.5 bg-fog-gray rounded-full">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2E7D5E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                  <span className="text-xs text-deep-ink/60">
+                    Your data is never used to train AI models.{' '}
+                    <a href="/privacy" className="text-lantern-amber underline hover:opacity-80 transition-opacity">
+                      Privacy Policy
+                    </a>
+                  </span>
                 </div>
               </div>
             )}
