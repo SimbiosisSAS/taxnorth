@@ -89,7 +89,7 @@ async function extractFromPDF(
 ): Promise<Record<string, unknown>> {
   // Load pdf-parse internal module to bypass canvas dependency
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfParse = require('pdf-parse/lib/pdf-parse.js')
+const pdfParse = require('pdf-parse')
 
   let fullText = ''
   try {
