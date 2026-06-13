@@ -136,17 +136,21 @@ export default function HomePage() {
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { number: "01", icon: <MessageCircle className="w-5 h-5 text-midnight-north" />, title: "Ask anything", body: "Describe your situation in any language. No tax knowledge required." },
-              { number: "02", icon: <Lightbulb className="w-5 h-5 text-midnight-north" />, title: "Get clarity", body: "TaxNorth explains what applies to you — simply, without jargon, at your pace." },
-              { number: "03", icon: <Users className="w-5 h-5 text-midnight-north" />, title: "Connect when ready", body: "When your situation needs a professional, we make the introduction." }
-            ].map((step) => (
-              <div key={step.number} className="bg-white rounded-card p-8 shadow-sm">
-                <p className="font-heading font-bold text-lantern-amber text-4xl mb-4">{step.number}</p>
-                <div className="w-10 h-10 bg-fog-gray rounded-lg flex items-center justify-center mb-4">{step.icon}</div>
-                <h3 className="font-heading font-semibold text-midnight-north text-xl mb-2">{step.title}</h3>
-                <p className="text-deep-ink/70 leading-relaxed">{step.body}</p>
-              </div>
-            ))}
+  { number: "01", icon: <MessageCircle className="w-7 h-7" />, title: "Ask anything", body: "Describe your situation in any language. No tax knowledge required." },
+  { number: "02", icon: <Lightbulb className="w-7 h-7" />, title: "Get clarity", body: "TaxNorth explains what applies to you — simply, without jargon, at your pace." },
+  { number: "03", icon: <Users className="w-7 h-7" />, title: "Connect when ready", body: "When your situation needs a professional, we make the introduction." }
+].map((step) => (
+  <div key={step.number} className="relative">
+    <div className="text-8xl font-bold text-midnight-north/5 absolute -top-12 -left-4">{step.number}</div>
+    <div className="relative z-10">
+      <div className="w-14 h-14 bg-lantern-amber/10 border border-lantern-amber/20 rounded-xl flex items-center justify-center mb-6 text-lantern-amber">
+        {step.icon}
+      </div>
+      <h3 className="font-heading font-bold text-midnight-north text-xl mb-4">{step.title}</h3>
+      <p className="text-deep-ink/70 leading-relaxed">{step.body}</p>
+    </div>
+  </div>
+))}
           </div>
         </div>
       </section>
