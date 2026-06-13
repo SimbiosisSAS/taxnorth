@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Flashlight, Send, Plus, X, ChevronDown } from 'lucide-react'
+import { Flashlight, Send, Plus, X, ChevronDown, Paperclip } from 'lucide-react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { useLanguage } from '@/context/LanguageContext'
@@ -35,15 +35,6 @@ function generateSessionId(): string {
   })
 }
 
-function getInitialSessionId(): string {
-  if (typeof window === 'undefined') return generateSessionId()
-  const existing = localStorage.getItem('taxnorth_session')
-  if (existing && uuidRegex.test(existing)) return existing
-  const newId = generateSessionId()
-  localStorage.setItem('taxnorth_session', newId)
-  return newId
-}
-
 function getRecents(): RecentConversation[] {
   if (typeof window === 'undefined') return []
   try {
@@ -72,6 +63,7 @@ export default function ChatClient() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState(() => {
     const newId = generateSessionId()
     if (typeof window !== 'undefined') {
@@ -87,6 +79,7 @@ export default function ChatClient() {
   const [emailSaved, setEmailSaved] = useState(false)
   const [savingEmail, setSavingEmail] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setRecents(getRecents())
@@ -184,6 +177,67 @@ export default function ChatClient() {
       console.error(e)
     } finally {
       setSavingEmail(false)
+    }
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+
+    const userMessage: Message = {
+      role: 'user',
+      content: `📎 ${file.name}`
+    }
+    setMessages(prev => [...prev, userMessage])
+
+    if (messages.length === 0) {
+      saveToRecents(currentSessionId, `📎 ${file.name}`)
+      setRecents(getRecents())
+    }
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('sessionId', currentSessionId)
+
+      const response = await fetch('/api/documents/process', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Processing failed')
+      }
+
+      const { documentType, taxYear, extractedData } = result
+      const fields = (extractedData?.fields || {}) as Record<string, string>
+
+      const fieldLines = Object.entries(fields)
+        .map(([key, val]) => `- **${key.replace(/_/g, ' ').replace(/box /gi, 'Box ')}:** ${val}`)
+        .join('\n')
+
+      const agentMessage: Message = {
+        role: 'assistant',
+        content: `I've processed your **${documentType}**${taxYear ? ` (${taxYear})` : ''}. Here are the key figures I extracted:\n\n${fieldLines}\n\n---\nThis document has been sent to your accountant as part of your prepared package. Would you like to upload another document or ask any questions about these numbers?`
+      }
+
+      setMessages(prev => [...prev, agentMessage])
+      trackEvent('document_uploaded', { document_type: documentType, language })
+
+    } catch (error) {
+      console.error('Upload error:', error)
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: `I had trouble processing that document. Please make sure it's a clear photo or PDF of a Canadian tax document and try again.`
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
@@ -448,6 +502,30 @@ export default function ChatClient() {
         {/* INPUT */}
         <div className="border-t border-fog-gray bg-white px-6 py-4">
           <div className="max-w-2xl mx-auto flex items-center gap-3">
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/heic,application/pdf"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+
+            {/* Attach button */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading || isLoading}
+              className="w-11 h-11 border border-fog-gray rounded-button flex items-center justify-center hover:bg-fog-gray transition-colors disabled:opacity-40 flex-shrink-0"
+              title="Upload tax document"
+            >
+              {isUploading ? (
+                <div className="w-4 h-4 border-2 border-deep-ink/30 border-t-lantern-amber rounded-full animate-spin" />
+              ) : (
+                <Paperclip className="w-4 h-4 text-deep-ink/50" />
+              )}
+            </button>
+
             <div className="flex-1 flex items-center gap-2 border border-fog-gray rounded-button px-4 py-2.5 focus-within:border-lantern-amber transition-colors">
               <input
                 type="text"
@@ -457,15 +535,16 @@ export default function ChatClient() {
                 placeholder={t.placeholder}
                 dir={textDir}
                 className={`flex-1 bg-transparent text-deep-ink text-sm outline-none placeholder:text-deep-ink/40 ${isRTL ? 'text-right' : 'text-left'}`}
-                disabled={isLoading}
+                disabled={isLoading || isUploading}
               />
               <span className="text-xs font-medium text-deep-ink/40 bg-fog-gray px-2 py-0.5 rounded-full">
                 {language.toUpperCase()}
               </span>
             </div>
+
             <button
               onClick={() => sendMessage(input)}
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || isUploading || !input.trim()}
               className="w-11 h-11 bg-lantern-amber rounded-button flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40"
             >
               <Send className="w-4 h-4 text-midnight-north" />
