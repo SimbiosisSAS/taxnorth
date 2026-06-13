@@ -38,7 +38,8 @@ Return ONLY a valid JSON object, no other text:
 }`
 
 async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> {
-  const pdfParse = (await import('pdf-parse')).default
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pdfParse = require('pdf-parse')
   const data = await pdfParse(buffer)
   const text = data.text
 
