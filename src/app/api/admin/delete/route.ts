@@ -24,12 +24,52 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Too many IDs' }, { status: 400 })
   }
 
-  const { error } = await supabaseAdmin.from(table).delete().in('id', ids)
+  try {
+    if (table === 'users') {
+      // Primero buscar las conversaciones del usuario
+      const { data: convs } = await supabaseAdmin
+        .from('conversations')
+        .select('id')
+        .in('user_id', ids)
 
-  if (error) {
+      if (convs && convs.length > 0) {
+        const convIds = convs.map((c: { id: string }) => c.id)
+        // Borrar mensajes de esas conversaciones
+        await supabaseAdmin.from('messages').delete().in('conversation_id', convIds)
+        // Borrar las conversaciones
+        await supabaseAdmin.from('conversations').delete().in('id', convIds)
+      }
+
+      // Ahora sí borrar el usuario
+      const { error } = await supabaseAdmin.from('users').delete().in('id', ids)
+      if (error) {
+        console.error('Delete error:', error)
+        return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
+      }
+
+    } else if (table === 'conversations') {
+      // Borrar mensajes primero
+      await supabaseAdmin.from('messages').delete().in('conversation_id', ids)
+      // Luego las conversaciones
+      const { error } = await supabaseAdmin.from('conversations').delete().in('id', ids)
+      if (error) {
+        console.error('Delete error:', error)
+        return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
+      }
+
+    } else {
+      // leads — sin dependencias, borrar directo
+      const { error } = await supabaseAdmin.from(table).delete().in('id', ids)
+      if (error) {
+        console.error('Delete error:', error)
+        return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
+      }
+    }
+
+    return NextResponse.json({ success: true })
+
+  } catch (error) {
     console.error('Delete error:', error)
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
   }
-
-  return NextResponse.json({ success: true })
 }
