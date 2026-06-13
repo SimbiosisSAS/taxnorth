@@ -1,4 +1,4 @@
-import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, Check } from 'lucide-react'
+import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, Check, AlertTriangle, TrendingDown, Sliders } from 'lucide-react'
 import Link from 'next/link'
 import Script from 'next/script'
 
@@ -191,28 +191,36 @@ export default function HomePage() {
 
     <div className="grid md:grid-cols-3 gap-6 mb-10">
       {[
-        {
-          number: "01",
-          title: "The CRA letter nobody expected",
-          body: "A friend followed their accountant's advice. A year later, a CRA audit. Back taxes, penalties, and stress that could have been avoided. Bad tax advice doesn't show up immediately — it shows up when it's too late."
-        },
-        {
-          number: "02",
-          title: "The free option that costs more",
-          body: "University and community programs mean well. But the person filing your return is still learning. You're not their client — you're their practice case. Your real situation, your real money, their learning curve."
-        },
-        {
-          number: "03",
-          title: "Tax software weren't built for you",
-          body: "Same questions for everyone, hundreds of returns a day — and no room to ask yours. The details that matter most get missed when the process was designed for the average filer, not for you."
-        }
-      ].map((item) => (
-        <div key={item.number} className="bg-white rounded-card p-8 shadow-sm">
-          <p className="font-heading font-bold text-lantern-amber text-3xl mb-4">{item.number}</p>
-          <h3 className="font-heading font-semibold text-midnight-north text-lg mb-3">{item.title}</h3>
-          <p className="text-deep-ink/60 leading-relaxed text-sm">{item.body}</p>
-        </div>
-      ))}
+  {
+    number: "01",
+    icon: <AlertTriangle className="w-5 h-5" />,
+    title: "The CRA letter nobody expected",
+    body: "A friend followed their accountant's advice. A year later, a CRA audit. Back taxes, penalties, and stress that could have been avoided. Bad tax advice doesn't show up immediately — it shows up when it's too late."
+  },
+  {
+    number: "02",
+    icon: <TrendingDown className="w-5 h-5" />,
+    title: "The free option that costs more",
+    body: "University and community programs mean well. But the person filing your return is still learning. You're not their client — you're their practice case. Your real situation, your real money, their learning curve."
+  },
+  {
+    number: "03",
+    icon: <Sliders className="w-5 h-5" />,
+    title: "Tax software weren't built for you",
+    body: "Same questions for everyone, hundreds of returns a day — and no room to ask yours. The details that matter most get missed when the process was designed for the average filer, not for you."
+  }
+].map((item) => (
+  <div key={item.number} className="bg-white rounded-card p-8 shadow-sm">
+    <div className="flex items-center gap-3 mb-5">
+      <span className="font-heading font-bold text-lantern-amber text-3xl">{item.number}</span>
+      <div className="w-10 h-10 bg-lantern-amber/10 border border-lantern-amber/20 rounded-xl flex items-center justify-center text-lantern-amber">
+        {item.icon}
+      </div>
+    </div>
+    <h3 className="font-heading font-semibold text-midnight-north text-lg mb-3">{item.title}</h3>
+    <p className="text-deep-ink/60 leading-relaxed text-sm">{item.body}</p>
+  </div>
+))}
     </div>
 
     <div className="bg-midnight-north rounded-card p-8 md:p-12">
