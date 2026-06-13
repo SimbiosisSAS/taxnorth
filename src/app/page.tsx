@@ -260,7 +260,7 @@ export default function HomePage() {
     </p>
     <Link
       href="/chat"
-      className="inline-block bg-midnight-north text-white font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity"
+      className="inline-block bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity"
     >
       Start the conversation →
     </Link>
