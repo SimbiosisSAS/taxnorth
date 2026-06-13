@@ -44,7 +44,7 @@ export async function PUT(req: NextRequest) {
 
     const { data: lead } = await supabaseAdmin
       .from('leads')
-      .select('full_name, email, province, language, situation, notes')
+      .select('full_name, email, phone, province, language, situation, notes')
       .eq('id', leadId)
       .single()
 
@@ -82,14 +82,48 @@ export async function PUT(req: NextRequest) {
             </div>
             <div style="background:#FAF8F5;padding:24px;border-radius:0 0 8px 8px">
               <table style="width:100%;border-collapse:collapse">
-                <tr><td style="padding:8px 0;color:#666;font-size:14px;width:140px">Client name</td><td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${lead.full_name || 'Not provided'}</td></tr>
-                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Province</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${lead.province || '—'}</td></tr>
-                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Language</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${lead.language || '—'}</td></tr>
-                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Situation</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${(lead.situation || []).join(', ') || '—'}</td></tr>
-                ${lead.notes ? `<tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Notes</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${lead.notes}</td></tr>` : ''}
-                ${notes ? `<tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Admin note</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${notes}</td></tr>` : ''}
+                <tr>
+                  <td style="padding:8px 0;color:#666;font-size:14px;width:140px">Client name</td>
+                  <td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${(lead as any).full_name || 'Not provided'}</td>
+                </tr>
+                <tr style="border-top:1px solid #EEF1F7">
+                  <td style="padding:8px 0;color:#666;font-size:14px">Email</td>
+                  <td style="padding:8px 0;font-size:14px">
+                    <a href="mailto:${(lead as any).email}" style="color:#F4A332;font-weight:600">${(lead as any).email || '—'}</a>
+                  </td>
+                </tr>
+                <tr style="border-top:1px solid #EEF1F7">
+                  <td style="padding:8px 0;color:#666;font-size:14px">Phone</td>
+                  <td style="padding:8px 0;font-size:14px">
+                    <a href="tel:${(lead as any).phone}" style="color:#F4A332;font-weight:600">${(lead as any).phone || '—'}</a>
+                  </td>
+                </tr>
+                <tr style="border-top:1px solid #EEF1F7">
+                  <td style="padding:8px 0;color:#666;font-size:14px">Province</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${(lead as any).province || '—'}</td>
+                </tr>
+                <tr style="border-top:1px solid #EEF1F7">
+                  <td style="padding:8px 0;color:#666;font-size:14px">Language</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${(lead as any).language || '—'}</td>
+                </tr>
+                <tr style="border-top:1px solid #EEF1F7">
+                  <td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Situation</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${((lead as any).situation || []).join(', ') || '—'}</td>
+                </tr>
+                ${(lead as any).notes ? `
+                <tr style="border-top:1px solid #EEF1F7">
+                  <td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Notes</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${(lead as any).notes}</td>
+                </tr>` : ''}
+                ${notes ? `
+                <tr style="border-top:1px solid #EEF1F7">
+                  <td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Admin note</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${notes}</td>
+                </tr>` : ''}
               </table>
-              <p style="color:#666;font-size:13px;margin:20px 0 0">Please reach out to this client within 24 hours. They have been notified that a professional will contact them soon.</p>
+              <p style="color:#666;font-size:13px;margin:20px 0 0">
+                Please reach out to this client within 24 hours. They have been notified that a professional will contact them soon.
+              </p>
             </div>
           </div>
         `,
