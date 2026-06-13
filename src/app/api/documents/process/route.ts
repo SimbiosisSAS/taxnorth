@@ -1,3 +1,35 @@
+// DOM polyfills — must be first, before any imports
+if (typeof globalThis.DOMMatrix === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(globalThis as any).DOMMatrix = class DOMMatrix {
+    constructor() {}
+    static fromMatrix() { return new (globalThis as any).DOMMatrix() }
+    multiply() { return this }
+    translate() { return this }
+    scale() { return this }
+    rotate() { return this }
+    invertSelf() { return this }
+  }
+}
+if (typeof globalThis.ImageData === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(globalThis as any).ImageData = class ImageData {
+    width: number; height: number; data: Uint8ClampedArray
+    constructor(sw: number, sh: number) {
+      this.width = sw; this.height = sh
+      this.data = new Uint8ClampedArray(sw * sh * 4)
+    }
+  }
+}
+if (typeof globalThis.Path2D === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(globalThis as any).Path2D = class Path2D {
+    constructor() {}
+    addPath() {} closePath() {} moveTo() {} lineTo() {}
+    bezierCurveTo() {} quadraticCurveTo() {} arc() {} rect() {}
+  }
+}
+
 import { supabaseAdmin } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
@@ -70,12 +102,10 @@ async function extractFromImage(
       max_tokens: 2000,
     }),
   })
-
   if (!response.ok) {
     const err = await response.text()
     throw new Error(`Image API error: ${response.status} ${err}`)
   }
-
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
   console.log('Image extraction:', content.substring(0, 400))
@@ -87,9 +117,8 @@ async function extractFromImage(
 async function extractFromPDF(
   buffer: Buffer
 ): Promise<Record<string, unknown>> {
-  // Load pdf-parse internal module to bypass canvas dependency
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse')
+  const pdfParse = require('pdf-parse')
 
   let fullText = ''
   try {
@@ -104,7 +133,7 @@ const pdfParse = require('pdf-parse')
   console.log('PDF text preview:', fullText.substring(0, 500))
 
   if (!fullText || fullText.trim().length < 20) {
-    throw new Error('Could not extract text from PDF — document may be scanned')
+    throw new Error('Could not extract text from PDF')
   }
 
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -146,16 +175,10 @@ export async function POST(req: NextRequest) {
     const conversationId = formData.get('conversationId') as string | null
 
     if (!file || !sessionId) {
-      return NextResponse.json(
-        { error: 'File and sessionId are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'File and sessionId are required' }, { status: 400 })
     }
 
-    const allowedTypes = [
-      'image/jpeg', 'image/png', 'image/webp',
-      'image/heic', 'application/pdf'
-    ]
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf']
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
         { error: 'File type not supported. Please upload a JPG, PNG, WebP, or PDF.' },
@@ -169,14 +192,10 @@ export async function POST(req: NextRequest) {
 
     console.log('Processing:', file.name, file.type, buffer.length, 'bytes')
 
-    // 1. Upload to Supabase Storage
     const filePath = `${sessionId}/${Date.now()}-${file.name}`
     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from('tax-documents')
-      .upload(filePath, buffer, {
-        contentType: file.type,
-        upsert: false,
-      })
+      .upload(filePath, buffer, { contentType: file.type, upsert: false })
 
     if (uploadError) {
       console.error('Storage upload error:', uploadError)
@@ -189,7 +208,6 @@ export async function POST(req: NextRequest) {
 
     const fileUrl = signedUrlData?.signedUrl || ''
 
-    // 2. Create document record
     const { data: document, error: docError } = await supabaseAdmin
       .from('documents')
       .insert({
@@ -208,7 +226,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to create document record' }, { status: 500 })
     }
 
-    // 3. Extract — PDFs use pdf-parse + DeepSeek, images use GPT-4o-mini
     let extractedData: Record<string, unknown> = {}
     let extractionStatus = 'completed'
 
@@ -224,7 +241,6 @@ export async function POST(req: NextRequest) {
       extractionStatus = 'error'
     }
 
-    // 4. Update document record
     await supabaseAdmin
       .from('documents')
       .update({
@@ -234,7 +250,6 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', document.id)
 
-    // 5. Send package to CPA
     if (extractionStatus === 'completed' && process.env.ADMIN_EMAIL) {
       const docType = (extractedData.document_type as string) || 'Tax Document'
       const taxYear = (extractedData.tax_year as string) || 'Unknown year'
@@ -250,54 +265,31 @@ export async function POST(req: NextRequest) {
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #1A2744; padding: 24px; border-radius: 8px 8px 0 0;">
               <h1 style="color: #F4A332; margin: 0; font-size: 18px;">New Tax Document Received</h1>
-              <p style="color: white; opacity: 0.7; margin: 8px 0 0; font-size: 14px;">
-                ${docType} · ${taxYear} · ${recipient}
-              </p>
+              <p style="color: white; opacity: 0.7; margin: 8px 0 0; font-size: 14px;">${docType} · ${taxYear} · ${recipient}</p>
             </div>
             <div style="background: #FAF8F5; padding: 24px; border-radius: 0 0 8px 8px;">
               <table style="width: 100%; border-collapse: collapse;">
-                <tr>
-                  <td style="padding: 8px 0; color: #666; font-size: 14px; width: 160px;">Document type</td>
-                  <td style="padding: 8px 0; color: #1A2744; font-weight: 600; font-size: 14px;">${docType}</td>
-                </tr>
-                <tr style="border-top: 1px solid #EEF1F7;">
-                  <td style="padding: 8px 0; color: #666; font-size: 14px;">Tax year</td>
-                  <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${taxYear}</td>
-                </tr>
-                <tr style="border-top: 1px solid #EEF1F7;">
-                  <td style="padding: 8px 0; color: #666; font-size: 14px;">Issuer</td>
-                  <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${issuer}</td>
-                </tr>
-                <tr style="border-top: 1px solid #EEF1F7;">
-                  <td style="padding: 8px 0; color: #666; font-size: 14px;">Recipient</td>
-                  <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${recipient}</td>
-                </tr>
+                <tr><td style="padding: 8px 0; color: #666; font-size: 14px; width: 160px;">Document type</td><td style="padding: 8px 0; color: #1A2744; font-weight: 600; font-size: 14px;">${docType}</td></tr>
+                <tr style="border-top: 1px solid #EEF1F7;"><td style="padding: 8px 0; color: #666; font-size: 14px;">Tax year</td><td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${taxYear}</td></tr>
+                <tr style="border-top: 1px solid #EEF1F7;"><td style="padding: 8px 0; color: #666; font-size: 14px;">Issuer</td><td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${issuer}</td></tr>
+                <tr style="border-top: 1px solid #EEF1F7;"><td style="padding: 8px 0; color: #666; font-size: 14px;">Recipient</td><td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${recipient}</td></tr>
               </table>
               <h3 style="color: #1A2744; font-size: 14px; margin: 20px 0 12px;">Extracted Fields</h3>
               <table style="width: 100%; border-collapse: collapse;">
                 ${Object.entries(fields).map(([key, value]) => `
                   <tr style="border-top: 1px solid #EEF1F7;">
-                    <td style="padding: 6px 0; color: #666; font-size: 13px; width: 200px;">
-                      ${key.replace(/_/g, ' ').replace(/box /gi, 'Box ')}
-                    </td>
-                    <td style="padding: 6px 0; color: #1A2744; font-size: 13px; font-weight: 500;">
-                      ${value}
-                    </td>
+                    <td style="padding: 6px 0; color: #666; font-size: 13px; width: 200px;">${key.replace(/_/g, ' ').replace(/box /gi, 'Box ')}</td>
+                    <td style="padding: 6px 0; color: #1A2744; font-size: 13px; font-weight: 500;">${value}</td>
                   </tr>
                 `).join('')}
               </table>
               ${fileUrl ? `
               <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #EEF1F7;">
-                <a href="${fileUrl}" style="background: #F4A332; color: #1A2744; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
-                  View Original Document →
-                </a>
+                <a href="${fileUrl}" style="background: #F4A332; color: #1A2744; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">View Original Document →</a>
                 <p style="color: #999; font-size: 11px; margin: 8px 0 0;">Link expires in 7 days</p>
-              </div>
-              ` : ''}
+              </div>` : ''}
               <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #EEF1F7;">
-                <p style="color: #999; font-size: 11px; margin: 0;">
-                  Session: ${sessionId} · Document ID: ${document.id}
-                </p>
+                <p style="color: #999; font-size: 11px; margin: 0;">Session: ${sessionId} · Document ID: ${document.id}</p>
               </div>
             </div>
           </div>
