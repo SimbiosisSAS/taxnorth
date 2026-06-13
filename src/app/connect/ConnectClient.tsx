@@ -56,6 +56,8 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [etransferConfirmed, setEtransferConfirmed] = useState(false)
+  const [savedSessionId, setSavedSessionId] = useState('')
+  const [savedEmail, setSavedEmail] = useState('')
 
   const allConsentsChecked = Object.values(consents).every(Boolean)
 
@@ -90,11 +92,30 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
           professionalName: proName || null,
         }),
       })
+      setSavedSessionId(sessionId)
+      setSavedEmail(form.email)
       setSubmitted(true)
     } catch (error) {
       console.error('Submit error:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleEtransferConfirm() {
+    setEtransferConfirmed(true)
+    try {
+      await fetch('/api/leads/payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: savedSessionId,
+          email: savedEmail,
+          method: 'etransfer',
+        }),
+      })
+    } catch (error) {
+      console.error('Payment update error:', error)
     }
   }
 
@@ -137,7 +158,7 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
                   </div>
                 </div>
                 <button
-                  onClick={() => setEtransferConfirmed(true)}
+                  onClick={handleEtransferConfirm}
                   className="w-full bg-midnight-north text-white font-semibold py-3 rounded-button hover:opacity-90 transition-opacity text-sm"
                 >
                   I've sent my e-Transfer ✓
@@ -156,13 +177,19 @@ export default function ConnectClient({ proSlug, proName, proFirm }: ConnectClie
                   A confirmation will be sent to <strong>{form.email}</strong> within 1 business hour.
                   Any engagement for professional services will be directly between you and the selected accountant.
                 </p>
+                <Link
+                  href="/chat"
+                  className="inline-block mt-4 bg-lantern-amber text-midnight-north font-semibold px-6 py-2.5 rounded-button text-sm hover:opacity-90 transition-opacity"
+                >
+                  Continue in TaxNorth →
+                </Link>
               </div>
             )}
           </div>
 
           {/* CARD OPTION */}
           <a
-            href="https://taxnorth.myhelcim.com/hosted/?token=5449fe12da0aa7f12c5574&amount=19.99&amountHash=2b8216946cd1838aae12f0958b4cb6a4148b4d9d8a3019d905d825cb785f7342"
+            href={`https://taxnorth.myhelcim.com/hosted/?token=5449fe12da0aa7f12c5574&amount=19.99&amountHash=2b8216946cd1838aae12f0958b4cb6a4148b4d9d8a3019d905d825cb785f7342&customerEmail=${encodeURIComponent(savedEmail)}&customerName=${encodeURIComponent(form.fullName)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block bg-white border border-fog-gray rounded-card p-6 mb-4 hover:border-lantern-amber transition-colors"
