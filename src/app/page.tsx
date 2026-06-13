@@ -1,4 +1,4 @@
-import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users } from 'lucide-react'
+import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, Check } from 'lucide-react'
 import Link from 'next/link'
 import Script from 'next/script'
 
@@ -230,18 +230,18 @@ export default function HomePage() {
           </h3>
           <div className="space-y-3">
             {[
-              "We know their background and years of experience",
-              "All professionals in our directory are licensed CPAs",
-              "We confirm they offer fair, transparent pricing",
-              "We stand behind every connection we make"
-            ].map((item) => (
-              <div key={item} className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-lantern-amber/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <div className="w-2 h-2 bg-lantern-amber rounded-full" />
-                </div>
-                <span className="text-white/70 text-sm leading-relaxed">{item}</span>
-              </div>
-            ))}
+  "We know their background and years of experience",
+  "All professionals in our directory are licensed CPAs",
+  "We confirm they offer fair, transparent pricing",
+  "We stand behind every connection we make"
+].map((item) => (
+  <div key={item} className="flex items-start gap-3">
+    <div className="w-5 h-5 bg-lantern-amber/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+      <Check className="w-3 h-3 text-lantern-amber" strokeWidth={3} />
+    </div>
+    <span className="text-white/70 text-sm leading-relaxed">{item}</span>
+  </div>
+))}
           </div>
         </div>
       </div>
