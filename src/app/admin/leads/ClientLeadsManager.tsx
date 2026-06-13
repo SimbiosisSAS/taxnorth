@@ -126,10 +126,7 @@ export default function ClientLeadsManager() {
     unassigned: leads.filter(l => l.payment_status === 'completed' && !l.professional_id).length,
   }
 
-  const relevantPros = professionals.filter(p =>
-    !selected?.province || p.province === selected.province ||
-    p.province === 'All' || !p.province
-  )
+  const relevantPros = professionals
 
   return (
     <div className="min-h-screen bg-fog-gray">
@@ -310,8 +307,8 @@ export default function ClientLeadsManager() {
                     <option value="">Select a professional...</option>
                     {relevantPros.map(p => (
                       <option key={p.id} value={p.id}>
-                        {p.name} — {p.firm_name} ({p.province})
-                      </option>
+  {p.name} — {p.firm_name} ({p.province || 'All provinces'})
+</option>
                     ))}
                   </select>
                   <textarea
