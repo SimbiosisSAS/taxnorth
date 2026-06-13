@@ -3,7 +3,7 @@ import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const VISION_MODEL = 'google/gemini-2.0-flash-001'
+const VISION_MODEL = 'openai/gpt-4o-mini'
 
 const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Extract all information from this document.
 
