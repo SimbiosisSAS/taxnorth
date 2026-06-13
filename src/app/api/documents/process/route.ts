@@ -7,7 +7,7 @@ const VISION_MODEL = 'google/gemini-2.0-flash-001'
 
 const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Extract all information from this document.
 
-First identify the document type: T4, T4A, T4E, T5, T3, T2202, RRSP Receipt, Notice of Assessment, T1135, T2200, or other.
+First identify the document type: T4, T4A, T4E, T5, T3, T2202, RRSP Receipt, Notice of Assessment, T1135, T2200, T5018, or other.
 
 Extract ALL fields visible in the document. For T4 documents extract:
 - Employer name and address
@@ -37,7 +37,46 @@ Return ONLY a valid JSON object, no other text:
   "notes": "Any relevant observations about document quality or missing data"
 }`
 
-async function extractWithGemini(
+async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> {
+  const pdfParse = (await import('pdf-parse')).default
+  const data = await pdfParse(buffer)
+  const text = data.text
+
+  if (!text || text.trim().length < 20) {
+    throw new Error('PDF appears to be scanned — no text found')
+  }
+
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://www.taxnorth.ca',
+      'X-Title': 'TaxNorth.ca',
+    },
+    body: JSON.stringify({
+      model: 'deepseek/deepseek-v4-flash',
+      messages: [
+        {
+          role: 'user',
+          content: `${EXTRACTION_PROMPT}\n\nDOCUMENT TEXT:\n${text}`,
+        },
+      ],
+      max_tokens: 2000,
+    }),
+  })
+
+  if (!response.ok) throw new Error(`API error: ${response.status}`)
+
+  const result = await response.json()
+  const content = result.choices[0]?.message?.content || ''
+  const jsonMatch = content.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) throw new Error('No JSON found in response')
+
+  return JSON.parse(jsonMatch[0])
+}
+
+async function extractFromImage(
   base64Content: string,
   mimeType: string
 ): Promise<Record<string, unknown>> {
@@ -72,14 +111,10 @@ async function extractWithGemini(
     }),
   })
 
-  if (!response.ok) {
-    throw new Error(`Gemini API error: ${response.status}`)
-  }
+  if (!response.ok) throw new Error(`Gemini API error: ${response.status}`)
 
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-
-  // Parse JSON from response
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON found in response')
 
@@ -100,7 +135,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Validate file type
     const allowedTypes = [
       'image/jpeg', 'image/png', 'image/webp',
       'image/heic', 'application/pdf'
@@ -112,7 +146,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Read file as buffer
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     const base64 = buffer.toString('base64')
@@ -134,14 +167,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Create signed URL valid for 7 days
     const { data: signedUrlData } = await supabaseAdmin.storage
       .from('tax-documents')
       .createSignedUrl(uploadData.path, 60 * 60 * 24 * 7)
 
     const fileUrl = signedUrlData?.signedUrl || ''
 
-    // 2. Create document record in Supabase
+    // 2. Create document record
     const { data: document, error: docError } = await supabaseAdmin
       .from('documents')
       .insert({
@@ -163,14 +195,18 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 3. Extract data with Gemini Vision
+    // 3. Extract data — PDF vs image
     let extractedData: Record<string, unknown> = {}
     let extractionStatus = 'completed'
 
     try {
-      extractedData = await extractWithGemini(base64, file.type)
+      if (file.type === 'application/pdf') {
+        extractedData = await extractFromPDF(buffer)
+      } else {
+        extractedData = await extractFromImage(base64, file.type)
+      }
     } catch (extractionError) {
-      console.error('Gemini extraction error:', extractionError)
+      console.error('Extraction error:', extractionError)
       extractionStatus = 'error'
     }
 
@@ -190,7 +226,7 @@ export async function POST(req: NextRequest) {
       const taxYear = (extractedData.tax_year as string) || 'Unknown year'
       const issuer = (extractedData.issuer_name as string) || 'Unknown issuer'
       const recipient = (extractedData.recipient_name as string) || 'Unknown'
-      const fields = extractedData.fields as Record<string, string> || {}
+      const fields = (extractedData.fields as Record<string, string>) || {}
 
       await resend.emails.send({
         from: 'TaxNorth <hello@taxnorth.ca>',
@@ -199,9 +235,7 @@ export async function POST(req: NextRequest) {
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #1A2744; padding: 24px; border-radius: 8px 8px 0 0;">
-              <h1 style="color: #F4A332; margin: 0; font-size: 18px;">
-                New Tax Document Received
-              </h1>
+              <h1 style="color: #F4A332; margin: 0; font-size: 18px;">New Tax Document Received</h1>
               <p style="color: white; opacity: 0.7; margin: 8px 0 0; font-size: 14px;">
                 ${docType} · ${taxYear} · ${recipient}
               </p>
@@ -225,7 +259,6 @@ export async function POST(req: NextRequest) {
                   <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${recipient}</td>
                 </tr>
               </table>
-
               <h3 style="color: #1A2744; font-size: 14px; margin: 20px 0 12px;">Extracted Fields</h3>
               <table style="width: 100%; border-collapse: collapse;">
                 ${Object.entries(fields).map(([key, value]) => `
@@ -239,17 +272,14 @@ export async function POST(req: NextRequest) {
                   </tr>
                 `).join('')}
               </table>
-
               ${fileUrl ? `
               <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #EEF1F7;">
-                <a href="${fileUrl}"
-                   style="background: #F4A332; color: #1A2744; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                <a href="${fileUrl}" style="background: #F4A332; color: #1A2744; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                   View Original Document →
                 </a>
                 <p style="color: #999; font-size: 11px; margin: 8px 0 0;">Link expires in 7 days</p>
               </div>
               ` : ''}
-
               <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #EEF1F7;">
                 <p style="color: #999; font-size: 11px; margin: 0;">
                   Session: ${sessionId} · Document ID: ${document.id}
@@ -260,7 +290,6 @@ export async function POST(req: NextRequest) {
         `,
       }).catch(err => console.error('Email send error:', err))
 
-      // Mark as sent
       await supabaseAdmin
         .from('documents')
         .update({ sent_to_cpa: true, sent_at: new Date().toISOString() })
