@@ -1,6 +1,6 @@
 import { openrouter, DEEPSEEK_MODEL } from '@/lib/openrouter'
 import { supabaseAdmin } from '@/lib/supabase'
-import { TAXNORTH_SYSTEM_PROMPT } from '@/lib/prompts'
+import { buildSystemPrompt } from '@/lib/prompts'
 import { getRelevantContext } from '@/lib/rag'
 import { NextRequest } from 'next/server'
 
@@ -14,11 +14,10 @@ export async function POST(req: NextRequest) {
   try {
     const { message, sessionId } = await req.json()
 
-// AGREGAR ESTO — validación de formato UUID
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-if (!message || !sessionId || !uuidRegex.test(sessionId)) {
-  return new Response('Missing or invalid required fields', { status: 400 })
-}
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    if (!message || !sessionId || !uuidRegex.test(sessionId)) {
+      return new Response('Missing or invalid required fields', { status: 400 })
+    }
 
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || req.headers.get('x-real-ip')
@@ -78,15 +77,19 @@ if (!message || !sessionId || !uuidRegex.test(sessionId)) {
 
     const { context, sources } = await getRelevantContext(trimmedMessage)
 
-    const systemWithContext = context
-      ? `${TAXNORTH_SYSTEM_PROMPT}
+    // Check if this session has a completed payment
+    const { data: leadData } = await supabaseAdmin
+      .from('leads')
+      .select('payment_status')
+      .eq('session_id', sessionId)
+      .maybeSingle()
 
-VERIFIED INFORMATION FROM CRA DOCUMENTS:
-Use the following verified information to answer accurately.
-Always prefer this over general knowledge when available.
+    const hasPaid = leadData?.payment_status === 'completed'
 
-${context}`
-      : TAXNORTH_SYSTEM_PROMPT
+    const systemWithContext = buildSystemPrompt({
+      hasPaid,
+      ragContext: context || undefined,
+    })
 
     const openrouterStream = await openrouter.chat.completions.create({
       model: DEEPSEEK_MODEL,
@@ -118,7 +121,6 @@ ${context}`
           fullRaw += text
 
           if (streamingStarted) {
-            // Check for inline think tags
             if (THINK_OPEN.some(t => text.includes(t))) inThinkBlock = true
             if (inThinkBlock) {
               if (THINK_CLOSE.some(t => text.includes(t))) inThinkBlock = false
@@ -132,7 +134,6 @@ ${context}`
             const hasClose = THINK_CLOSE.some(t => preBuffer.includes(t))
 
             if (!hasOpen || hasClose) {
-              // No thinking block or it's complete — start streaming
               streamingStarted = true
               let toSend = preBuffer
               THINK_OPEN.forEach((open, i) => {
@@ -150,7 +151,6 @@ ${context}`
           }
         }
 
-        // Flush preBuffer if stream ended before starting
         if (!streamingStarted && preBuffer) {
           let toSend = preBuffer
           THINK_OPEN.forEach((open, i) => {
@@ -165,13 +165,11 @@ ${context}`
           }
         }
 
-        // Append sources once
         if (sources.length > 0) {
           sourcesText = `\n\n---\n**Sources:** ${sources.join(' · ')}`
           controller.enqueue(enc.encode(sourcesText))
         }
 
-        // Save to Supabase
         await supabaseAdmin.from('messages').insert({
           conversation_id: conversation.id,
           role: 'assistant',
