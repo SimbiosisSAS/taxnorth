@@ -35,7 +35,8 @@ KEY TOPICS YOU COVER:
 - GST/HST credits and the Canada Groceries and Essentials Benefit
   (which replaced the GST/HST credit starting July 2026)
 - Canada Workers Benefit
-- Climate Action Incentive
+- Canada Groceries and Essentials Benefit (replaced GST/HST credit July 2026, pays 25% more)
+- Canada Workers Benefit
 - Filing deadlines (April 30)
 - RRSP and TFSA basics
 - Provincial differences
