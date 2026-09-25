@@ -25,12 +25,13 @@ export const metadata: Metadata = {
   description: 'Your free AI guide to Canadian taxes — in any language, for every newcomer. Understand what you owe, what you\'re owed, and when to file.',
   keywords: 'Canadian taxes, newcomers Canada, tax guide, impuestos Canada, CRA, file taxes Canada',
   verification: {
-    google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
-    other: {
-      'msvalidate.01': 'D1C1BE7C521A8B10763BB6027E7B401A',
-      'fo-verify': 'b13a8735-f039-405e-8138-b18195cde0ac',
-    },
+  google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
+  other: {
+    'msvalidate.01': 'D1C1BE7C521A8B10763BB6027E7B401A',
+    'fo-verify': 'b13a8735-f039-405e-8138-b18195cde0ac',
+    'impact-site-verification': 'f3998595-7f42-427f-9598-337001370053',
   },
+},
   metadataBase: new URL('https://www.taxnorth.ca'),
   openGraph: {
     type: 'website',
