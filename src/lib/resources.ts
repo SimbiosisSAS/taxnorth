@@ -1,3 +1,10 @@
+export interface AffiliateProduct {
+  name: string
+  description: string
+  link: string
+  badge?: string
+}
+
 export interface Resource {
   slug: string
   title: string
@@ -5,6 +12,7 @@ export interface Resource {
   description: string
   intro: string
   sections: { heading: string; content: string }[]
+  affiliates?: AffiliateProduct[]
   cta: string
 }
 
@@ -30,7 +38,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'Step 4 — File by the deadline',
-        content: 'The filing deadline for most individuals is April 30. If you or your spouse are self-employed, the deadline to file is June 15, but any taxes owing must still be paid by April 30. Even if you have no income to report, filing is important — it activates your GST/HST credit, Climate Action Incentive, and other benefits you are entitled to receive.'
+        content: 'The filing deadline for most individuals is April 30. If you or your spouse are self-employed, the deadline to file is June 15, but any taxes owing must still be paid by April 30. Even if you have no income to report, filing is important — it activates your Canada Groceries and Essentials Benefit, Canada Workers Benefit, and other benefits you are entitled to receive.'
       },
       {
         heading: 'Step 5 — Set up direct deposit',
@@ -56,7 +64,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'When do you receive your T4?',
-        content: 'Your employer must issue your T4 by the last day of February for the previous tax year. So for income earned in 2024, you receive your T4 by February 28, 2025. If you have not received it by then, contact your employer first. If they cannot provide it, you can request a copy through My Account on the CRA website.'
+        content: 'Your employer must issue your T4 by the last day of February for the previous tax year. So for income earned in 2025, you receive your T4 by February 28, 2026. If you have not received it by then, contact your employer first. If they cannot provide it, you can request a copy through My Account on the CRA website.'
       },
       {
         heading: 'The most important boxes on your T4',
@@ -64,7 +72,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'How to use your T4 to file taxes',
-        content: 'When you file your tax return, you enter the information from your T4 into your tax software or form. The amounts in Box 22 represent tax already paid — if more was withheld than you owe, you receive a refund. If less was withheld, you pay the difference. Most newcomers with a single T4 and no other income receive a refund because they also qualify for credits like the GST/HST credit and basic personal amount.'
+        content: 'When you file your tax return, you enter the information from your T4 into your tax software or form. The amounts in Box 22 represent tax already paid — if more was withheld than you owe, you receive a refund. If less was withheld, you pay the difference. Most newcomers with a single T4 and no other income receive a refund because they also qualify for credits like the Canada Groceries and Essentials Benefit and the basic personal amount.'
       },
       {
         heading: 'What if you lost your T4?',
@@ -75,44 +83,44 @@ export const resources: Resource[] = [
   },
   {
     slug: 'gst-hst-credit-canada-newcomers',
-    title: 'GST/HST Credit in Canada: Who is Eligible and How to Get It',
-    metaTitle: 'GST/HST Credit Canada: Eligibility for Newcomers Explained | TaxNorth',
-    description: 'Learn who qualifies for the GST/HST credit in Canada, how much you can receive, when payments arrive, and how to apply as a newcomer.',
-    intro: 'The GST/HST credit is one of the most important — and most overlooked — benefits for newcomers to Canada. It is a tax-free quarterly payment from the government designed to help people with low and modest incomes offset the sales tax they pay. Many newcomers miss it simply because nobody told them it exists.',
+    title: 'The Canada Groceries and Essentials Benefit: What Newcomers Need to Know',
+    metaTitle: 'Canada Groceries and Essentials Benefit for Newcomers 2026 | TaxNorth',
+    description: 'The GST/HST credit was replaced by the Canada Groceries and Essentials Benefit in July 2026 — paying 25% more. Learn who qualifies and how to get it as a newcomer.',
+    intro: 'In July 2026, Canada replaced the GST/HST credit with the Canada Groceries and Essentials Benefit — and the new benefit pays 25% more. Most newcomers have no idea this money exists. Here is everything you need to know to claim it.',
     sections: [
       {
-        heading: 'What is the GST/HST credit?',
-        content: 'The GST/HST credit is a quarterly tax-free payment from the Canada Revenue Agency. It is designed to help individuals and families with low to moderate incomes offset the Goods and Services Tax (GST) or Harmonized Sales Tax (HST) they pay on everyday purchases. It is not a loan — it is money the government gives you.'
-      },
-      {
-        heading: 'Who is eligible?',
-        content: 'To receive the GST/HST credit you must be a Canadian resident for tax purposes, be 19 years of age or older, or have a spouse or common-law partner, or be a parent living with your child. As a newcomer, you may be eligible in the year you arrive in Canada. The amount you receive depends on your family net income and the number of children you have.'
-      },
-      {
-        heading: 'How do you apply?',
-        content: 'You do not apply separately for the GST/HST credit. The CRA automatically considers you when you file your income tax return. This is one of the most important reasons newcomers should file a tax return even if they had no income — filing is what triggers the credit.'
-      },
-      {
-        heading: 'When do payments arrive?',
-        content: 'Payments are made four times per year: in January, April, July, and October. The amount is based on your previous year\'s tax return. Set up direct deposit through My CRA Account to receive payments directly in your bank account on payment day.'
+        heading: 'What is the Canada Groceries and Essentials Benefit?',
+        content: 'The Canada Groceries and Essentials Benefit (CGEB) is a tax-free quarterly payment from the federal government to help Canadians with low and modest incomes. It replaced the GST/HST credit in July 2026 and pays 25% more than its predecessor. It is not charity — it is a benefit you are entitled to as a Canadian resident, funded by taxes already collected from everyone.'
       },
       {
         heading: 'How much can you receive?',
-        content: 'The amount varies based on your income, marital status, and number of children. For a single individual with no children and low income, the annual credit is typically between $300 and $500. For families with children, it can be significantly higher. The lower your income, the higher the credit.'
+        content: 'For 2026, a single individual with no children and modest income can receive approximately $650 per year. Families with children receive more. The lower your income, the higher the benefit. Payments arrive quarterly — in October, January, April, and July.'
+      },
+      {
+        heading: 'The one thing you need to do to receive it',
+        content: 'File your tax return. That is it. You do not fill out a separate form. You do not call anyone. The CRA automatically calculates your entitlement when you file, even if you had zero income that year. Every year you do not file is a year you decline this money.'
+      },
+      {
+        heading: 'Can you get it in your first year in Canada?',
+        content: 'Yes. If you became a Canadian resident during the year and file a return, you may be eligible for a prorated amount in your first benefit year. You can also apply early using Form RC151 before filing your first return — this lets you start receiving payments sooner without waiting until tax season.'
+      },
+      {
+        heading: 'What about the old GST/HST credit?',
+        content: 'If you arrived before July 2026 and received the GST/HST credit, the transition was automatic. The CRA switched existing recipients to the new benefit without any action required. The amount simply increased by approximately 25% starting with the July 2026 payment.'
       }
     ],
-    cta: 'Not sure if you qualify for the GST/HST credit? Ask TaxNorth — free answers in any language.'
+    cta: 'Not sure if you qualify or how much you can receive? Ask TaxNorth — free guidance in any language.'
   },
   {
     slug: 'tax-filing-deadline-canada',
     title: 'Canadian Tax Filing Deadlines: Everything Newcomers Need to Know',
-    metaTitle: 'Tax Filing Deadline Canada 2024-2025: Guide for Newcomers | TaxNorth',
+    metaTitle: 'Tax Filing Deadline Canada 2025-2026: Guide for Newcomers | TaxNorth',
     description: 'Learn the tax filing deadlines in Canada, what happens if you miss them, and why filing on time — even with no income — is critical for newcomers.',
     intro: 'Missing the tax filing deadline in Canada has real consequences — both financial penalties and lost benefits. Here is everything you need to know about when to file, what happens if you are late, and why filing early is almost always the right move.',
     sections: [
       {
         heading: 'The main filing deadline — April 30',
-        content: 'For most individuals in Canada, the deadline to file your income tax return is April 30 of the year following the tax year. For example, your 2024 tax return must be filed by April 30, 2025. If April 30 falls on a weekend or holiday, the deadline moves to the next business day.'
+        content: 'For most individuals in Canada, the deadline to file your income tax return is April 30 of the year following the tax year. For example, your 2025 tax return must be filed by April 30, 2026. If April 30 falls on a weekend or holiday, the deadline moves to the next business day.'
       },
       {
         heading: 'Self-employed individuals — June 15',
@@ -128,7 +136,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'Why newcomers should file even with no income',
-        content: 'Many newcomers assume that if they had no income, they do not need to file. This is incorrect — and costly. Filing your return, even with zero income, activates your GST/HST credit, Climate Action Incentive Payment, Canada Child Benefit if you have children, and provincial benefits like the Ontario Trillium Benefit. Every year you do not file is a year you decline those payments.'
+        content: 'Many newcomers assume that if they had no income, they do not need to file. This is incorrect — and costly. Filing your return, even with zero income, activates your Canada Groceries and Essentials Benefit, Canada Workers Benefit, Canada Child Benefit if you have children, and provincial benefits like the Ontario Trillium Benefit. Every year you do not file is a year you decline those payments.'
       }
     ],
     cta: 'Questions about deadlines or what to file? Ask TaxNorth — free, instant answers in your language.'
@@ -137,12 +145,12 @@ export const resources: Resource[] = [
     slug: 'international-student-taxes-canada',
     title: 'How International Students File Taxes in Canada',
     metaTitle: 'International Student Taxes Canada: Complete Filing Guide | TaxNorth',
-    description: 'Everything international students need to know about filing taxes in Canada — residency status, tuition credits, T4 slips, GST/HST eligibility, and free filing options.',
-    intro: 'If you are an international student in Canada, you likely need to file a Canadian tax return — and doing so can put money back in your pocket through the tuition tax credit and GST/HST credit. Here is everything you need to know.',
+    description: 'Everything international students need to know about filing taxes in Canada — residency status, tuition credits, T4 slips, benefit eligibility, and free filing options.',
+    intro: 'If you are an international student in Canada, you likely need to file a Canadian tax return — and doing so can put money back in your pocket through the tuition tax credit and the Canada Groceries and Essentials Benefit. Here is everything you need to know.',
     sections: [
       {
         heading: 'Are international students required to file taxes in Canada?',
-        content: 'If you lived in Canada for more than 183 days in a calendar year, you are generally considered a Canadian resident for tax purposes and should file a tax return. This applies to most international students. Even if you had no income, filing is worthwhile because it makes you eligible for the GST/HST credit and builds your RRSP contribution room for future years.'
+        content: 'If you lived in Canada for more than 183 days in a calendar year, you are generally considered a Canadian resident for tax purposes and should file a tax return. This applies to most international students. Even if you had no income, filing is worthwhile because it makes you eligible for the Canada Groceries and Essentials Benefit and builds your RRSP contribution room for future years.'
       },
       {
         heading: 'The tuition tax credit',
@@ -153,8 +161,8 @@ export const resources: Resource[] = [
         content: 'If you worked part-time or full-time while studying in Canada, your employer issues a T4 slip by the end of February showing your income and deductions. You must include this income in your tax return. Many students who worked throughout the year receive a refund because their employer withheld more tax than necessary.'
       },
       {
-        heading: 'GST/HST credit eligibility for students',
-        content: 'International students who are Canadian residents for tax purposes are eligible for the GST/HST credit. Even if you had no employment income, filing your return makes you eligible for this quarterly payment. The amount depends on your income — lower income means higher credit.'
+        heading: 'Benefits international students can access',
+        content: 'International students who are Canadian residents for tax purposes are eligible for the Canada Groceries and Essentials Benefit. Even if you had no employment income, filing your return makes you eligible for this quarterly payment. The amount depends on your income — lower income means higher benefit.'
       },
       {
         heading: 'Free tax help for students',
@@ -176,7 +184,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'What benefits are you eligible for?',
-        content: 'Work permit holders who are Canadian residents for tax purposes are eligible for most federal benefits including the GST/HST credit, Canada Workers Benefit, and Climate Action Incentive Payment. If you have children, you may also be eligible for the Canada Child Benefit. These benefits are activated by filing your tax return.'
+        content: 'Work permit holders who are Canadian residents for tax purposes are eligible for most federal benefits including the Canada Groceries and Essentials Benefit, Canada Workers Benefit, and Canada Child Benefit if you have children. These benefits are activated by filing your tax return.'
       },
       {
         heading: 'CPP and EI contributions',
@@ -191,7 +199,7 @@ export const resources: Resource[] = [
         content: 'If you also earned income in your home country while living in Canada, you generally must report it on your Canadian tax return. However, Canada has tax treaties with many countries to prevent double taxation. A foreign tax credit allows you to offset Canadian taxes with taxes you paid abroad on the same income.'
       }
     ],
-    cta: 'Have questions about taxes on your work permit? Ask TaxNorth — free answers in any language.'
+    cta: 'Have questions about taxes on your work permit? Ask TaxNorth — free guidance in any language.'
   },
   {
     slug: 'canada-child-benefit-newcomers',
@@ -202,7 +210,7 @@ export const resources: Resource[] = [
     sections: [
       {
         heading: 'What is the Canada Child Benefit?',
-        content: 'The Canada Child Benefit (CCB) is a tax-free monthly payment made to eligible families to help with the cost of raising children under 18 years of age. Unlike older child benefit programs, the CCB is targeted — families with lower incomes receive higher payments. It is not taxable income.'
+        content: 'The Canada Child Benefit (CCB) is a tax-free monthly payment made to eligible families to help with the cost of raising children under 18 years of age. For the 2025-2026 benefit year, the maximum CCB is $7,997 per year for each child under age 6 and $6,748 per year for each child aged 6 to 17. Unlike older child benefit programs, the CCB is targeted — families with lower incomes receive higher payments. It is not taxable income.'
       },
       {
         heading: 'Who is eligible as a newcomer?',
@@ -210,7 +218,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'How much can you receive?',
-        content: 'The amount depends on your family net income and the ages of your children. For a family with one child under 6 and a family net income below a certain threshold, the annual benefit can exceed $7,000. Payments are recalculated every July based on your previous year\'s tax return. The lower your income, the higher your benefit.'
+        content: 'The amount depends on your family net income and the ages of your children. For a family with one child under 6 and a family net income below $36,502, the annual benefit is the full $7,997. Payments are recalculated every July based on your previous year\'s tax return. The lower your income, the higher your benefit.'
       },
       {
         heading: 'How to apply',
@@ -222,8 +230,7 @@ export const resources: Resource[] = [
       }
     ],
     cta: 'Questions about the Canada Child Benefit or other benefits for your family? Ask TaxNorth — free, in your language.'
-  }
-  ,
+  },
   {
     slug: 'rrsp-for-newcomers-canada',
     title: 'RRSP for Newcomers to Canada: A Complete Guide',
@@ -237,11 +244,11 @@ export const resources: Resource[] = [
       },
       {
         heading: 'How does contribution room work for newcomers?',
-        content: 'Your RRSP contribution room is calculated as 18 percent of your previous year\'s earned income, up to the annual maximum limit. As a newcomer, you start earning contribution room from the first year you have Canadian income. You do not get credit for income earned outside Canada before you arrived. Unused contribution room carries forward indefinitely — so you can save it for years when you earn more.'
+        content: 'Your RRSP contribution room is calculated as 18 percent of your previous year\'s earned income, up to the annual maximum limit ($32,490 for 2025, $33,810 for 2026). As a newcomer, you start earning contribution room from the first year you have Canadian income. You do not get credit for income earned outside Canada before you arrived. Unused contribution room carries forward indefinitely — so you can save it for years when you earn more.'
       },
       {
         heading: 'What is the RRSP contribution deadline?',
-        content: 'The deadline to contribute to your RRSP for a given tax year is 60 days after December 31 — usually March 1 of the following year. For example, to claim RRSP contributions on your 2024 tax return, you have until March 1, 2025. Contributions made in January or February of the new year can be applied to either the previous year or the current year.'
+        content: 'The deadline to contribute to your RRSP for a given tax year is 60 days after December 31 — usually March 1 of the following year. For example, to claim RRSP contributions on your 2025 tax return, you have until March 2, 2026. Contributions made in January or February of the new year can be applied to either the previous year or the current year.'
       },
       {
         heading: 'When should newcomers start contributing?',
@@ -313,7 +320,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'British Columbia — high cost, progressive rates',
-        content: 'British Columbia has relatively progressive income tax rates and a combined 12 percent HST. Vancouver is one of the most expensive cities in Canada but also one of the most diverse with large immigrant communities from Asia. BC offers the BC Family Benefit for families with children and the Climate Action Tax Credit.'
+        content: 'British Columbia has relatively progressive income tax rates and a combined 12 percent HST. Vancouver is one of the most expensive cities in Canada but also one of the most diverse with large immigrant communities from Asia. BC offers the BC Family Benefit for families with children and the BC Climate Action Tax Credit.'
       },
       {
         heading: 'Quebec — separate tax return required',
@@ -359,15 +366,13 @@ export const resources: Resource[] = [
       }
     ],
     cta: 'Questions about your Notice of Assessment or tax return? Ask TaxNorth — free answers in any language.'
-  }
-
-  ,
+  },
   {
     slug: 'canada-groceries-essentials-benefit-newcomers-2026',
     title: 'Canada Groceries and Essentials Benefit 2026: What Newcomers Need to Know',
     metaTitle: 'Canada Groceries and Essentials Benefit 2026 — Guide for Newcomers | TaxNorth',
     description: 'The GST/HST credit is being replaced by the Canada Groceries and Essentials Benefit in July 2026. Learn what changed, how much you receive, and how newcomers can apply.',
-    intro: 'If you heard about the GST/HST credit when you arrived in Canada, here is important news: starting July 2026, it is being replaced by a new program called the Canada Groceries and Essentials Benefit — and it pays 25% more than before. Here is everything you need to know.',
+    intro: 'If you heard about the GST/HST credit when you arrived in Canada, here is important news: starting July 2026, it is being replaced by a program called the Canada Groceries and Essentials Benefit — and it pays 25% more than before. Here is everything you need to know.',
     sections: [
       {
         heading: 'What is the Canada Groceries and Essentials Benefit?',
@@ -375,32 +380,285 @@ export const resources: Resource[] = [
       },
       {
         heading: 'What changed from the GST/HST credit?',
-        content: 'The GST/HST credit and the new Groceries and Essentials Benefit work in the same way — you do not apply separately, the CRA calculates it automatically when you file your tax return, and payments arrive quarterly. The main changes are: the name is different, the payment amount is 25% higher, and the purpose is explicitly tied to helping with the cost of groceries and everyday essentials. A one-time transitional top-up payment was sent on June 5, 2026 to bridge the transition from the old system to the new one.'
+        content: 'The GST/HST credit and the new Groceries and Essentials Benefit work in the same way — you do not apply separately, the CRA calculates it automatically when you file your tax return, and payments arrive quarterly. The main changes are: the name is different, the payment amount is 25% higher, and the purpose is explicitly tied to helping with the cost of groceries and everyday essentials.'
       },
       {
         heading: 'Who is eligible?',
-        content: 'Eligibility follows the same rules as the old GST/HST credit. You must be a Canadian resident for tax purposes, be 19 years of age or older, or have a spouse or common-law partner, or be a parent living with your child. Eligibility for the 2026-2027 benefit year is based on your 2025 net income reported on your tax return. Lower income means higher payments. As a newcomer, you may be eligible from the moment you become a Canadian resident for tax purposes — even before you file your first tax return.'
+        content: 'Eligibility follows the same rules as the old GST/HST credit. You must be a Canadian resident for tax purposes, be 19 years of age or older, or have a spouse or common-law partner, or be a parent living with your child. Eligibility for the 2026-2027 benefit year is based on your 2025 net income reported on your tax return. Lower income means higher payments.'
       },
       {
         heading: 'How much do you receive?',
-        content: 'Exact amounts depend on your family net income and the number of children you have. As a reference, a single person with low income who previously received the GST/HST credit will receive approximately $136 more per year under the new benefit. Payments are made quarterly — in July, October, January, and April. The 25% increase over the old credit amounts is locked in for five years from 2026 to 2031.'
+        content: 'Exact amounts depend on your family net income and the number of children you have. A single person with low income who previously received the GST/HST credit will receive approximately $136 more per year under the new benefit. Payments are made quarterly — in July, October, January, and April.'
       },
       {
         heading: 'How do newcomers apply?',
-        content: 'If you arrived in Canada recently and have not yet filed a tax return, you must apply manually using Form RC151, called the GST/HST Credit and Groceries and Essentials Benefit Application for Individuals Who Become Residents of Canada. Download this form from canada.ca and mail it to the CRA. If you have children under 18, use Form RC66 (Canada Child Benefits Application) instead — it covers both the Groceries and Essentials Benefit and the Canada Child Benefit in one form. Once you start filing annual tax returns, the CRA will automatically evaluate your eligibility every year.'
-      },
-      {
-        heading: 'What if you already receive the GST/HST credit?',
-        content: 'No action is required. If you were already receiving the GST/HST credit, your payments will automatically continue under the new name starting July 2026 — and you will notice the amount is 25% higher. You do not need to reapply or contact the CRA. Just continue filing your annual tax return to maintain eligibility.'
+        content: 'If you arrived in Canada recently and have not yet filed a tax return, apply using Form RC151 — the GST/HST Credit and Groceries and Essentials Benefit Application for Individuals Who Become Residents of Canada. Download this form from canada.ca and mail it to the CRA. If you have children under 18, use Form RC66 instead — it covers both benefits in one form.'
       },
       {
         heading: 'Why this matters for newcomers especially',
-        content: 'Many newcomers to Canada miss this benefit entirely because they do not know they need to file a tax return even with no income. Every year you do not file, you lose the quarterly payments you are entitled to receive. For a newcomer with low or modest income, the Groceries and Essentials Benefit can mean $400 to $700 or more per year — money the government has set aside for you that only gets activated when you file. The deadline to file for the 2025 tax year was April 30, 2026. If you missed it, file as soon as possible — the CRA can still issue retroactive payments.'
+        content: 'Many newcomers to Canada miss this benefit entirely because they do not know they need to file a tax return even with no income. Every year you do not file, you lose the quarterly payments you are entitled to receive. For a newcomer with low or modest income, this benefit can mean $400 to $700 or more per year — money the government has set aside for you that only gets activated when you file.'
       }
     ],
     cta: 'Questions about the Groceries and Essentials Benefit or any other Canadian tax topic? Ask TaxNorth — free answers in any language.'
+  },
+  {
+    slug: 'best-bank-accounts-newcomers-canada',
+    title: 'Best Bank Accounts for Newcomers to Canada in 2026',
+    metaTitle: 'Best Bank Accounts for Newcomers to Canada 2026 | TaxNorth',
+    description: 'Compare the best Canadian bank accounts for newcomers in 2026. No-fee accounts, welcome bonuses up to $500, and unsecured credit cards with no Canadian credit history required.',
+    intro: 'Opening a bank account is one of the first things you need to do when you arrive in Canada. The right account can save you hundreds of dollars in fees, give you a welcome bonus, and even help you get a credit card without any Canadian credit history. Here is an honest comparison of the best options in 2026.',
+    sections: [
+      {
+        heading: 'What to look for in a newcomer bank account',
+        content: 'Before comparing accounts, you need to know what actually matters. Monthly fees add up — a $16.95 per month fee costs you $203 per year that you could keep. Welcome bonuses are real money if you were planning to open an account anyway. And an unsecured credit card from a bank — one that does not require a security deposit — is the fastest way to start building Canadian credit history, which affects everything from renting an apartment to getting a car loan.'
+      },
+      {
+        heading: 'Simplii Financial — Best no-fee account with a cash bonus',
+        content: 'Simplii Financial (owned by CIBC) charges $0 forever with no minimum balance and no fee for unlimited transactions, e-Transfers, and bill payments. They are currently offering a $300 cash bonus plus a $50 gift card when you set up a direct deposit of at least $100 per month for three consecutive months. You can apply online if you landed within the last 5 years. You also get access to 3,400 CIBC ATMs across Canada with no withdrawal fees. The credit card limits for newcomers tend to be lower ($1,000 to $5,000) compared to the Big Five banks, which is worth noting if your priority is a high credit limit.'
+      },
+      {
+        heading: 'Scotiabank StartRight — Best for a high credit limit',
+        content: 'If getting an unsecured credit card with a high limit is your priority, Scotiabank StartRight is hard to beat. They offer limits up to $15,000 with no Canadian credit history — just proof of your landing documents and income. The first year of banking is free (saving $203.40 in fees) and you earn up to 50,000 Scene+ points worth approximately $500 in travel or groceries. After year one, you can keep the account free by maintaining a $4,000 minimum balance.'
+      },
+      {
+        heading: 'RBC Newcomer Advantage — Best for international transfers',
+        content: 'RBC is Canada\'s largest bank and their newcomer package includes free international money transfers for 12 months — a meaningful benefit if you are still sending money home or receiving it from abroad. The account has no monthly fee for one year and unlimited transactions. The credit card limit can also reach $15,000. The main consideration is that after year one, fees apply unless you maintain a minimum balance or upgrade your package.'
+      },
+      {
+        heading: 'EQ Bank — Best interest rate on your deposits',
+        content: 'EQ Bank is entirely digital but it offers something the Big Five cannot match: 1.00% interest on every dollar in your account, rising to 2.75% when you maintain a qualifying direct deposit of $2,000 per month. On a $10,000 balance, that is $275 per year just sitting in your account. There are no fees, free ATM withdrawals, and zero FX markups on the EQ Bank Card. The downside: EQ Bank does not offer credit cards, so you would need a separate account for credit building.'
+      },
+      {
+        heading: 'KOHO — Best for building credit without a deposit',
+        content: 'KOHO is a Canadian fintech whose account earns 3.5% interest and comes with a prepaid Mastercard. Their Credit Builder program ($10 per month) reports your payments to Equifax and starts building your Canadian credit history with no security deposit and no credit check required. Within 6 to 12 months of using KOHO Credit Builder alongside a bank account, most newcomers are approved for mainstream credit cards.'
+      },
+      {
+        heading: 'The honest recommendation',
+        content: 'For most newcomers, the smartest move is to open two accounts: Scotiabank StartRight or RBC for the unsecured credit card and branch access, and either Simplii Financial or EQ Bank for day-to-day banking at no cost. If you have limited income in your first months and need to build credit without a deposit, add KOHO Credit Builder for $10 per month. This combination gives you a high credit limit, no fees, and a credit history in progress.'
+      }
+    ],
+    affiliates: [
+      {
+        name: 'Simplii Financial',
+        description: '$0 forever + $300 cash bonus + $50 gift card. Apply online if you arrived in the last 5 years.',
+        link: 'https://www.simplii.com/en/banking-simplii/join-simplii/new-to-canada.html',
+        badge: 'Best no-fee account'
+      },
+      {
+        name: 'Scotiabank StartRight',
+        description: '1 year free + up to $15,000 unsecured credit limit + 50,000 Scene+ points (~$500).',
+        link: 'https://startright.scotiabank.com',
+        badge: 'Best credit limit'
+      },
+      {
+        name: 'EQ Bank',
+        description: '$0 fees + up to 2.75% interest on every dollar with direct deposit.',
+        link: 'https://www.eqbank.ca/personal-banking/personal-account',
+        badge: 'Best interest rate'
+      },
+      {
+        name: 'KOHO',
+        description: '3.5% interest + Credit Builder for $10/month — no deposit, no credit check.',
+        link: 'https://www.koho.ca',
+        badge: 'Best for credit building'
+      }
+    ],
+    cta: 'Questions about banking in Canada or which account is right for you? Ask TaxNorth — free, in any language.'
+  },
+  {
+    slug: 'build-credit-canada-newcomer',
+    title: 'How to Build Credit in Canada as a Newcomer',
+    metaTitle: 'How to Build Credit in Canada as a Newcomer — Complete Guide 2026 | TaxNorth',
+    description: 'Step-by-step guide to building Canadian credit history from zero. Best secured cards, credit builders, and strategies for newcomers without Canadian credit history.',
+    intro: 'When you arrive in Canada, your credit history from your home country does not transfer. You start from zero on both Equifax and TransUnion — Canada\'s two main credit bureaus. This affects your ability to rent an apartment, get a cell phone plan without a deposit, qualify for a car loan, and eventually a mortgage. The good news: you can build a solid Canadian credit score in 12 to 18 months with the right approach.',
+    sections: [
+      {
+        heading: 'Why your home country credit history does not transfer',
+        content: 'Credit bureaus in different countries do not share data. Your excellent credit score from your home country means nothing to a Canadian lender. There is one exception: American Express has a global card transfer program that allows US cardholders to bring their history to Canada. For everyone else, you start fresh. This is not a judgment on your financial history — it is simply how the system is built. The faster you understand this, the faster you can fix it.'
+      },
+      {
+        heading: 'Option 1 — Get an unsecured credit card through a newcomer bank package',
+        content: 'The fastest way to start building credit is an unsecured credit card — one that does not require a security deposit. Scotiabank StartRight and RBC Newcomer Advantage both offer unsecured Mastercard or Visa cards with limits up to $15,000 to newcomers who can show proof of landing documents and income. You do not need Canadian credit history. Once you have the card, use it for regular purchases, pay the full statement balance every month, and keep your balance under 30% of your limit. This single action builds your credit faster than anything else.'
+      },
+      {
+        heading: 'Option 2 — KOHO Credit Builder (no deposit required)',
+        content: 'If you do not yet qualify for an unsecured credit card, KOHO Credit Builder is the most accessible option. For $10 per month, KOHO establishes a small line of credit in your name and reports your monthly payments to Equifax. There is no security deposit, no credit check, and no interest charged. After 6 to 12 months of consistent on-time payments, most newcomers see enough credit history to qualify for mainstream products. Note: KOHO only reports to Equifax, not TransUnion. For the most complete profile, pair it with another product.'
+      },
+      {
+        heading: 'Option 3 — Neo Financial Secured Mastercard',
+        content: 'If you want a secured credit card that reports to both credit bureaus, Neo Financial is one of the best options. You deposit money as collateral (your deposit equals your credit limit), and Neo reports your payment activity to both Equifax and TransUnion monthly. The card also offers cash back at hundreds of Canadian partner merchants — so you earn rewards while building credit. There is no minimum credit score required for approval.'
+      },
+      {
+        heading: 'Check your score for free with Borrowell',
+        content: 'Once you have a credit product open and a few months of history, check your Equifax credit score for free using Borrowell. It takes about 3 minutes and does not affect your score (it is a soft inquiry). Knowing your score helps you track progress and understand when you are ready to apply for better products. Borrowell also shows you which factors are helping or hurting your score.'
+      },
+      {
+        heading: 'The rules that actually move your score',
+        content: 'Payment history makes up 35% of your credit score. Pay your full statement balance before the due date, every single month, without exception. Late payments stay on your credit report for up to 6 years. Credit utilization makes up 30% of your score — keep your card balance below 30% of your limit at all times. Length of credit history matters too: your very first card is your most valuable. Keep it open forever, even if you eventually get better cards.'
+      },
+      {
+        heading: 'How long does it take to build a good score?',
+        content: 'With an unsecured bank credit card and consistent on-time payments at under 30% utilization, most newcomers reach a score of 650 to 720 within 12 months. A score of 720 or above is considered good and opens the door to competitive mortgage rates, car loans, and premium credit cards. The fastest path to 750+ is to have at least two different credit products, pay everything on time, keep balances low, and avoid applying for multiple new products within a short period.'
+      }
+    ],
+    affiliates: [
+      {
+        name: 'KOHO Credit Builder',
+        description: 'Build credit with no deposit — $10/month, reports to Equifax. No credit check required.',
+        link: 'https://www.koho.ca/credit-building/',
+        badge: 'No deposit required'
+      },
+      {
+        name: 'Neo Financial Secured Card',
+        description: 'Guaranteed approval — reports to both Equifax and TransUnion. Earn cash back while building credit.',
+        link: 'https://www.neofinancial.com',
+        badge: 'Reports to both bureaus'
+      },
+      {
+        name: 'Borrowell',
+        description: 'Check your Equifax credit score for free in 3 minutes. No impact on your score.',
+        link: 'https://www.borrowell.com',
+        badge: 'Free credit score'
+      }
+    ],
+    cta: 'Questions about credit in Canada or how to get started? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'best-tfsa-rrsp-accounts-newcomers-canada',
+    title: 'Best TFSA and RRSP Accounts for Newcomers to Canada in 2026',
+    metaTitle: 'Best TFSA and RRSP Accounts for Newcomers Canada 2026 | TaxNorth',
+    description: 'Compare the best TFSA and RRSP accounts for newcomers in Canada. Learn the rules, 2026 contribution limits, and which platforms are best for beginners.',
+    intro: 'Two of the most powerful tools for building wealth in Canada are the TFSA and the RRSP. As a newcomer, understanding these accounts early — and using them correctly — can make a significant difference in your long-term financial picture. Here is everything you need to know.',
+    sections: [
+      {
+        heading: 'TFSA vs RRSP — which one should you open first?',
+        content: 'The short answer for most newcomers: start with the TFSA. Contributions are not tax-deductible, but all growth and withdrawals are completely tax-free — forever. You can take money out at any time for any reason and the contribution room comes back the following January. The RRSP works in reverse: contributions are tax-deductible (you get a tax refund now), but withdrawals are taxed as income later. The RRSP is more powerful when you are in a high tax bracket. For most newcomers in their first years — still building income in a lower bracket — the TFSA gives more flexibility with no tax risk on growth.'
+      },
+      {
+        heading: 'TFSA rules for newcomers — the critical detail',
+        content: 'Your TFSA contribution room starts accumulating from the year you become a Canadian resident — not from when you turned 18 in your home country. If you arrived in 2025, your 2025 room was $7,000. Your 2026 room is another $7,000. That gives you $14,000 of total room as of 2026 if you arrived in 2025. The mistake many newcomers make is contributing more than their room — the CRA charges a 1% per month penalty on the excess. Always check your available room through My CRA Account before contributing.'
+      },
+      {
+        heading: 'RRSP rules for newcomers',
+        content: 'Your RRSP contribution limit is 18% of your previous year\'s earned income in Canada, up to the annual maximum ($32,490 for 2025, $33,810 for 2026). In your first year, you may have little or no RRSP room because the calculation is based on the prior year. Foreign income earned before you arrived in Canada does not create RRSP room — only Canadian earned income counts.'
+      },
+      {
+        heading: 'Wealthsimple — Best for beginners and hands-off investors',
+        content: 'Wealthsimple is the most popular investment platform among newcomers in Canada. Their TFSA and RRSP accounts charge zero trading commissions on Canadian and US stocks and ETFs. For those who prefer not to pick individual investments, Wealthsimple Managed Investing builds a diversified portfolio of index ETFs automatically for a management fee of 0.40% to 0.50% per year. The app is clean, available in multiple languages, and opening an account takes about 10 minutes with just your SIN and a government ID.'
+      },
+      {
+        heading: 'EQ Bank — Best for guaranteed returns without market risk',
+        content: 'If investing in stocks makes you uncomfortable, EQ Bank offers TFSA and RRSP savings accounts that earn interest with zero market risk. Your money is CDIC-insured and you earn a competitive interest rate that beats most bank savings accounts. You can also lock in higher rates with TFSA GICs (Guaranteed Investment Certificates) for 1 to 5 years. This is the right choice if you are saving for a specific goal within the next few years and cannot afford to lose any principal.'
+      },
+      {
+        heading: 'The First Home Savings Account (FHSA) — A third option for home buyers',
+        content: 'If you plan to buy your first home in Canada, the First Home Savings Account combines the best of both worlds: contributions are tax-deductible like an RRSP, and withdrawals for a qualifying home purchase are completely tax-free like a TFSA. You can contribute up to $8,000 per year with a lifetime limit of $40,000. As a newcomer who has never owned a home in Canada, you almost certainly qualify. Wealthsimple and EQ Bank both offer FHSAs alongside their TFSA and RRSP accounts.'
+      }
+    ],
+    affiliates: [
+      {
+        name: 'Wealthsimple',
+        description: '$0 trading commissions. Open a TFSA, RRSP, or FHSA in 10 minutes. Available in multiple languages.',
+        link: 'https://www.wealthsimple.com/en-ca/accounts/tfsa',
+        badge: 'Best for beginners'
+      },
+      {
+        name: 'EQ Bank',
+        description: 'TFSA savings at up to 2.75% interest — no market risk, CDIC insured. No fees.',
+        link: 'https://www.eqbank.ca/personal-banking/tfsa',
+        badge: 'Best guaranteed rate'
+      }
+    ],
+    cta: 'Questions about TFSAs, RRSPs, or where to start investing? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'register-business-canada-newcomer',
+    title: 'How to Register a Business in Canada as a Newcomer',
+    metaTitle: 'How to Register a Business in Canada as a Newcomer | TaxNorth',
+    description: 'Step-by-step guide to registering a business in Canada as a newcomer — sole proprietorship vs incorporation, costs, tax implications, and what to do first.',
+    intro: 'Many newcomers arrive in Canada with entrepreneurial ambitions — or find themselves doing freelance work that requires registering a business. The process is more straightforward than most people expect, but the choice between a sole proprietorship and incorporation has real tax consequences. Here is what you need to know before you register.',
+    sections: [
+      {
+        heading: 'Sole proprietorship vs incorporation — which one is right for you?',
+        content: 'A sole proprietorship is the simplest structure. You register your business name with your province and all income flows directly to your personal tax return. It costs $60 to $100 to register in most provinces and takes about a day. The downside: you are personally liable for all business debts, and all profit is taxed at your personal marginal rate. Incorporation creates a separate legal entity taxed at a lower corporate rate (typically 9-12% on the first $500,000 of active business income in Canada). However, incorporation costs $500 to $2,000 to set up and requires ongoing maintenance. For most newcomers starting out with moderate self-employment income, a sole proprietorship is the right starting point. Once your annual profit consistently exceeds $50,000 to $80,000, talk to a CPA about incorporating.'
+      },
+      {
+        heading: 'What you need before you register',
+        content: 'To register a business in Canada, you need: a valid Social Insurance Number (SIN), a Canadian address, a government-issued ID, and your chosen business name (which must be searched to confirm availability). You will also need a business bank account — your personal account should never be mixed with business finances.'
+      },
+      {
+        heading: 'The tax implications of being self-employed in Canada',
+        content: 'When you are self-employed, no one withholds tax from your payments. You are responsible for setting aside money for taxes throughout the year. Set aside 25-30% of every payment you receive. You will also pay both the employee and employer portions of CPP contributions — approximately 11.9% of your net self-employment income up to the annual maximum. If your total business revenues exceed $30,000 in any four consecutive quarters, you must register to collect GST or HST and remit it to the CRA.'
+      },
+      {
+        heading: 'Registering your business name in your province',
+        content: 'In most provinces, you register a sole proprietorship directly with the provincial government registry. In Ontario, with Service Ontario. In Alberta, with Service Alberta. In British Columbia, with BC Registry Services. The cost is typically $60 to $100 and processing takes 1 to 3 business days online. If you are incorporating federally, you register with Corporations Canada for $200 online.'
+      },
+      {
+        heading: 'Getting a Business Number from the CRA',
+        content: 'Once registered provincially, you need a Business Number (BN) from the CRA to handle GST/HST and corporate tax if you incorporate. Register for your BN online through the CRA Business Registration Online portal at canada.ca. It is free and takes about 15 minutes. The BN is a 9-digit number that stays with your business permanently.'
+      }
+    ],
+    affiliates: [
+      {
+        name: 'Ownr',
+        description: 'Canada\'s leading business registration platform. Register your sole proprietorship or incorporate online — trusted by 270,000+ Canadians.',
+        link: 'https://www.ownr.co',
+        badge: 'Fastest registration'
+      }
+    ],
+    cta: 'Questions about taxes for your Canadian business? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'best-accounting-software-self-employed-newcomers',
+    title: 'Best Accounting Software for Self-Employed Newcomers in Canada',
+    metaTitle: 'Best Accounting Software for Self-Employed Newcomers Canada 2026 | TaxNorth',
+    description: 'Compare FreshBooks, QuickBooks, and Xero for self-employed newcomers in Canada. Track income, expenses, invoices, and prepare for tax time without an accounting background.',
+    intro: 'If you are self-employed in Canada — freelancing, consulting, running a small business — you need to track your income and expenses properly. Not just for tax purposes, but because knowing your actual numbers is the difference between a thriving practice and one that runs out of cash without warning. Here is an honest comparison of the top options for newcomers.',
+    sections: [
+      {
+        heading: 'Why proper bookkeeping matters more than you think',
+        content: 'Many self-employed newcomers track income and expenses in a spreadsheet — or worse, in their head. This works until tax season arrives and the CRA asks for receipts, or until you try to get a business loan and cannot show proper financial statements. Without accurate books you have no idea whether your business is actually profitable after expenses. Modern accounting software automates most of this — you connect your bank account, categorize transactions as they happen, and the software does the rest. Tax time becomes a matter of exporting one report instead of reconstructing months of transactions in a panic.'
+      },
+      {
+        heading: 'FreshBooks — Best for service-based freelancers and consultants',
+        content: 'FreshBooks is built for people who sell their time and expertise — consultants, designers, writers, coaches, and contractors. Its invoicing is best in class: professional-looking invoices, automatic payment reminders, and the ability to accept credit card payments directly through the invoice. For Canadian users, FreshBooks handles HST/GST tracking and generates the T2125 business income report you need to file your taxes. The Lite plan starts at $19 CAD per month for up to 5 clients, which covers most freelancers starting out.'
+      },
+      {
+        heading: 'QuickBooks Self-Employed — Best for tracking mileage and home office',
+        content: 'QuickBooks Self-Employed is designed specifically for sole proprietors and freelancers. It automatically imports transactions from your bank, separates personal from business expenses, and tracks mileage using your phone\'s GPS — useful for newcomers who drive for work and want to claim the vehicle deduction. It starts at approximately $9.99 CAD per month. The limitation: once your business grows beyond basic freelancing, you will need to upgrade to QuickBooks Online.'
+      },
+      {
+        heading: 'Xero — Best for growing businesses with multiple needs',
+        content: 'Xero is more powerful than FreshBooks or QuickBooks Self-Employed and is better suited to businesses that are growing — those with employees, inventory, multiple bank accounts, or more complex reporting needs. It integrates with hundreds of third-party apps and is the preferred platform of most Canadian accountants, which makes it easy to share access with a CPA. It starts at $20 CAD per month. Xero becomes the right choice when your business reaches $100,000 or more in annual revenue or when you hire your first employee.'
+      },
+      {
+        heading: 'The honest recommendation based on your situation',
+        content: 'If you are a freelancer or consultant with fewer than 20 clients: start with FreshBooks. Clean invoices, simple expense tracking, and it handles Canadian taxes correctly. If you drive for work and need mileage tracking: add QuickBooks Self-Employed. If your business is growing and you are working with a CPA: move to Xero when you are ready for more structure. Whatever you choose, connect it to your business bank account from day one.'
+      }
+    ],
+    affiliates: [
+      {
+        name: 'FreshBooks',
+        description: 'Best invoicing and GST/HST tracking for Canadian freelancers. Generates the T2125 report automatically.',
+        link: 'https://www.freshbooks.com/campaign/canada',
+        badge: 'Best for freelancers'
+      },
+      {
+        name: 'QuickBooks',
+        description: 'Mileage tracking, automatic expense categorization, and CRA-ready reports.',
+        link: 'https://quickbooks.intuit.com/ca/',
+        badge: 'Best for mileage'
+      },
+      {
+        name: 'Xero',
+        description: 'Best for growing businesses working with a CPA. Integrates with 800+ apps.',
+        link: 'https://www.xero.com/ca/',
+        badge: 'Best for growth'
+      }
+    ],
+    cta: 'Questions about taxes for your self-employed income? Ask TaxNorth — free guidance in any language.'
   }
-
 ]
 
 export function getResource(slug: string): Resource | undefined {

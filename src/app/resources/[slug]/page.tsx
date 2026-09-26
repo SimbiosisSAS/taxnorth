@@ -1,4 +1,4 @@
-import { Flashlight, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Flashlight, ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { resources, getResource } from '@/lib/resources'
 import { notFound } from 'next/navigation'
@@ -74,6 +74,44 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
             </div>
           ))}
         </div>
+
+        {/* Affiliate products */}
+        {resource!.affiliates && resource!.affiliates.length > 0 && (
+          <div className="mt-12 pt-10 border-t border-fog-gray">
+            <h3 className="font-heading font-semibold text-midnight-north text-lg mb-4">
+              Recommended products
+            </h3>
+            <div className="grid gap-3 mb-4">
+              {resource!.affiliates.map((product) => (
+                <a
+                  key={product.name}
+                  href={product.link}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="flex items-center justify-between p-4 bg-fog-gray rounded-card hover:bg-fog-gray/70 transition-colors group"
+                >
+                  <div>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="font-heading font-semibold text-midnight-north text-sm">
+                        {product.name}
+                      </span>
+                      {product.badge && (
+                        <span className="bg-lantern-amber/20 text-lantern-amber text-xs font-medium px-2 py-0.5 rounded-full">
+                          {product.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-deep-ink/60 text-sm">{product.description}</p>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-lantern-amber flex-shrink-0 ml-4" />
+                </a>
+              ))}
+            </div>
+            <p className="text-deep-ink/30 text-xs">
+              * TaxNorth may receive a commission if you open an account through these links, at no cost to you. We only recommend products we believe are genuinely useful for newcomers.
+            </p>
+          </div>
+        )}
 
         <div className="mt-12 bg-midnight-north rounded-card p-8 text-center">
           <div className="w-10 h-10 bg-lantern-amber/20 rounded-xl flex items-center justify-center mx-auto mb-4">
