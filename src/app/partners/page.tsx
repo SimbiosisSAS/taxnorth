@@ -157,6 +157,56 @@ export default function PartnersPage() {
         </div>
       </section>
 
+{/* TIKTOK ADS FOR CPAs */}
+      <section className="bg-warm-white py-24 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-midnight-north rounded-card p-8 md:p-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-lantern-amber/20 rounded-xl flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-lantern-amber" />
+              </div>
+              <span className="text-lantern-amber font-semibold text-sm uppercase tracking-widest">
+                Grow Your Practice
+              </span>
+            </div>
+            <h2 className="font-heading font-bold text-white text-3xl md:text-4xl mb-4 leading-tight">
+              Your next 100 clients are scrolling TikTok right now.
+            </h2>
+            <p className="text-white/70 text-lg mb-8 leading-relaxed max-w-2xl">
+              Over 1 million newcomers arrived in Canada in 2025. Most of them are active on TikTok
+              and actively searching for financial guidance. TikTok Ads lets you reach this audience
+              directly by language, location, and interest — at a fraction of the cost of Google Ads.
+              Set up your first campaign in minutes.
+            </p>
+            <div className="grid md:grid-cols-3 gap-4 mb-10">
+              {[
+                { stat: "1M+", label: "Newcomers in Canada actively on TikTok" },
+                { stat: "6", label: "Languages you can target precisely" },
+                { stat: "Low CPC", label: "Cost per click vs. Google Ads for financial services" },
+              ].map((item) => (
+                <div key={item.label} className="bg-white/5 border border-white/10 rounded-card p-4 text-center">
+                  <p className="font-heading font-bold text-lantern-amber text-3xl mb-1">{item.stat}</p>
+                  <p className="text-white/60 text-sm leading-snug">{item.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <a
+                href="https://getstartedtiktok.partnerlinks.io/mzx9t0lqgqx0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-lantern-amber text-midnight-north font-semibold px-8 py-4 rounded-button hover:opacity-90 transition-opacity"
+              >
+                Start advertising on TikTok <ArrowRight className="w-4 h-4" />
+              </a>
+              <p className="text-white/40 text-sm">
+                Free to create an account. Spend only what you choose.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PRICING */}
       <section className="bg-fog-gray py-24 px-6">
         <div className="max-w-4xl mx-auto">
