@@ -31,6 +31,14 @@ const links = [
     external: false,
   },
   {
+  title: 'Register your business in Canada',
+  description: 'Fast, simple incorporation from $49 with Ownr',
+  href: 'https://partners.ownr.co/f842lqsbq1c1',
+  emoji: '🏢',
+  primary: false,
+  external: true,
+},
+  {
     title: 'Grow your business on TikTok',
     description: 'Start advertising and reach your first customers',
     href: 'https://getstartedtiktok.partnerlinks.io/mzx9t0lqgqx0',

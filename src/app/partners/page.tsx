@@ -156,7 +156,38 @@ export default function PartnersPage() {
           </div>
         </div>
       </section>
-
+{/* TAXCYCLE FOR CPAs */}
+      <section className="bg-fog-gray py-16 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-card p-8 flex flex-col md:flex-row items-start gap-6">
+            <div className="w-12 h-12 bg-midnight-north rounded-xl flex items-center justify-center flex-shrink-0">
+              <FileText className="w-6 h-6 text-lantern-amber" />
+            </div>
+            <div className="flex-1">
+              <p className="text-lantern-amber font-semibold text-sm uppercase tracking-widest mb-2">
+                Recommended Software
+              </p>
+              <h3 className="font-heading font-bold text-midnight-north text-2xl mb-3">
+                File faster with TaxCycle.
+              </h3>
+              <p className="text-deep-ink/70 text-base leading-relaxed mb-6">
+                TaxCycle is the professional tax preparation software trusted by thousands of 
+                Canadian CPAs. Built for T1, T2, T3 and more — it integrates CRA data directly 
+                and cuts preparation time significantly. TaxNorth partners get a special referral 
+                rate when they sign up through our link.
+              </p>
+              <a
+                href="https://invitation.taxcycle.com/tu8pjwswlief"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-midnight-north text-white font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
+              >
+                Try TaxCycle free <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 {/* TIKTOK ADS FOR CPAs */}
       <section className="bg-warm-white py-24 px-6">
         <div className="max-w-4xl mx-auto">

@@ -603,7 +603,7 @@ export const resources: Resource[] = [
       {
         name: 'Ownr',
         description: 'Canada\'s leading business registration platform. Register your sole proprietorship or incorporate online — trusted by 270,000+ Canadians.',
-        link: 'https://www.ownr.co',
+        link: 'https://partners.ownr.co/f842lqsbq1c1',
         badge: 'Fastest registration'
       }
     ],
