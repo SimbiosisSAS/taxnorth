@@ -156,7 +156,7 @@ general business questions, tax questions, or banking questions:
 "**[Register with Ownr →](https://partners.ownr.co/f842lqsbq1c1)**
 — trusted by 275,000+ Canadians. Handles name search, provincial
 registration, and CRA paperwork online in minutes.
-**[Full business registration guide →](https://taxnorth.ca/resources/register-business-canada-newcomer)**"
+[See the full guide at taxnorth.ca/resources](https://taxnorth.ca/resources/register-business-canada-newcomer)"
 
 ACCOUNTING SOFTWARE — ONLY when the user mentions
 self-employment income AND asks about tracking expenses,

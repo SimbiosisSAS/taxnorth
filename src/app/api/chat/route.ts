@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
                 const regex = new RegExp(open.replace(/[<>]/g, c => `\\${c}`) + '[\\s\\S]*?' + close.replace(/[<>\/]/g, c => `\\${c}`), 'gi')
                 toSend = toSend.replace(regex, '')
               })
-              toSend = toSend.replace(/^N\/A\s*/i, '').trim()
+              toSend = toSend.replace(/^[^a-zA-Z\*\[\#]+/, '').trim()
               if (toSend) {
                 fullCleaned += toSend
                 controller.enqueue(enc.encode(toSend))
@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
             const regex = new RegExp(open.replace(/[<>]/g, c => `\\${c}`) + '[\\s\\S]*?' + close.replace(/[<>\/]/g, c => `\\${c}`), 'gi')
             toSend = toSend.replace(regex, '')
           })
-          toSend = toSend.replace(/^N\/A\s*/i, '').trim()
+          toSend = toSend.replace(/^[^a-zA-Z\*\[\#]+/, '').trim()
           if (toSend) {
             fullCleaned += toSend
             controller.enqueue(enc.encode(toSend))
