@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown'
 import { useLanguage } from '@/context/LanguageContext'
 import { translations, languageNames, SupportedLanguage } from '@/lib/translations'
 import { trackEvent, trackMetaStandard } from '@/lib/analytics'
+import remarkGfm from 'remark-gfm'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -443,7 +444,21 @@ export default function ChatClient() {
                         : 'bg-fog-gray text-deep-ink rounded-chat rounded-tl-sm'
                     }`}
                   >
-                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                    <ReactMarkdown
+  remarkPlugins={[remarkGfm]}
+  components={{
+    a: ({ ...props }) => (
+      <a
+        {...props}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-lantern-amber underline font-medium hover:opacity-80 transition-opacity"
+      />
+    ),
+  }}
+>
+  {message.content}
+</ReactMarkdown>
                     {message.role === 'assistant' && message.content === '' && (
                       <span className="inline-block w-2 h-4 bg-deep-ink/40 animate-pulse" />
                     )}
