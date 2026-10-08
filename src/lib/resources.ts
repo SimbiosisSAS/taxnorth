@@ -458,8 +458,8 @@ export const resources: Resource[] = [
       },
       {
         name: 'KOHO',
-        description: '3.5% interest + Credit Builder for $10/month — no deposit, no credit check.',
-        link: 'https://www.koho.ca',
+        description: 'Free Core Account with 3.5% interest and a prepaid Mastercard. Cash advance up to $500 with KOHO Cover.',
+      link: 'https://kohofinancial.pxf.io/c/7846688/1274983/15676?adnetwork=Impact&u=https%3A%2F%2Fwww.koho.ca%2Fnew-to-canada%2F',
         badge: 'Best for credit building'
       }
     ],
@@ -482,7 +482,7 @@ export const resources: Resource[] = [
       },
       {
         heading: 'Option 2 — KOHO Credit Builder (no deposit required)',
-        content: 'If you do not yet qualify for an unsecured credit card, KOHO Credit Builder is the most accessible option. For $10 per month, KOHO establishes a small line of credit in your name and reports your monthly payments to Equifax. There is no security deposit, no credit check, and no interest charged. After 6 to 12 months of consistent on-time payments, most newcomers see enough credit history to qualify for mainstream products. Note: KOHO only reports to Equifax, not TransUnion. For the most complete profile, pair it with another product.'
+        content: 'If you do not yet qualify for an unsecured credit card, KOHO Credit Builder is the most accessible option. For $10 per month, KOHO establishes a small line of credit in your name and reports your monthly payments to Equifax. There is no security deposit, no credit check, and no interest charged. After 6 to 12 months of consistent on-time payments, most newcomers see enough credit history to qualify for mainstream products. KOHO now reports to both Equifax and TransUnion. For the most complete profile, pair it with another product.'
       },
       {
         heading: 'Option 3 — Neo Financial Secured Mastercard',
@@ -504,8 +504,8 @@ export const resources: Resource[] = [
     affiliates: [
       {
         name: 'KOHO Credit Builder',
-        description: 'Build credit with no deposit — $10/month, reports to Equifax. No credit check required.',
-        link: 'https://www.koho.ca/credit-building/',
+        description: 'Free Core Account with 3.5% interest. Credit building available as a separate add-on. Reports to both credit bureaus.',
+      link: 'https://kohofinancial.pxf.io/c/7846688/1274983/15676?adnetwork=Impact&u=https%3A%2F%2Fwww.koho.ca%2Fnew-to-canada%2F',
         badge: 'No deposit required'
       },
       {

@@ -129,9 +129,9 @@ in unsecured credit with no Canadian credit history required.
 
 CREDIT BUILDING — ONLY when the user asks specifically about
 building credit or getting a first credit card in Canada:
-"**KOHO Credit Builder** ($10/month) requires no deposit and no
-credit check — it reports to Equifax and most newcomers see
-results in 6 months. For a card that reports to both bureaus,
+"**[KOHO Core Account →](https://kohofinancial.pxf.io/c/7846688/1274983/15676?adnetwork=Impact&u=https%3A%2F%2Fwww.koho.ca%2Fnew-to-canada%2F)** is free with 3.5% interest and a prepaid Mastercard.
+Credit building is available as a separate add-on — reports to both credit bureaus.
+For a secured card with guaranteed approval,
 **Neo Financial** is a strong option.
 **[Full credit-building guide →](https://taxnorth.ca/resources/build-credit-canada-newcomer)**"
 
