@@ -481,9 +481,8 @@ export const resources: Resource[] = [
         content: 'The fastest way to start building credit is an unsecured credit card — one that does not require a security deposit. Scotiabank StartRight and RBC Newcomer Advantage both offer unsecured Mastercard or Visa cards with limits up to $15,000 to newcomers who can show proof of landing documents and income. You do not need Canadian credit history. Once you have the card, use it for regular purchases, pay the full statement balance every month, and keep your balance under 30% of your limit. This single action builds your credit faster than anything else.'
       },
       {
-        heading: 'Option 2 — KOHO Credit Builder (no deposit required)',
-        content: 'If you do not yet qualify for an unsecured credit card, KOHO Credit Builder is the most accessible option. For $10 per month, KOHO establishes a small line of credit in your name and reports your monthly payments to Equifax. There is no security deposit, no credit check, and no interest charged. After 6 to 12 months of consistent on-time payments, most newcomers see enough credit history to qualify for mainstream products. KOHO now reports to both Equifax and TransUnion. For the most complete profile, pair it with another product.'
-      },
+        heading: 'Option 2 — KOHO Core Account (free, no deposit required)',
+        content: 'KOHO\'s Core Account is permanently free and earns 3.5% interest on your balance with a prepaid Mastercard. There is no security deposit and no credit check required. KOHO also offers a credit building feature available as a separate add-on — it reports to both Equifax and TransUnion. After 6 to 12 months of consistent payments, most newcomers see enough credit history to qualify for mainstream products. For the most complete profile, pair it with another product.'
       {
         heading: 'Option 3 — Neo Financial Secured Mastercard',
         content: 'If you want a secured credit card that reports to both credit bureaus, Neo Financial is one of the best options. You deposit money as collateral (your deposit equals your credit limit), and Neo reports your payment activity to both Equifax and TransUnion monthly. The card also offers cash back at hundreds of Canadian partner merchants — so you earn rewards while building credit. There is no minimum credit score required for approval.'
