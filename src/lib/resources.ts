@@ -483,7 +483,7 @@ export const resources: Resource[] = [
       {
         heading: 'Option 2 — KOHO Core Account (free, no deposit required)',
         content: 'KOHO\'s Core Account is permanently free and earns 3.5% interest on your balance with a prepaid Mastercard. There is no security deposit and no credit check required. KOHO also offers a credit building feature available as a separate add-on — it reports to both Equifax and TransUnion. After 6 to 12 months of consistent payments, most newcomers see enough credit history to qualify for mainstream products. For the most complete profile, pair it with another product.'
-        
+      },
       {
         heading: 'Option 3 — Neo Financial Secured Mastercard',
         content: 'If you want a secured credit card that reports to both credit bureaus, Neo Financial is one of the best options. You deposit money as collateral (your deposit equals your credit limit), and Neo reports your payment activity to both Equifax and TransUnion monthly. The card also offers cash back at hundreds of Canadian partner merchants — so you earn rewards while building credit. There is no minimum credit score required for approval.'
