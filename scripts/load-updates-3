@@ -1,0 +1,145 @@
+import * as dotenv from 'dotenv'
+dotenv.config({ path: '.env.local' })
+
+import { createClient } from '@supabase/supabase-js'
+import OpenAI from 'openai'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+const openrouter = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+  defaultHeaders: {
+    'HTTP-Referer': 'https://taxnorth.ca',
+    'X-Title': 'TaxNorth.ca',
+  },
+})
+
+function chunkText(text: string, chunkSize = 400): string[] {
+  const sentences = text.split(/\.\s+/).filter(s => s.trim())
+  const chunks: string[] = []
+  let current = ''
+  for (const sentence of sentences) {
+    if ((current + sentence).length > chunkSize && current) {
+      chunks.push(current.trim())
+      current = sentence
+    } else {
+      current += (current ? '. ' : '') + sentence
+    }
+  }
+  if (current) chunks.push(current.trim())
+  return chunks
+}
+
+async function loadDocument(text: string, source: string, category: string) {
+  const chunks = chunkText(text)
+  console.log(`Loading ${chunks.length} chunks from: ${source}`)
+  for (const chunk of chunks) {
+    const embeddingResponse = await openrouter.embeddings.create({
+      model: 'openai/text-embedding-3-small',
+      input: chunk,
+    })
+    const embedding = embeddingResponse.data[0].embedding
+    const { error } = await supabase.from('knowledge_base').insert({
+      content: chunk,
+      embedding,
+      source,
+      category,
+      metadata: { source_url: 'https://canada.ca' },
+    })
+    if (error) console.error('Insert error:', error)
+    else process.stdout.write('.')
+  }
+  console.log(` Done: ${source}`)
+}
+
+const updates = [
+  {
+    source: 'tax-brackets-2026-updated',
+    category: 'filing_basics',
+    text: 'Canadian Federal Income Tax Brackets 2026 Updated. Canada reduced the lowest federal tax rate to 14 percent in 2026. The 2026 federal brackets are: 14 percent on the first $58,523; 20.5 percent on $58,524 to $117,045; 26 percent on $117,046 to $181,440; 29 percent on $181,441 to $258,482; 33 percent on income over $258,482. The Basic Personal Amount for 2026 is $16,452 for individuals earning $181,440 or less and phases down to $14,829 for those earning $258,482 or more. The RRSP limit for 2026 is $33,810. The TFSA annual limit is $7,000 for 2026. The FHSA annual limit remains $8,000 with a $40,000 lifetime maximum.'
+  },
+  {
+    source: 'cgeb-exact-amounts-2026',
+    category: 'credits_benefits',
+    text: 'Canada Groceries and Essentials Benefit Exact Amounts and Payment Dates 2026. The Canada Groceries and Essentials Benefit replaced the GST/HST credit starting July 2026 and pays 25 percent more. For July 2026 to June 2027 the maximum annual amounts are: $679 for a single individual, $890 for a married couple or common-law partners, and $234 for each eligible child under 19. Payment dates in 2026: January 5 and April 2 under the old GST/HST credit, a one-time spring transition payment by June 2026, the first enriched quarterly CGEB payment on July 3, and the second on October 5. File your tax return even with no income to receive this benefit. Apply early using Form RC151 if you recently arrived.'
+  },
+  {
+    source: 'cwb-2026-exact-amounts',
+    category: 'credits_benefits',
+    text: 'Canada Workers Benefit 2026 Exact Amounts and Payment Dates. For 2026 the maximum basic CWB is $1,633 for single workers and $2,813 for families. The maximum disability supplement is $843. No benefit is paid when adjusted net income exceeds $37,742 for singles. Advance Canada Workers Benefit payments are issued automatically on January 12, July 10, and October 9, 2026. No application required for advance payments. Claimed on line 45300 of your T1 return.'
+  },
+  {
+    source: 'cpp-self-employed-2026-updated',
+    category: 'self_employment',
+    text: 'CPP Contributions for Self-Employed Newcomers 2026. Self-employed individuals pay both the employee and employer portions of CPP. For 2026 the CPP earnings ceiling is $74,600 with a basic exemption of $3,500. The combined self-employed rate is 11.9 percent on earnings between $3,500 and $74,600, resulting in a maximum base contribution of $8,460.90. A second CPP tier called CPP2 applies at a combined 8 percent rate on earnings above $74,600 up to the second ceiling. Quebec residents pay into QPP instead of CPP at equivalent rates.'
+  },
+  {
+    source: 'gst-hst-provincial-rates-2026',
+    category: 'self_employment',
+    text: 'GST/HST Registration and Provincial Tax Rates for Self-Employed Newcomers 2026. Register for GST/HST within 29 days of exceeding $30,000 in taxable revenues in any four consecutive quarters or in a single quarter. Exception: rideshare drivers for Uber and Lyft must register from their very first dollar of earnings with no threshold. Food delivery couriers for DoorDash and SkipTheDishes use the standard $30,000 threshold. Provincial rates: Alberta is 5 percent GST only. BC is 5 percent GST plus 7 percent PST for 12 percent total. Ontario is 13 percent HST. Quebec is 5 percent GST plus 9.975 percent QST for 14.975 percent total.'
+  },
+  {
+    source: 'gig-economy-airbnb-taxes',
+    category: 'self_employment',
+    text: 'Gig Economy and Airbnb Tax Rules for Newcomers Canada. Uber, DoorDash, SkipTheDishes, Instacart, and Airbnb platform workers are classified as self-employed by the CRA. Report all gross earnings before platform fees on Form T2125. Deduct vehicle mileage, phone business use, and platform fees as expenses. Short-term rental income goes on Form T776. Critical rule from 2024: if your short-term rental property does not comply with local municipal licensing or zoning bylaws, the CRA denies 100 percent of all expense deductions including mortgage interest, property taxes, and insurance. Always verify your municipal short-term rental permit before listing on Airbnb or VRBO.'
+  },
+  {
+    source: 'self-employed-deductions-instalments',
+    category: 'self_employment',
+    text: 'Business Expense Deductions and Quarterly Instalments for Self-Employed Newcomers. Deductible expenses on Form T2125 include: home office costs prorated by workspace square footage, vehicle costs based on business mileage percentage, phone and internet business portion, office supplies, software, professional development, and accounting fees. Client meals are limited to 50 percent deductible. Capital items like computers and furniture are depreciated using Capital Cost Allowance. Quarterly tax instalments are required when net tax owing exceeds $3,000 in the current year and either of the two prior years. Quebec threshold is $1,800. Instalment due dates: March 15, June 15, September 15, and December 15. First-year self-employed newcomers typically do not owe instalments. Set aside 25 to 30 percent of every payment received for taxes and CPP.'
+  },
+  {
+    source: 'canada-india-treaty',
+    category: 'newcomers',
+    text: 'Canada-India Tax Treaty for Newcomers. Canada and India have an income tax agreement signed in 1996. Dividend withholding tax is reduced to 15 percent for significant corporate holdings and 25 percent for portfolio investments. Interest income withholding is capped at 15 percent. Indian pension income received by Canadian residents must be reported on your Canadian return and may be taxed in both countries. Claim a foreign tax credit on Form T2209 to avoid double taxation. Canada and India do not have a social security totalization agreement, so CPP and Indian pension contributions cannot generally be combined for eligibility. Foreign bank accounts and investments in India exceeding $100,000 CAD must be reported on Form T1135 starting your second year of Canadian residence.'
+  },
+  {
+    source: 'canada-philippines-mexico-colombia-treaty',
+    category: 'newcomers',
+    text: 'Canada Tax Treaties with Philippines, Mexico, and Colombia. Philippines: dividend withholding capped at 15 percent for significant holdings and 25 percent for portfolio dividends, interest at 15 percent. Canada and the Philippines have an active Social Security Agreement allowing SSS and CPP contributions to be combined for pension eligibility. Mexico: dividend withholding reduced to 10 percent for direct holdings and 15 percent for portfolio investors, interest capped at 10 percent. Canada and Mexico have an active Social Security Totalization Agreement combining Mexican IMSS contributions with CPP and OAS. Colombia: dividend withholding reduced to 5 percent for direct holdings and 15 percent for portfolio investors, interest capped at 10 percent. Canada and Colombia have an active Social Security Agreement. For all three countries, foreign pension income must be reported on your Canadian return but foreign tax credits prevent double taxation.'
+  },
+  {
+    source: 'canada-china-ukraine-korea-brazil-treaty',
+    category: 'newcomers',
+    text: 'Canada Tax Treaties with China, Ukraine, South Korea, and Brazil. China treaty signed 1986: dividend and interest withholding both capped at 10 percent. Private Chinese pensions are taxable in Canada. Government pensions from China are taxable in China. Limited social security agreement for temporary workers only. Ukraine: dividend withholding 5 percent for direct holdings and 15 percent for portfolio, interest capped at 10 percent. Active Social Security Agreement with Canada. South Korea: dividend withholding 10 percent for significant holdings and 15 percent for portfolio, interest capped at 10 percent. Private Korean pensions taxable in Canada as residence country. Active Social Security Agreement totalizing Korean NPS and Canadian CPP/OAS. Brazil treaty signed 1984: dividend and interest withholding both capped at 15 percent. Pensions taxable in source country. Active Social Security Agreement with Canada.'
+  },
+  {
+    source: 'nigeria-pakistan-no-treaty',
+    category: 'newcomers',
+    text: 'Canada Tax Rules for Newcomers from Nigeria and Pakistan. Canada and Nigeria have an income tax treaty. Dividend withholding is reduced to 12.5 percent for corporate holdings and 15 percent for portfolio investors. Interest withholding is capped at 12.5 percent. Nigerian pension income received by Canadian residents is taxable in Nigeria as the source country. Canada and Nigeria do not have a social security totalization agreement. Canada and Pakistan also have an income tax treaty. Dividend withholding is reduced to 15 percent for direct holdings and 25 percent for portfolio investors. Interest withholding is capped at 15 percent. Pakistani pensions are taxable in Pakistan as the source country. Canada and Pakistan do not have a social security totalization agreement. For both countries, foreign tax credits on Form T2209 prevent double taxation, and T1135 reporting applies for foreign property over $100,000 CAD starting in your second year of Canadian residence.'
+  },
+  {
+    source: 't1135-deemed-acquisition-newcomer',
+    category: 'newcomers',
+    text: 'Foreign Income Reporting for Newcomers — T1135 and Deemed Acquisition Rules. When you become a Canadian resident three rules apply. First, you are taxed on worldwide income from your arrival date including foreign employment, rental, dividends, and pensions. Second, the deemed acquisition rule means you are treated as having sold and repurchased all capital assets at fair market value on your arrival date, protecting you from Canadian tax on gains that accumulated before you arrived. Third, Form T1135 Foreign Income Verification Statement must be filed if you hold foreign property exceeding $100,000 CAD at any point during the year. Critical newcomer exemption: you are completely exempt from filing T1135 in your very first year of Canadian residence. Full reporting begins in your second tax year. Foreign property includes foreign bank accounts, foreign stocks and mutual funds, and foreign real estate not used as a personal residence. Penalties for missing T1135 start at $2,500 minimum.'
+  },
+  {
+    source: 'alberta-child-family-benefit-2026-updated',
+    category: 'credits_benefits',
+    text: 'Alberta Child and Family Benefit 2026 to 2027 Exact Amounts. The ACFB is a quarterly non-taxable payment for Alberta families with children under 18. For July 2026 to June 2027 the maximum base component is $1,529 for one child, $2,293 for two children, $3,057 for three children, and $3,821 for four or more children. The maximum working component is $782 for one child, $1,494 for two children, $1,920 for three children, and $2,061 for four or more children. The working component phases in once family employment income exceeds $2,760 at 15 percent. The base component phases out above $28,116 family net income. The working component phases out above $47,115. Payments are quarterly in August, November, February, and May. File your annual tax return to receive the ACFB automatically.'
+  },
+  {
+    source: 'bc-ontario-quebec-provincial-benefits-2026',
+    category: 'credits_benefits',
+    text: 'Provincial Benefits for Newcomers in BC, Ontario, and Quebec 2026. BC Family Benefit: maximum approximately $1,750 for first child, $1,100 for second child, $900 for each additional child, plus $500 single parent supplement annually. Phases out above approximately $29,000 family net income. Ontario Trillium Benefit: combines Ontario Sales Tax Credit approximately $345 to $360 per adult and child, Ontario Energy and Property Tax Credit for property taxes or rent, and Northern Ontario Energy Credit for northern residents. Payments on the 10th of each month from July 2026. Renters claim 20 percent of rent paid as property tax equivalent. Quebec Solidarity Tax Credit: three components including QST component, housing component, and northern village component. Payment frequency depends on annual amount — monthly if $800 or more, quarterly if $241 to $799, single July payment if $240 or less. File provincial TP-1-V return with Revenu Quebec to receive this credit.'
+  },
+  {
+    source: 'provincial-healthcare-waiting-periods-updated',
+    category: 'newcomers',
+    text: 'Provincial Healthcare Waiting Periods for Newcomers Canada 2026. Alberta: no waiting period, AHCIP coverage begins immediately upon establishing residency. Ontario: no waiting period, OHIP coverage begins on the date you establish residence, the historical three-month wait was eliminated. Manitoba: no waiting period for permanent residents and work permit holders with permits valid 12 or more months. Saskatchewan: no waiting period, immediate coverage upon establishing primary residence. British Columbia: up to three months waiting period under MSP, equals the remainder of your arrival month plus two full calendar months. Private health insurance is strongly recommended during the BC wait. Quebec: three-month waiting period under RAMQ with exceptions for newcomers from countries with reciprocal health agreements including France, Belgium, Denmark, Finland, Luxembourg, Norway, Portugal, and Sweden. Prescription drugs and dental care are not covered by any provincial public health plan regardless of waiting period.'
+  }
+]
+
+async function main() {
+  console.log(`Loading ${updates.length} new documents from deep research...\n`)
+  for (const doc of updates) {
+    await loadDocument(doc.text, doc.source, doc.category)
+  }
+  console.log('\nAll documents loaded successfully.')
+}
+
+main().catch(console.error)
