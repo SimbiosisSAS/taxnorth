@@ -45,3 +45,5 @@ live-server/node_modules/
 live-server/
 *.mp3
 taxnorth.zip
+voice-server/node_modules/
+*.zip
