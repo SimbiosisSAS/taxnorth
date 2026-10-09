@@ -42,3 +42,6 @@ next-env.d.ts
 mi-proyecto.zip
 
 live-server/node_modules/
+live-server/
+*.mp3
+taxnorth.zip
