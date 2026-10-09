@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isAdminRequest } from '@/lib/adminAuth'
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  // Proteger todas las rutas /admin excepto el login
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    const adminCookie = req.cookies.get('taxnorth_admin')?.value
+  const isAdminPage = pathname.startsWith('/admin') && pathname !== '/admin/login'
+  const isAdminApi = pathname.startsWith('/api/admin') && pathname !== '/api/admin/login'
 
-    if (adminCookie !== process.env.ADMIN_KEY) {
+  if (isAdminPage || isAdminApi) {
+    if (!(await isAdminRequest(req))) {
+      if (isAdminApi) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
       return NextResponse.redirect(new URL('/admin/login', req.url))
     }
   }
@@ -16,5 +20,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }

@@ -4,6 +4,7 @@ import { supabaseAdmin as supabase } from '@/lib/supabase'
 import { redirect } from 'next/navigation'
 import { UsersTable, LeadsTable } from '@/components/admin/AdminTables'
 import { cookies } from 'next/headers'
+import { verifyAdminCookieValue } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,7 +12,7 @@ export default async function AdminPage() {
 
   const cookieStore = await cookies()
   const adminCookie = cookieStore.get('taxnorth_admin')?.value
-  if (adminCookie !== process.env.ADMIN_KEY) redirect('/admin/login')
+  if (!(await verifyAdminCookieValue(adminCookie))) redirect('/admin/login')
 
   const [
     { count: totalUsers },

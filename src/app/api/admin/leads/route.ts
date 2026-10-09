@@ -1,10 +1,16 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
+import { isAdminRequest } from '@/lib/adminAuth'
+import { escapeHtml } from '@/lib/html'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!(await isAdminRequest(req))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { data, error } = await supabaseAdmin
     .from('leads')
     .select(`
@@ -18,6 +24,10 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+  if (!(await isAdminRequest(req))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const body = await req.json()
   const { leadId, action, professionalId, notes } = body
 
@@ -84,41 +94,41 @@ export async function PUT(req: NextRequest) {
               <table style="width:100%;border-collapse:collapse">
                 <tr>
                   <td style="padding:8px 0;color:#666;font-size:14px;width:140px">Client name</td>
-                  <td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${(lead as any).full_name || 'Not provided'}</td>
+                  <td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${escapeHtml((lead as any).full_name || 'Not provided')}</td>
                 </tr>
                 <tr style="border-top:1px solid #EEF1F7">
                   <td style="padding:8px 0;color:#666;font-size:14px">Email</td>
                   <td style="padding:8px 0;font-size:14px">
-                    <a href="mailto:${(lead as any).email}" style="color:#F4A332;font-weight:600">${(lead as any).email || '—'}</a>
+                    <a href="mailto:${escapeHtml((lead as any).email)}" style="color:#F4A332;font-weight:600">${escapeHtml((lead as any).email || '—')}</a>
                   </td>
                 </tr>
                 <tr style="border-top:1px solid #EEF1F7">
                   <td style="padding:8px 0;color:#666;font-size:14px">Phone</td>
                   <td style="padding:8px 0;font-size:14px">
-                    <a href="tel:${(lead as any).phone}" style="color:#F4A332;font-weight:600">${(lead as any).phone || '—'}</a>
+                    <a href="tel:${escapeHtml((lead as any).phone)}" style="color:#F4A332;font-weight:600">${escapeHtml((lead as any).phone || '—')}</a>
                   </td>
                 </tr>
                 <tr style="border-top:1px solid #EEF1F7">
                   <td style="padding:8px 0;color:#666;font-size:14px">Province</td>
-                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${(lead as any).province || '—'}</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml((lead as any).province || '—')}</td>
                 </tr>
                 <tr style="border-top:1px solid #EEF1F7">
                   <td style="padding:8px 0;color:#666;font-size:14px">Language</td>
-                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${(lead as any).language || '—'}</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml((lead as any).language || '—')}</td>
                 </tr>
                 <tr style="border-top:1px solid #EEF1F7">
                   <td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Situation</td>
-                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${((lead as any).situation || []).join(', ') || '—'}</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml(((lead as any).situation || []).join(', ') || '—')}</td>
                 </tr>
                 ${(lead as any).notes ? `
                 <tr style="border-top:1px solid #EEF1F7">
                   <td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Notes</td>
-                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${(lead as any).notes}</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml((lead as any).notes)}</td>
                 </tr>` : ''}
                 ${notes ? `
                 <tr style="border-top:1px solid #EEF1F7">
                   <td style="padding:8px 0;color:#666;font-size:14px;vertical-align:top">Admin note</td>
-                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${notes}</td>
+                  <td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml(notes)}</td>
                 </tr>` : ''}
               </table>
               <p style="color:#666;font-size:13px;margin:20px 0 0">

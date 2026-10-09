@@ -8,7 +8,7 @@
     "3001": {
       "label": "Voice Server",
       "onAutoForward": "silent",
-      "visibility": "public"
+      "visibility": "private"
     }
   },
   "forwardPorts": [3000, 3001]

@@ -1,13 +1,13 @@
 import { supabaseAdmin } from '@/lib/supabase'
+import { isAdminRequest } from '@/lib/adminAuth'
 import { NextRequest, NextResponse } from 'next/server'
 
-function isAuthorized(req: NextRequest): boolean {
-  const adminCookie = req.cookies.get('taxnorth_admin')?.value
-  return adminCookie === process.env.ADMIN_KEY
+async function isAuthorized(req: NextRequest): Promise<boolean> {
+  return isAdminRequest(req)
 }
 
 export async function GET(req: NextRequest) {
-  if (!isAuthorized(req)) {
+  if (!(await isAuthorized(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAuthorized(req)) {
+  if (!(await isAuthorized(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  if (!isAuthorized(req)) {
+  if (!(await isAuthorized(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

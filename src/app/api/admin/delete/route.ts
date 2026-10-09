@@ -1,12 +1,12 @@
 import { supabaseAdmin } from '@/lib/supabase'
+import { isAdminRequest } from '@/lib/adminAuth'
 import { NextRequest, NextResponse } from 'next/server'
 
 const ALLOWED_TABLES = ['leads', 'users', 'conversations'] as const
 type AllowedTable = typeof ALLOWED_TABLES[number]
 
 export async function POST(req: NextRequest) {
-  const adminCookie = req.cookies.get('taxnorth_admin')?.value
-  if (adminCookie !== process.env.ADMIN_KEY) {
+  if (!(await isAdminRequest(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

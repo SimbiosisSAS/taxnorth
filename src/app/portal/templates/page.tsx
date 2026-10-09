@@ -2,13 +2,14 @@ import { Flashlight, Copy } from 'lucide-react'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { verifyToken } from '@/lib/session'
 import TemplatesCopy from './TemplatesCopy'
 
 export const dynamic = 'force-dynamic'
 
 export default async function TemplatesPage() {
   const cookieStore = await cookies()
-  const proId = cookieStore.get('taxnorth_pro_id')?.value
+  const proId = await verifyToken('pro', cookieStore.get('taxnorth_pro_id')?.value)
   if (!proId) redirect('/portal')
 
   const templates = [

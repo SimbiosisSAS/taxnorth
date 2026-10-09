@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { createClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
+import { verifyToken } from '@/lib/session'
 import PortalCRM from './PortalCRM'
 
 export const dynamic = 'force-dynamic'
@@ -14,7 +15,7 @@ const supabase = createClient(
 
 export default async function PortalDashboard() {
   const cookieStore = await cookies()
-  const proId = cookieStore.get('taxnorth_pro_id')?.value
+  const proId = await verifyToken('pro', cookieStore.get('taxnorth_pro_id')?.value)
   if (!proId) redirect('/portal')
 
   const { data: professional } = await supabase

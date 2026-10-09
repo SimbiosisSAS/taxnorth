@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase'
+import { isAdminRequest } from '@/lib/adminAuth'
 import { openrouter } from '@/lib/openrouter'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
@@ -108,6 +109,10 @@ Return ONLY a JSON object:
 }
 
 export async function POST(req: NextRequest) {
+  if (!(await isAdminRequest(req))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const { prospectId, templateType, send, subject: providedSubject, body: providedBody } = await req.json()
 
