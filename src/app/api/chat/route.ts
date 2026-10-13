@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { buildSystemPrompt } from '@/lib/prompts'
 import { getRelevantContext } from '@/lib/rag'
 import { NextRequest } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 
 const SESSION_MESSAGE_LIMIT = 20
 const SESSION_WINDOW_HOURS = 24
@@ -22,6 +23,14 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || req.headers.get('x-real-ip')
       || 'unknown'
+
+    // 60 messages per hour per IP, on top of the 20-per-session daily limit
+    if (!rateLimit(`chat-ip:${ip}`, 60, 60 * 60 * 1000)) {
+      return new Response(
+        JSON.stringify({ error: 'Too many requests from your network. Please try again in a while.' }),
+        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': '3600' } }
+      )
+    }
 
     const refCode = req.cookies.get('taxnorth_ref')?.value || null
 
@@ -68,23 +77,26 @@ export async function POST(req: NextRequest) {
       content: trimmedMessage,
     })
 
-    const { data: history } = await supabaseAdmin
+    // the 10 most recent messages, oldest first
+    const { data: recentMessages } = await supabaseAdmin
       .from('messages')
       .select('role, content')
       .eq('conversation_id', conversation.id)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
       .limit(10)
+    const history = (recentMessages || []).reverse()
 
     const { context, sources } = await getRelevantContext(trimmedMessage)
 
     // Check if this session has a completed payment
-    const { data: leadData } = await supabaseAdmin
+    const { data: paidLeads } = await supabaseAdmin
       .from('leads')
-      .select('payment_status')
+      .select('id')
       .eq('session_id', sessionId)
-      .maybeSingle()
+      .eq('payment_status', 'completed')
+      .limit(1)
 
-    const hasPaid = leadData?.payment_status === 'completed'
+    const hasPaid = (paidLeads?.length ?? 0) > 0
 
     const systemWithContext = buildSystemPrompt({
       hasPaid,

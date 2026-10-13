@@ -2,20 +2,42 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { rateLimit, clientIp } from '@/lib/rateLimit'
+import { escapeHtml } from '@/lib/html'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
-  const { email } = await req.json()
+  if (!rateLimit(`pro-link-ip:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+  }
+
+  let body: { email?: unknown } = {}
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
+
+  const email = typeof body.email === 'string' ? body.email.trim() : ''
+  if (!email || email.length > 254) {
+    return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
+  }
+
+  if (!rateLimit(`pro-link-email:${email.toLowerCase()}`, 3, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+  }
 
   const { data: professional } = await supabaseAdmin
     .from('professionals')
     .select('id, name, firm_name')
     .eq('email', email.toLowerCase())
-    .single()
+    .maybeSingle()
 
+  // Same answer whether or not the email belongs to a partner, so this form
+  // cannot be used to find out which firms are in the network.
   if (!professional) {
-    return NextResponse.json({ error: 'Email not found in our partner network.' }, { status: 404 })
+    return NextResponse.json({ success: true })
   }
 
   const token = crypto.randomBytes(32).toString('hex')
@@ -38,7 +60,7 @@ export async function POST(req: NextRequest) {
           <h1 style="color:#F4A332; margin:0; font-size:22px;">TaxNorth Partner Portal</h1>
         </div>
         <div style="background:#FAF8F5; padding:32px 24px; border-radius:0 0 8px 8px;">
-          <h2 style="color:#1A2744; font-size:18px; margin:0 0 16px;">Hi ${professional.name},</h2>
+          <h2 style="color:#1A2744; font-size:18px; margin:0 0 16px;">Hi ${escapeHtml(professional.name)},</h2>
           <p style="color:#444; font-size:15px; line-height:1.6; margin:0 0 24px;">
             Click the button below to access your TaxNorth partner portal — see your clients, update statuses, and access multilingual templates.
           </p>

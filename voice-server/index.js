@@ -2,13 +2,15 @@ require('dotenv').config()
 const express = require('express')
 const http = require('http')
 const WebSocket = require('ws')
+const { validTwilioRequest, signStreamToken, verifyStreamToken } = require('./auth')
 
 const app = express()
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+app.disable('x-powered-by')
+app.use(express.urlencoded({ extended: true, limit: '20kb' }))
+app.use(express.json({ limit: '20kb' }))
 
 const server = http.createServer(app)
-const wss = new WebSocket.Server({ server, path: '/stream' })
+const wss = new WebSocket.Server({ server, path: '/stream', maxPayload: 64 * 1024 })
 
 // Mulaw decode table
 const MULAW_DECODE = new Int16Array(256)
@@ -51,95 +53,144 @@ const INBOUND_PROMPT = 'You are TaxNorth, a friendly AI tax guide for newcomers 
 
 const OUTBOUND_PROMPT = 'You are a sales representative for TaxNorth.ca calling tax accountants in Alberta. Goal: convince them to subscribe at taxnorth.ca/partners. Keep responses to 2 sentences. If interested direct to taxnorth.ca/partners. If not interested thank them and end.'
 
-server.on('upgrade', function(req, socket, head) {
-  console.log('WebSocket upgrade:', req.url)
-})
+// Cost and abuse limits
+var MAX_CONCURRENT_CALLS = parseInt(process.env.MAX_CONCURRENT_CALLS || '3', 10)
+var MAX_CALL_MS = 10 * 60 * 1000
+var activeCalls = 0
 
-wss.on('connection', function(twilioWs, req) {
-  console.log('Twilio connected')
-  var urlParams = new URLSearchParams(req.url.split('?')[1] || '')
-  var callType = urlParams.get('type') || 'inbound'
-  var firmName = urlParams.get('firmName') || ''
+wss.on('connection', function(twilioWs) {
+  // refuse floods of sockets that never authenticate
+  if (wss.clients.size > MAX_CONCURRENT_CALLS * 5) {
+    twilioWs.close(1013, 'busy')
+    return
+  }
+
+  var authenticated = false
+  var finished = false
+  var callType = 'inbound'
   var streamSid = null
   var deepgramWs = null
   var deepgramReady = false
   var audioQueue = []
 
-  var systemPrompt = callType === 'outbound'
-    ? OUTBOUND_PROMPT + ' You are calling ' + (firmName || 'a tax firm') + ' in Alberta.'
-    : INBOUND_PROMPT
+  // the first message (Twilio "start") must arrive within 5 seconds and carry a valid token
+  var authTimer = setTimeout(function() {
+    if (!authenticated) twilioWs.close(1008, 'unauthorized')
+  }, 5000)
+  var callTimer = null
 
-  deepgramWs = new WebSocket(
-  'wss://agent.deepgram.com/v1/agent/converse?token=' + process.env.DEEPGRAM_API_KEY
-)
-
-  deepgramWs.on('open', function() {
-    console.log('Deepgram connected — sending Settings')
-    var settings = {
-  type: 'Settings',
-  agent: {
-    speak: {
-      provider: { type: 'deepgram', model: 'aura-2-odysseus-en' }
-    },
-    think: {
-      provider: { type: 'google', model: 'gemini-3.1-flash-lite' },
-      prompt: systemPrompt
-    },
-    greeting: 'Welcome to TaxNorth. How can I help you today?'
+  function cleanup() {
+    if (finished) return
+    finished = true
+    clearTimeout(authTimer)
+    if (callTimer) clearTimeout(callTimer)
+    if (authenticated) activeCalls--
+    if (deepgramWs) deepgramWs.close()
   }
-}
-    var settingsStr = JSON.stringify(settings)
-    console.log('Settings length:', settingsStr.length)
-    deepgramWs.send(settingsStr)
-    console.log('Settings sent')
-  })
 
-  deepgramWs.on('message', function(data) {
-    if (Buffer.isBuffer(data)) {
-      // linear16 from Deepgram → convert to mulaw → Twilio
-      if (streamSid && twilioWs.readyState === WebSocket.OPEN) {
-        var mulawData = linear16ToMulaw(data)
-        twilioWs.send(JSON.stringify({
-          event: 'media',
-          streamSid: streamSid,
-          media: { payload: mulawData.toString('base64') }
-        }))
-      }
-    } else {
-      var raw = data.toString()
-      console.log('Deepgram message:', raw)
-      try {
-        var event = JSON.parse(raw)
-        if (event.type === 'SettingsApplied') {
-          console.log('Settings applied — ready!')
-          deepgramReady = true
-          while (audioQueue.length > 0 && deepgramWs.readyState === WebSocket.OPEN) {
-            deepgramWs.send(audioQueue.shift())
-          }
+  // Deepgram is only opened after the stream is authenticated
+  function startAgent() {
+    var systemPrompt = callType === 'outbound'
+      ? OUTBOUND_PROMPT + ' You are calling a tax firm in Alberta.'
+      : INBOUND_PROMPT
+
+    deepgramWs = new WebSocket(
+      'wss://agent.deepgram.com/v1/agent/converse?token=' + process.env.DEEPGRAM_API_KEY
+    )
+
+    deepgramWs.on('open', function() {
+      console.log('Deepgram connected, sending Settings')
+      var settings = {
+        type: 'Settings',
+        agent: {
+          speak: {
+            provider: { type: 'deepgram', model: 'aura-2-odysseus-en' }
+          },
+          think: {
+            provider: { type: 'google', model: 'gemini-3.1-flash-lite' },
+            prompt: systemPrompt
+          },
+          greeting: 'Welcome to TaxNorth. How can I help you today?'
         }
-      } catch(e) {}
-    }
-  })
+      }
+      deepgramWs.send(JSON.stringify(settings))
+      console.log('Settings sent')
+    })
 
-  deepgramWs.on('error', function(err) {
-    console.error('Deepgram error:', err.message)
-  })
+    deepgramWs.on('message', function(data) {
+      if (Buffer.isBuffer(data)) {
+        // linear16 from Deepgram, converted to mulaw for Twilio
+        if (streamSid && twilioWs.readyState === WebSocket.OPEN) {
+          var mulawData = linear16ToMulaw(data)
+          twilioWs.send(JSON.stringify({
+            event: 'media',
+            streamSid: streamSid,
+            media: { payload: mulawData.toString('base64') }
+          }))
+        }
+      } else {
+        // only the event type is logged: Deepgram messages contain the call transcript
+        try {
+          var event = JSON.parse(data.toString())
+          console.log('Deepgram event:', event.type)
+          if (event.type === 'SettingsApplied') {
+            console.log('Settings applied, ready')
+            deepgramReady = true
+            while (audioQueue.length > 0 && deepgramWs.readyState === WebSocket.OPEN) {
+              deepgramWs.send(audioQueue.shift())
+            }
+          }
+        } catch(e) {}
+      }
+    })
 
-  deepgramWs.on('close', function(code, reason) {
-    var r = reason && reason.length > 0 ? reason.toString() : '(empty)'
-    console.log('Deepgram closed:', code, r)
-    deepgramReady = false
-  })
+    deepgramWs.on('error', function(err) {
+      console.error('Deepgram error:', err.message)
+    })
+
+    deepgramWs.on('close', function(code, reason) {
+      var r = reason && reason.length > 0 ? reason.toString() : '(empty)'
+      console.log('Deepgram closed:', code, r)
+      deepgramReady = false
+    })
+  }
 
   twilioWs.on('message', function(rawData) {
     try {
       var msg = JSON.parse(rawData.toString())
+
       if (msg.event === 'start') {
+        if (authenticated) return
+        var params = (msg.start && msg.start.customParameters) || {}
+        var callSid = String((msg.start && msg.start.callSid) || '')
+        var type = params.type === 'outbound' ? 'outbound' : 'inbound'
+
+        if (!callSid || params.callSid !== callSid || !verifyStreamToken(params.token, callSid, type)) {
+          console.warn('Rejected stream without a valid token')
+          twilioWs.close(1008, 'unauthorized')
+          return
+        }
+        if (activeCalls >= MAX_CONCURRENT_CALLS) {
+          console.warn('Rejected stream: too many concurrent calls')
+          twilioWs.close(1013, 'busy')
+          return
+        }
+
+        authenticated = true
+        activeCalls++
+        clearTimeout(authTimer)
+        callType = type
         streamSid = msg.start.streamSid
-        console.log('Stream started:', streamSid)
+        callTimer = setTimeout(function() { twilioWs.close() }, MAX_CALL_MS)
+        console.log('Stream started:', streamSid, 'type:', callType)
+        startAgent()
+        return
       }
+
+      if (!authenticated) return
+
       if (msg.event === 'media') {
-        // mulaw from Twilio → convert to linear16 → Deepgram
+        // mulaw from Twilio, converted to linear16 for Deepgram
         var mulawBuf = Buffer.from(msg.media.payload, 'base64')
         var linear16Buf = mulawToLinear16(mulawBuf)
         if (deepgramReady && deepgramWs && deepgramWs.readyState === WebSocket.OPEN) {
@@ -151,14 +202,14 @@ wss.on('connection', function(twilioWs, req) {
       }
       if (msg.event === 'stop') {
         console.log('Stream stopped')
-        if (deepgramWs) deepgramWs.close()
+        cleanup()
       }
     } catch(e) {}
   })
 
   twilioWs.on('close', function() {
     console.log('Twilio disconnected')
-    if (deepgramWs) deepgramWs.close()
+    cleanup()
   })
 
   twilioWs.on('error', function(err) {
@@ -167,12 +218,33 @@ wss.on('connection', function(twilioWs, req) {
 })
 
 app.post('/voice', function(req, res) {
+  // only requests signed by Twilio are accepted
+  if (!validTwilioRequest(req)) {
+    console.warn('Rejected /voice request with invalid Twilio signature. host:', req.headers.host, 'url:', req.originalUrl, 'PUBLIC_URL set:', !!process.env.PUBLIC_URL)
+    return res.status(403).send('Forbidden')
+  }
+
   var publicUrl = process.env.PUBLIC_URL || ('https://' + req.headers.host)
   var wsUrl = publicUrl.replace('https://', 'wss://')
-  var type = req.query.type || 'inbound'
-  console.log('Incoming call — type:', type)
+  var type = req.query.type === 'outbound' ? 'outbound' : 'inbound'
+  var callSid = String(req.body.CallSid || '').replace(/[^A-Za-z0-9]/g, '')
+  var token = signStreamToken(callSid, type)
+
+  if (!token) {
+    console.error('VOICE_STREAM_SECRET is missing or shorter than 32 characters')
+    return res.status(500).send('Server not configured')
+  }
+
+  console.log('Incoming call, type:', type)
   res.type('text/xml')
-  res.send('<?xml version="1.0" encoding="UTF-8"?><Response><Connect><Stream url="' + wsUrl + '/stream?type=' + type + '"/></Connect></Response>')
+  res.send(
+    '<?xml version="1.0" encoding="UTF-8"?><Response><Connect>' +
+    '<Stream url="' + wsUrl + '/stream">' +
+    '<Parameter name="token" value="' + token + '"/>' +
+    '<Parameter name="callSid" value="' + callSid + '"/>' +
+    '<Parameter name="type" value="' + type + '"/>' +
+    '</Stream></Connect></Response>'
+  )
 })
 
 app.get('/health', function(req, res) {

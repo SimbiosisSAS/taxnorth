@@ -2,23 +2,65 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { openrouter } from '@/lib/openrouter'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
+import { escapeHtml } from '@/lib/html'
+import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// trims, removes control characters and caps the length of user text
+function clean(value: unknown, max: number, keepNewlines = false): string {
+  if (typeof value !== 'string') return ''
+  const pattern = keepNewlines ? /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g : /[\u0000-\u001f\u007f]/g
+  return value.replace(pattern, ' ').trim().slice(0, max)
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const {
-      fullName, email, phone, province, language,
-      situation, notes, sessionId,
-      professionalSlug, professionalName
-    } = body
-
-    if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+    // max 5 requests per hour per IP (per server instance)
+    if (!rateLimit(`lead-ip:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
     }
 
-    const refCode = req.cookies.get('taxnorth_ref')?.value || null
+    const body = await req.json()
+
+    const fullName = clean(body.fullName, 100)
+    const email = clean(body.email, 254)
+    const phone = clean(body.phone, 30)
+    const province = clean(body.province, 50)
+    const language = clean(body.language, 30)
+    const notes = clean(body.notes, 2000, true)
+    const situation: string[] = Array.isArray(body.situation)
+      ? body.situation.slice(0, 12).map((s: unknown) => clean(s, 60)).filter(Boolean)
+      : []
+    const sessionId = typeof body.sessionId === 'string' && UUID_REGEX.test(body.sessionId) ? body.sessionId : null
+
+    if (!email || !EMAIL_REGEX.test(email)) {
+      return NextResponse.json({ error: 'A valid email is required' }, { status: 400 })
+    }
+
+    // max 3 requests per hour for the same email address
+    if (!rateLimit(`lead-email:${email.toLowerCase()}`, 3, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+    }
+
+    // The professional's name always comes from the database (looked up by slug),
+    // never from the form, so nobody can plant leads in another CPA's portal.
+    let professionalName: string | null = null
+    if (typeof body.professionalSlug === 'string' && body.professionalSlug) {
+      const { data: pro } = await supabaseAdmin
+        .from('professionals')
+        .select('name')
+        .eq('slug', body.professionalSlug.slice(0, 100))
+        .eq('is_verified', true)
+        .maybeSingle()
+      professionalName = pro?.name || null
+    }
+
+    const refCookie = req.cookies.get('taxnorth_ref')?.value || ''
+    const refCode = /^[a-zA-Z0-9_-]{1,40}$/.test(refCookie) ? refCookie : null
 
     let conversationId = null
     if (sessionId) {
@@ -96,67 +138,67 @@ export async function POST(req: NextRequest) {
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background-color: #1A2744; padding: 24px; border-radius: 8px 8px 0 0;">
             <h1 style="color: #F4A332; margin: 0; font-size: 20px;">
-              ${isPreSelected ? `New client for ${professionalName}` : 'New Professional Connection Request'}
+              ${isPreSelected ? `New client for ${escapeHtml(professionalName)}` : 'New Professional Connection Request'}
             </h1>
             <p style="color: white; margin: 8px 0 0; opacity: 0.7; font-size: 14px;">
-              ${isPreSelected ? `Client selected ${professionalName} from the TaxNorth directory` : 'Client requested TaxNorth to match them with a professional'}
-              ${refCode ? ` · Referral: <strong>${refCode}</strong>` : ''}
+              ${isPreSelected ? `Client selected ${escapeHtml(professionalName)} from the TaxNorth directory` : 'Client requested TaxNorth to match them with a professional'}
+              ${refCode ? ` · Referral: <strong>${escapeHtml(refCode)}</strong>` : ''}
             </p>
           </div>
           <div style="background-color: #FAF8F5; padding: 24px; border-radius: 0 0 8px 8px;">
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 8px 0; color: #666; font-size: 14px; width: 160px;">Name</td>
-                <td style="padding: 8px 0; color: #1A2744; font-size: 14px; font-weight: 600;">${fullName || 'Not provided'}</td>
+                <td style="padding: 8px 0; color: #1A2744; font-size: 14px; font-weight: 600;">${escapeHtml(fullName || 'Not provided')}</td>
               </tr>
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px;">Email</td>
-                <td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${email}" style="color: #F4A332;">${email}</a></td>
+                <td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${escapeHtml(email)}" style="color: #F4A332;">${escapeHtml(email)}</a></td>
               </tr>
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px;">Phone</td>
-                <td style="padding: 8px 0; font-size: 14px;"><a href="tel:${phone}" style="color: #F4A332;">${phone || 'Not provided'}</a></td>
+                <td style="padding: 8px 0; font-size: 14px;"><a href="tel:${escapeHtml(phone)}" style="color: #F4A332;">${escapeHtml(phone || 'Not provided')}</a></td>
               </tr>
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px;">Province</td>
-                <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${province || 'Not provided'}</td>
+                <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${escapeHtml(province || 'Not provided')}</td>
               </tr>
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px;">Language</td>
-                <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${language || 'Not provided'}</td>
+                <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${escapeHtml(language || 'Not provided')}</td>
               </tr>
               ${refCode ? `
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px;">Referred by</td>
                 <td style="padding: 8px 0; font-size: 14px;">
-                  <span style="background:#F4A33220; color:#F4A332; padding: 2px 10px; border-radius: 4px; font-weight: 600;">${refCode}</span>
+                  <span style="background:#F4A33220; color:#F4A332; padding: 2px 10px; border-radius: 4px; font-weight: 600;">${escapeHtml(refCode)}</span>
                 </td>
               </tr>` : ''}
               ${isPreSelected ? `
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px;">Professional</td>
                 <td style="padding: 8px 0; font-size: 14px;">
-                  <span style="background:#F4A332; color:#1A2744; padding: 2px 10px; border-radius: 4px; font-weight: 600;">${professionalName}</span>
+                  <span style="background:#F4A332; color:#1A2744; padding: 2px 10px; border-radius: 4px; font-weight: 600;">${escapeHtml(professionalName)}</span>
                 </td>
               </tr>` : ''}
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px; vertical-align: top;">Situation</td>
                 <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">
                   ${situation && situation.length > 0
-                    ? situation.map((s: string) => `<span style="background:#EEF1F7; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block;">${s}</span>`).join(' ')
+                    ? situation.map((s: string) => `<span style="background:#EEF1F7; padding: 2px 8px; border-radius: 4px; margin: 2px; display: inline-block;">${escapeHtml(s)}</span>`).join(' ')
                     : 'Not specified'}
                 </td>
               </tr>
               ${notes ? `
               <tr style="border-top: 1px solid #EEF1F7;">
                 <td style="padding: 8px 0; color: #666; font-size: 14px; vertical-align: top;">Notes</td>
-                <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${notes}</td>
+                <td style="padding: 8px 0; color: #1A2744; font-size: 14px;">${escapeHtml(notes)}</td>
               </tr>` : ''}
               ${conversationSummary ? `
               <tr style="border-top: 2px solid #1A2744;">
                 <td colspan="2" style="padding: 16px 0 8px;">
                   <p style="color: #1A2744; font-size: 14px; font-weight: 700; margin: 0 0 8px;">AI Summary of Chat Conversation</p>
-                  <div style="background: #1A2744; color: white; padding: 12px 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; white-space: pre-line;">${conversationSummary}</div>
+                  <div style="background: #1A2744; color: white; padding: 12px 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; white-space: pre-line;">${escapeHtml(conversationSummary)}</div>
                 </td>
               </tr>` : ''}
             </table>
@@ -184,12 +226,12 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="background-color: #FAF8F5; padding: 32px 24px; border-radius: 0 0 8px 8px;">
             <h2 style="color: #1A2744; font-size: 20px; margin: 0 0 16px;">
-              Hi ${fullName || 'there'}, your request is confirmed.
+              Hi ${escapeHtml(fullName || 'there')}, your request is confirmed.
             </h2>
             <p style="color: #444; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
               ${isPreSelected
-                ? `We've received your request to connect with <strong>${professionalName}</strong>. They will reach out to you shortly with a special TaxNorth rate.`
-                : `We've received your request. We're matching you with the best tax professional for your situation in ${province || 'Canada'}. You'll hear from us within one business day.`
+                ? `We've received your request to connect with <strong>${escapeHtml(professionalName)}</strong>. They will reach out to you shortly with a special TaxNorth rate.`
+                : `We've received your request. We're matching you with the best tax professional for your situation in ${escapeHtml(province || 'Canada')}. You'll hear from us within one business day.`
               }
             </p>
             <div style="background: #1A2744; border-radius: 8px; padding: 20px 24px; margin-bottom: 24px;">
@@ -205,7 +247,7 @@ export async function POST(req: NextRequest) {
                 </tr>
                 <tr>
                   <td style="color: white; opacity: 0.6; font-size: 13px; padding: 4px 0;">Memo</td>
-                  <td style="color: white; font-size: 13px; font-weight: 600; padding: 4px 0;">${fullName || 'Your name'} — TaxNorth</td>
+                  <td style="color: white; font-size: 13px; font-weight: 600; padding: 4px 0;">${escapeHtml(fullName || 'Your name')} — TaxNorth</td>
                 </tr>
               </table>
               <p style="color: white; opacity: 0.5; font-size: 12px; margin: 12px 0 0;">Or pay by credit card at taxnorth.ca/connect</p>

@@ -1,10 +1,41 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
+import { escapeHtml } from '@/lib/html'
+import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
 const TEXT_MODEL = 'deepseek/deepseek-v4-flash'
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024
+const MAX_DOCS_PER_SESSION_PER_DAY = 10
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+// Checks the first bytes of the file, so a renamed file or a spoofed Content-Type is rejected.
+function matchesDeclaredType(buf: Buffer, mime: string): boolean {
+  if (mime === 'application/pdf') return buf.subarray(0, 5).toString('latin1') === '%PDF-'
+  if (mime === 'image/jpeg') return buf.length > 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff
+  if (mime === 'image/png') return buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+  if (mime === 'image/webp') return buf.subarray(0, 4).toString('latin1') === 'RIFF' && buf.subarray(8, 12).toString('latin1') === 'WEBP'
+  if (mime === 'image/heic') return buf.subarray(4, 8).toString('latin1') === 'ftyp'
+  return false
+}
+
+// SIN values are masked in the admin email (the original file and the stored data are untouched).
+function maskSensitiveFields(fields: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(fields)) {
+    const isSin = /(^|[^a-z])sin([^a-z]|$)|social.?insurance/i.test(key)
+    if (isSin) {
+      const digits = String(value ?? '').replace(/\D/g, '')
+      result[key] = digits.length >= 3 ? `***-***-${digits.slice(-3)}` : '[hidden]'
+    } else {
+      result[key] = value
+    }
+  }
+  return result
+}
 
 const EXTRACTION_PROMPT = `You are a Canadian tax document analyzer. Extract all information from this document.
 
@@ -64,7 +95,6 @@ async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> 
   const { text } = await extractText(new Uint8Array(buffer), { mergePages: true })
 
   console.log('PDF text length:', text.length)
-  console.log('PDF preview:', text.substring(0, 500))
 
   if (!text || text.trim().length < 20) {
     throw new Error('Could not extract text from PDF')
@@ -90,7 +120,6 @@ async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> 
   if (!response.ok) throw new Error(`Text API error: ${response.status}`)
   const result = await response.json()
   const content = result.choices[0]?.message?.content || ''
-  console.log('DeepSeek response:', content.substring(0, 400))
   const jsonMatch = content.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON in PDF response')
   return JSON.parse(jsonMatch[0])
@@ -98,14 +127,46 @@ async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> 
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData()
-    const file = formData.get('file') as File
-    const sessionId = formData.get('sessionId') as string
-    const conversationId = formData.get('conversationId') as string | null
+    // max 20 uploads per hour per IP (per server instance)
+    if (!rateLimit(`doc-ip:${clientIp(req)}`, 20, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Too many uploads. Please try again later.' }, { status: 429 })
+    }
 
-    if (!file || !sessionId) {
+    const declaredLength = Number(req.headers.get('content-length') || 0)
+    if (declaredLength > MAX_FILE_BYTES + 1024 * 1024) {
+      return NextResponse.json({ error: 'File too large. Maximum 10 MB.' }, { status: 413 })
+    }
+
+    const formData = await req.formData()
+    const file = formData.get('file')
+    const sessionId = formData.get('sessionId')
+
+    if (!(file instanceof File) || typeof sessionId !== 'string' || !UUID_REGEX.test(sessionId)) {
       return NextResponse.json({ error: 'File and sessionId are required' }, { status: 400 })
     }
+
+    if (file.size === 0 || file.size > MAX_FILE_BYTES) {
+      return NextResponse.json({ error: 'File too large. Maximum 10 MB.' }, { status: 413 })
+    }
+
+    // at most 10 documents per session per 24 hours
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+    const { count: recentDocs } = await supabaseAdmin
+      .from('documents')
+      .select('id', { count: 'exact', head: true })
+      .eq('session_id', sessionId)
+      .gte('created_at', since)
+    if ((recentDocs || 0) >= MAX_DOCS_PER_SESSION_PER_DAY) {
+      return NextResponse.json({ error: 'Daily document limit reached. Please try again tomorrow.' }, { status: 429 })
+    }
+
+    // the conversation is looked up on the server, never taken from the client
+    const { data: conversation } = await supabaseAdmin
+      .from('conversations')
+      .select('id')
+      .eq('session_id', sessionId)
+      .maybeSingle()
+    const conversationId: string | null = conversation?.id ?? null
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf']
     if (!allowedTypes.includes(file.type)) {
@@ -114,11 +175,16 @@ export async function POST(req: NextRequest) {
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
+
+    if (!matchesDeclaredType(buffer, file.type)) {
+      return NextResponse.json({ error: 'File content does not match its type.' }, { status: 400 })
+    }
     const base64 = buffer.toString('base64')
 
-    console.log('Processing:', file.name, file.type, buffer.length, 'bytes')
+    console.log('Processing document:', file.type, buffer.length, 'bytes')
 
-    const filePath = `${sessionId}/${Date.now()}-${file.name}`
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) || 'document'
+    const filePath = `${sessionId}/${Date.now()}-${safeName}`
     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from('tax-documents')
       .upload(filePath, buffer, { contentType: file.type, upsert: false })
@@ -139,7 +205,7 @@ export async function POST(req: NextRequest) {
       .insert({
         session_id: sessionId,
         conversation_id: conversationId || null,
-        file_name: file.name,
+        file_name: file.name.slice(0, 200),
         file_type: file.type,
         file_url: fileUrl,
         status: 'processing',
@@ -158,7 +224,7 @@ export async function POST(req: NextRequest) {
       extractedData = file.type === 'application/pdf'
         ? await extractFromPDF(buffer)
         : await extractFromImage(base64, file.type)
-      console.log('Success:', JSON.stringify(extractedData).substring(0, 300))
+      console.log('Extraction completed')
     } catch (err) {
       console.error('Extraction failed:', err)
       extractionStatus = 'error'
@@ -179,34 +245,35 @@ export async function POST(req: NextRequest) {
       const issuer = (extractedData.issuer_name as string) || 'Unknown issuer'
       const recipient = (extractedData.recipient_name as string) || 'Unknown'
       const fields = (extractedData.fields as Record<string, string>) || {}
+      const emailFields = maskSensitiveFields(fields)
 
       await resend.emails.send({
         from: 'TaxNorth <hello@taxnorth.ca>',
         to: process.env.ADMIN_EMAIL,
-        subject: `New Document — ${docType} ${taxYear} — ${recipient}`,
+        subject: `New Document — ${docType} ${taxYear} — ${recipient}`.replace(/[\r\n]+/g, ' '),
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: #1A2744; padding: 24px; border-radius: 8px 8px 0 0;">
               <h1 style="color: #F4A332; margin: 0; font-size: 18px;">New Tax Document Received</h1>
-              <p style="color: white; opacity: 0.7; margin: 8px 0 0; font-size: 14px;">${docType} · ${taxYear} · ${recipient}</p>
+              <p style="color: white; opacity: 0.7; margin: 8px 0 0; font-size: 14px;">${escapeHtml(docType)} · ${escapeHtml(taxYear)} · ${escapeHtml(recipient)}</p>
             </div>
             <div style="background: #FAF8F5; padding: 24px; border-radius: 0 0 8px 8px;">
               <table style="width: 100%; border-collapse: collapse;">
-                <tr><td style="padding:8px 0;color:#666;font-size:14px;width:160px">Document type</td><td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${docType}</td></tr>
-                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Tax year</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${taxYear}</td></tr>
-                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Issuer</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${issuer}</td></tr>
-                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Recipient</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${recipient}</td></tr>
+                <tr><td style="padding:8px 0;color:#666;font-size:14px;width:160px">Document type</td><td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${escapeHtml(docType)}</td></tr>
+                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Tax year</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml(taxYear)}</td></tr>
+                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Issuer</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml(issuer)}</td></tr>
+                <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Recipient</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml(recipient)}</td></tr>
               </table>
               <h3 style="color:#1A2744;font-size:14px;margin:20px 0 12px">Extracted Fields</h3>
               <table style="width:100%;border-collapse:collapse">
-                ${Object.entries(fields).map(([k, v]) => `
+                ${Object.entries(emailFields).map(([k, v]) => `
                   <tr style="border-top:1px solid #EEF1F7">
-                    <td style="padding:6px 0;color:#666;font-size:13px;width:200px">${k.replace(/_/g,' ').replace(/box /gi,'Box ')}</td>
-                    <td style="padding:6px 0;color:#1A2744;font-size:13px;font-weight:500">${v}</td>
+                    <td style="padding:6px 0;color:#666;font-size:13px;width:200px">${escapeHtml(k.replace(/_/g,' ').replace(/box /gi,'Box '))}</td>
+                    <td style="padding:6px 0;color:#1A2744;font-size:13px;font-weight:500">${escapeHtml(v)}</td>
                   </tr>`).join('')}
               </table>
               ${fileUrl ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid #EEF1F7">
-                <a href="${fileUrl}" style="background:#F4A332;color:#1A2744;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px">View Original Document →</a>
+                <a href="${escapeHtml(fileUrl)}" style="background:#F4A332;color:#1A2744;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px">View Original Document →</a>
                 <p style="color:#999;font-size:11px;margin:8px 0 0">Link expires in 7 days</p>
               </div>` : ''}
               <p style="color:#999;font-size:11px;margin:16px 0 0">Session: ${sessionId} · ID: ${document.id}</p>

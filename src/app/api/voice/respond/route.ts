@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import twilio from 'twilio'
+import { validateTwilioRequest, formToParams } from '@/lib/twilioAuth'
 import { openrouter } from '@/lib/openrouter'
 
 const VoiceResponse = twilio.twiml.VoiceResponse
@@ -42,20 +43,30 @@ RULES:
 Respond with ONLY the spoken words — no stage directions, no markdown, no bullet points.`
 
 export async function POST(req: NextRequest) {
-  const url = new URL(req.url)
-  const type = url.searchParams.get('type') || 'inbound'
-  const firmName = url.searchParams.get('firmName') || ''
-  const rawHistory = url.searchParams.get('history') || ''
-
   const formData = await req.formData()
-  const speechResult = formData.get('SpeechResult') as string || ''
+  if (!validateTwilioRequest(req, formToParams(formData))) {
+    return new Response('Forbidden', { status: 403 })
+  }
+
+  const url = new URL(req.url)
+  const type = url.searchParams.get('type') === 'outbound' ? 'outbound' : 'inbound'
+  const firmName = (url.searchParams.get('firmName') || '').replace(/[\u0000-\u001f]/g, ' ').slice(0, 80)
+  const rawHistory = url.searchParams.get('history') || ''
+  const speechResult = String(formData.get('SpeechResult') || '').slice(0, 500)
 
   const twiml = new VoiceResponse()
   const baseUrl = 'https://www.taxnorth.ca'
 
   let history: { role: string; content: string }[] = []
   try {
-    history = rawHistory ? JSON.parse(decodeURIComponent(rawHistory)) : []
+    const parsed = rawHistory ? JSON.parse(decodeURIComponent(rawHistory)) : []
+    if (Array.isArray(parsed)) {
+      // keep only well-formed user/assistant turns, capped in number and length
+      history = parsed
+        .filter((m: any) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+        .slice(-12)
+        .map((m: any) => ({ role: m.role, content: m.content.slice(0, 500) }))
+    }
   } catch {
     history = []
   }

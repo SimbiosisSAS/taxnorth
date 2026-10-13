@@ -2,15 +2,31 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export async function POST(req: NextRequest) {
   try {
-    const { email, sessionId } = await req.json()
+    // max 5 requests per hour per IP
+    if (!rateLimit(`magic-ip:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+    }
 
-    if (!email) {
-      return NextResponse.json({ error: 'Email required' }, { status: 400 })
+    const body = await req.json()
+    const email = typeof body.email === 'string' ? body.email.trim() : ''
+    const sessionId = typeof body.sessionId === 'string' && UUID_REGEX.test(body.sessionId) ? body.sessionId : null
+
+    if (!email || email.length > 254 || !EMAIL_REGEX.test(email)) {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
+    }
+
+    // max 3 emails per hour to the same address (stops email bombing)
+    if (!rateLimit(`magic-email:${email.toLowerCase()}`, 3, 60 * 60 * 1000)) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
     }
 
     const token = crypto.randomBytes(32).toString('hex')

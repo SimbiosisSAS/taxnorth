@@ -1,10 +1,21 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
+import { escapeHtml } from '@/lib/html'
+import { safeEqual } from '@/lib/session'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
+  // Vapi must send the secret configured in its server settings, either as
+  // the X-Vapi-Secret header or as Authorization: Bearer <secret>.
+  // Without VAPI_WEBHOOK_SECRET set in the environment, every request is rejected.
+  const secret = process.env.VAPI_WEBHOOK_SECRET
+  const sent = req.headers.get('x-vapi-secret') || (req.headers.get('authorization') || '').replace(/^Bearer /i, '')
+  if (!secret || !sent || !safeEqual(sent, secret)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const body = await req.json()
     const payload = body.message || body
@@ -17,10 +28,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true })
     }
 
-    const transcript = call.transcript || ''
-    const summary = call.summary || call.analysis?.summary || ''
-    const customerPhone = call.customer?.number || ''
-    const customerName = call.customer?.name || ''
+    const transcript = String(call.transcript || '').slice(0, 50000)
+    const summary = String(call.summary || call.analysis?.summary || '').slice(0, 5000)
+    const customerPhone = String(call.customer?.number || '').slice(0, 30)
+    const customerName = String(call.customer?.name || '').slice(0, 100)
     const durationSeconds = call.duration || 0
     const callId = call.id
 
@@ -60,7 +71,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: 'TaxNorth <hello@taxnorth.ca>',
       to: process.env.ADMIN_EMAIL!,
-      subject: `${interested ? '🔥 Interested!' : '📞 Call done'} — ${customerName || customerPhone}`,
+      subject: `${interested ? '🔥 Interested!' : '📞 Call done'} — ${customerName || customerPhone}`.replace(/[\r\n]+/g, ' '),
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background-color: #1A2744; padding: 24px; border-radius: 8px 8px 0 0;">
@@ -69,16 +80,16 @@ export async function POST(req: NextRequest) {
             </h1>
           </div>
           <div style="background-color: #FAF8F5; padding: 24px; border-radius: 0 0 8px 8px;">
-            <p><strong>Name:</strong> ${customerName || 'Unknown'}</p>
-            <p><strong>Phone:</strong> <a href="tel:${customerPhone}" style="color:#F4A332;">${customerPhone}</a></p>
+            <p><strong>Name:</strong> ${escapeHtml(customerName || 'Unknown')}</p>
+            <p><strong>Phone:</strong> <a href="tel:${escapeHtml(customerPhone)}" style="color:#F4A332;">${escapeHtml(customerPhone)}</a></p>
             <p><strong>Duration:</strong> ${Math.round(durationSeconds / 60)} min</p>
             <p><strong>Interested:</strong> ${interested ? '✅ Yes' : '❌ Not yet'}</p>
-            ${emailCaptured ? `<p><strong>Email captured:</strong> <a href="mailto:${emailCaptured}" style="color:#F4A332;">${emailCaptured}</a></p>` : ''}
-            ${summary ? `<p><strong>Summary:</strong> ${summary}</p>` : ''}
+            ${emailCaptured ? `<p><strong>Email captured:</strong> <a href="mailto:${escapeHtml(emailCaptured)}" style="color:#F4A332;">${escapeHtml(emailCaptured)}</a></p>` : ''}
+            ${summary ? `<p><strong>Summary:</strong> ${escapeHtml(summary)}</p>` : ''}
             ${transcript ? `
             <hr/>
             <p><strong>Transcript:</strong></p>
-            <pre style="background:#EEF1F7; padding:12px; border-radius:8px; font-size:12px; white-space:pre-wrap;">${transcript}</pre>` : ''}
+            <pre style="background:#EEF1F7; padding:12px; border-radius:8px; font-size:12px; white-space:pre-wrap;">${escapeHtml(transcript)}</pre>` : ''}
           </div>
         </div>
       `
