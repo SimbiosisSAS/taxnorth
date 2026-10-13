@@ -66,13 +66,13 @@ export default function ChatClient() {
   const [isLoading, setIsLoading] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState(() => {
-  if (typeof window === 'undefined') return generateSessionId()
-  const existing = localStorage.getItem('taxnorth_session')
-  if (existing && uuidRegex.test(existing)) return existing
-  const newId = generateSessionId()
-  localStorage.setItem('taxnorth_session', newId)
-  return newId
-})
+    if (typeof window === 'undefined') return generateSessionId()
+    const existing = localStorage.getItem('taxnorth_session')
+    if (existing && uuidRegex.test(existing)) return existing
+    const newId = generateSessionId()
+    localStorage.setItem('taxnorth_session', newId)
+    return newId
+  })
   const [recents, setRecents] = useState<RecentConversation[]>([])
   const [showReferral, setShowReferral] = useState(false)
   const [showLangMenu, setShowLangMenu] = useState(false)
@@ -80,6 +80,7 @@ export default function ChatClient() {
   const [captureEmail, setCaptureEmail] = useState('')
   const [emailSaved, setEmailSaved] = useState(false)
   const [savingEmail, setSavingEmail] = useState(false)
+  const [pendingDocumentId, setPendingDocumentId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -105,6 +106,7 @@ export default function ChatClient() {
     setShowReferral(false)
     setShowEmailCapture(false)
     setEmailSaved(false)
+    setPendingDocumentId(null)
   }
 
   function openRecent(recent: RecentConversation) {
@@ -113,6 +115,46 @@ export default function ChatClient() {
 
   async function sendMessage(content: string) {
     if (!content.trim() || isLoading) return
+
+    // Handle document send confirmation
+    if (pendingDocumentId) {
+      const lower = content.toLowerCase()
+      const wantsToSend = lower.includes('yes') || lower.includes('send')
+      const wantsToKeep = lower.includes('no') || lower.includes('keep')
+
+      if (wantsToSend || wantsToKeep) {
+        const docId = pendingDocumentId
+        setPendingDocumentId(null)
+        setMessages(prev => [...prev, { role: 'user', content }])
+        setInput('')
+
+        if (wantsToSend) {
+          try {
+            await fetch('/api/documents/send', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ documentId: docId, sessionId: currentSessionId }),
+            })
+            setMessages(prev => [...prev, {
+              role: 'assistant',
+              content: 'Your document has been sent to your accountant. They will review everything and contact you within 24 hours. Is there anything else you would like to know?'
+            }])
+          } catch {
+            setMessages(prev => [...prev, {
+              role: 'assistant',
+              content: 'There was an issue sending the document. Please try again or contact hello@taxnorth.ca.'
+            }])
+          }
+        } else {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: 'No problem. Your document is saved securely for your reference only. Your accountant has not been notified. Is there anything else I can help you with?'
+          }])
+        }
+        return
+      }
+    }
+
     const userMessage: Message = { role: 'user', content }
 
     if (messages.length === 0) {
@@ -188,10 +230,7 @@ export default function ChatClient() {
 
     setIsUploading(true)
 
-    const userMessage: Message = {
-      role: 'user',
-      content: `📎 ${file.name}`
-    }
+    const userMessage: Message = { role: 'user', content: `📎 ${file.name}` }
     setMessages(prev => [...prev, userMessage])
 
     if (messages.length === 0) {
@@ -215,16 +254,19 @@ export default function ChatClient() {
         throw new Error(result.error || 'Processing failed')
       }
 
-      const { documentType, taxYear, extractedData } = result
+      const { documentId, documentType, taxYear, extractedData } = result
       const fields = (extractedData?.fields || {}) as Record<string, string>
 
       const fieldLines = Object.entries(fields)
         .map(([key, val]) => `- **${key.replace(/_/g, ' ').replace(/box /gi, 'Box ')}:** ${val}`)
         .join('\n')
 
+      // Store documentId — wait for explicit user confirmation before sending
+      setPendingDocumentId(documentId)
+
       const agentMessage: Message = {
         role: 'assistant',
-        content: `I've processed your **${documentType}**${taxYear ? ` (${taxYear})` : ''}. Here are the key figures I extracted:\n\n${fieldLines}\n\n---\nThis document has been sent to your accountant as part of your prepared package. Would you like to upload another document or ask any questions about these numbers?`
+        content: `Here is what I extracted from your **${documentType || 'document'}**${taxYear ? ` (${taxYear})` : ''}:\n\n${fieldLines || 'No specific fields detected.'}\n\n---\nDoes this look correct? If you would like to share this document with your accountant, reply **"yes, send it"**. If you prefer to keep it for your reference only, reply **"no, keep it"**.`
       }
 
       setMessages(prev => [...prev, agentMessage])
@@ -234,7 +276,7 @@ export default function ChatClient() {
       console.error('Upload error:', error)
       const errorMessage: Message = {
         role: 'assistant',
-        content: `I had trouble processing that document. Please make sure it's a clear photo or PDF of a Canadian tax document and try again.`
+        content: `I had trouble processing that document. Please make sure it is a clear photo or PDF of a Canadian tax document and try again.`
       }
       setMessages(prev => [...prev, errorMessage])
     } finally {
@@ -445,20 +487,20 @@ export default function ChatClient() {
                     }`}
                   >
                     <ReactMarkdown
-  remarkPlugins={[remarkGfm]}
-  components={{
-    a: ({ ...props }) => (
-      <a
-        {...props}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-lantern-amber underline font-medium hover:opacity-80 transition-opacity"
-      />
-    ),
-  }}
->
-  {message.content}
-</ReactMarkdown>
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        a: ({ ...props }) => (
+                          <a
+                            {...props}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-lantern-amber underline font-medium hover:opacity-80 transition-opacity"
+                          />
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
                     {message.role === 'assistant' && message.content === '' && (
                       <span className="inline-block w-2 h-4 bg-deep-ink/40 animate-pulse" />
                     )}
