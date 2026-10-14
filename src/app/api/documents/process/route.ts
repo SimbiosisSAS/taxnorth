@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
 
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
-const TEXT_MODEL = 'deepseek/deepseek-v4-flash'
+const TEXT_MODEL = 'openai/gpt-4o-mini'
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024
 const MAX_DOCS_PER_SESSION_PER_DAY = 10
