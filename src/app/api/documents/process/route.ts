@@ -1,8 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
+import { pairSlipBoxes, toLayoutText, guessSlipType, dropUnsupportedValues, type TextItem } from '@/lib/pdfLayout'
 
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
+// Not a reasoning model on purpose: reasoning models spend max_tokens on hidden thinking and can return an empty reply.
 const TEXT_MODEL = 'openai/gpt-4o-mini'
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024
@@ -24,7 +26,7 @@ function maskSensitiveFields(fields: Record<string, unknown>): Record<string, un
   const result: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(fields)) {
     const isSin = /(^|[^a-z])sin([^a-z]|$)|social.?insurance/i.test(key)
-    if (isSin) {
+    if (isSin || /^\d{3}[ -]?\d{3}[ -]?\d{3}$/.test(String(value ?? '').trim())) {
       const digits = String(value ?? '').replace(/\D/g, '')
       result[key] = digits.length >= 3 ? `***-***-${digits.slice(-3)}` : '[hidden]'
     } else {
@@ -141,16 +143,11 @@ async function extractFromImage(
   return readExtraction(response, 'image')
 }
 
-async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> {
-  const { extractText } = await import('unpdf')
-  const { text } = await extractText(new Uint8Array(buffer), { mergePages: true })
+const METADATA_PROMPT = `Read this Canadian tax slip and return ONLY a JSON object, with no other text:
+{"document_type":"T4","tax_year":"2025","issuer_name":"employer or payer name","recipient_name":"the person's full name"}
+Use only what is printed in the text. If something is not there, use null.`
 
-  console.log('PDF text length:', text.length)
-
-  if (!text || text.trim().length < 20) {
-    throw new Error('Could not extract text from PDF')
-  }
-
+async function callTextModel(prompt: string): Promise<Record<string, unknown>> {
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -161,15 +158,84 @@ async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> 
     },
     body: JSON.stringify({
       model: TEXT_MODEL,
-      messages: [{
-        role: 'user',
-        content: `${EXTRACTION_PROMPT}\n\nDOCUMENT TEXT:\n${text}`,
-      }],
+      messages: [{ role: 'user', content: prompt }],
       max_tokens: 4000,
       temperature: 0,
     }),
   })
   return readExtraction(response, 'PDF')
+}
+
+// Text items with their position on the page (needed to tell which value belongs to which box).
+async function readPdfItems(buffer: Buffer): Promise<TextItem[][]> {
+  const { getDocumentProxy } = await import('unpdf')
+  const pdf = await getDocumentProxy(new Uint8Array(buffer))
+  const pages: TextItem[][] = []
+  const count = Math.min(pdf.numPages, 6)
+  for (let n = 1; n <= count; n++) {
+    const page = await pdf.getPage(n)
+    const height = page.getViewport({ scale: 1 }).height
+    const content = await page.getTextContent()
+    const items: TextItem[] = []
+    for (const raw of content.items as unknown as Array<{ str?: unknown; transform?: number[]; width?: number }>) {
+      const str = typeof raw.str === 'string' ? raw.str.trim() : ''
+      if (!str || !raw.transform) continue
+      items.push({ str, x: raw.transform[4], y: height - raw.transform[5], w: raw.width || 0 })
+    }
+    pages.push(items)
+  }
+  return pages
+}
+
+async function extractFromPDF(buffer: Buffer): Promise<Record<string, unknown>> {
+  let pages: TextItem[][] | null = null
+  try {
+    pages = await readPdfItems(buffer)
+  } catch (err) {
+    console.warn('Positional PDF reading failed, using plain text:', err instanceof Error ? err.message : String(err))
+  }
+
+  let text = ''
+  if (pages) {
+    text = toLayoutText(pages)
+  } else {
+    const { extractText } = await import('unpdf')
+    text = (await extractText(new Uint8Array(buffer), { mergePages: true })).text
+  }
+
+  console.log('PDF text length:', text.length)
+
+  if (!text || text.trim().length < 20) {
+    throw new Error('Could not extract text from PDF')
+  }
+
+  // CRA slips (T4, T4A, T5...): box values come from their exact position, never from the model.
+  const boxFields = pages ? pairSlipBoxes(pages[0] || []) : {}
+  if (Object.keys(boxFields).length >= 4) {
+    const meta = await callTextModel(`${METADATA_PROMPT}\n\nDOCUMENT TEXT:\n${text.slice(0, 6000)}`)
+    return {
+      document_type: (typeof meta.document_type === 'string' && meta.document_type) || guessSlipType(text),
+      tax_year: meta.tax_year ?? null,
+      issuer_name: meta.issuer_name ?? null,
+      recipient_name: meta.recipient_name ?? null,
+      fields: boxFields,
+      confidence: 'high',
+      notes: 'Box values were read from their exact position on the page. Empty boxes are left out.',
+    }
+  }
+
+  // Any other text document: the model reads it, then every value is checked against the text.
+  const data = await callTextModel(`${EXTRACTION_PROMPT}\n\nDOCUMENT TEXT:\n${text}`)
+  const fields = data.fields && typeof data.fields === 'object' && !Array.isArray(data.fields)
+    ? (data.fields as Record<string, unknown>)
+    : {}
+  const { kept, dropped } = dropUnsupportedValues(fields, text)
+  if (dropped.length > 0) {
+    data.fields = kept
+    data.confidence = 'low'
+    data.notes = `Values not found in the document were removed: ${dropped.join(', ')}`
+  }
+  return data
 }
 
 export async function POST(req: NextRequest) {

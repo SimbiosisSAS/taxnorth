@@ -12,7 +12,7 @@ function maskSensitiveFields(fields: Record<string, unknown>): Record<string, un
   const result: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(fields)) {
     const isSin = /(^|[^a-z])sin([^a-z]|$)|social.?insurance/i.test(key)
-    if (isSin) {
+    if (isSin || /^\d{3}[ -]?\d{3}[ -]?\d{3}$/.test(String(value ?? '').trim())) {
       const digits = String(value ?? '').replace(/\D/g, '')
       result[key] = digits.length >= 3 ? `***-***-${digits.slice(-3)}` : '[hidden]'
     } else {
