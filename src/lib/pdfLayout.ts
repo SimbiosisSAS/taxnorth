@@ -106,3 +106,44 @@ export function dropUnsupportedValues(
   }
   return { kept, dropped }
 }
+
+// Names of the T4 boxes, added to the key (box_14 -> box_14_employment_income) so the chat, the email
+// and the conversation show what each number is. Other slips keep plain box_N keys.
+const T4_BOX_LABELS: Record<string, string> = {
+  '10': 'province_of_employment',
+  '12': 'social_insurance_number',
+  '14': 'employment_income',
+  '16': 'cpp_contributions',
+  '16A': 'second_cpp_contributions',
+  '17': 'qpp_contributions',
+  '17A': 'second_qpp_contributions',
+  '18': 'ei_premiums',
+  '20': 'rpp_contributions',
+  '22': 'income_tax_deducted',
+  '24': 'ei_insurable_earnings',
+  '26': 'cpp_qpp_pensionable_earnings',
+  '29': 'employment_code',
+  '44': 'union_dues',
+  '45': 'employer_offered_dental_benefits',
+  '46': 'charitable_donations',
+  '50': 'rpp_or_dpsp_registration_number',
+  '52': 'pension_adjustment',
+  '54': 'employer_account_number',
+  '55': 'ppip_premiums',
+  '56': 'ppip_insurable_earnings',
+}
+
+export function labelSlipFields(
+  documentType: string | null | undefined,
+  fields: Record<string, unknown>
+): Record<string, unknown> {
+  if (String(documentType || '').toUpperCase() !== 'T4') return fields
+  const out: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(fields)) {
+    const m = /^box_(\d{1,3}[A-Za-z]?)$/.exec(key)
+    const number = m ? m[1].toUpperCase() : ''
+    const label = number ? T4_BOX_LABELS[number] : undefined
+    out[label ? `box_${number}_${label}` : key] = value
+  }
+  return out
+}

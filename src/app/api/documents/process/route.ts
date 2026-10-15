@@ -1,7 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
-import { pairSlipBoxes, toLayoutText, guessSlipType, dropUnsupportedValues, type TextItem } from '@/lib/pdfLayout'
+import { pairSlipBoxes, toLayoutText, guessSlipType, dropUnsupportedValues, labelSlipFields, type TextItem } from '@/lib/pdfLayout'
 
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
 // Not a reasoning model on purpose: reasoning models spend max_tokens on hidden thinking and can return an empty reply.
@@ -340,6 +340,8 @@ export async function POST(req: NextRequest) {
       if (!hasUsableFields(extractedData)) {
         throw new Error('extraction returned no usable fields')
       }
+      // T4: put the name of each box in its key (box_14 -> box_14_employment_income)
+      extractedData.fields = labelSlipFields(String(extractedData.document_type || ''), extractedData.fields as Record<string, unknown>)
       console.log('Extraction completed')
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err)

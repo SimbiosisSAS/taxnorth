@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { buildSystemPrompt } from '@/lib/prompts'
 import { getRelevantContext } from '@/lib/rag'
 import { NextRequest } from 'next/server'
+import { buildDateContext } from '@/lib/dateContext'
 import { rateLimit } from '@/lib/rateLimit'
 
 const SESSION_MESSAGE_LIMIT = 20
@@ -107,7 +108,7 @@ export async function POST(req: NextRequest) {
       model: DEEPSEEK_MODEL,
       stream: true,
       messages: [
-        { role: 'system', content: systemWithContext },
+        { role: 'system', content: `${systemWithContext}\n\n${buildDateContext()}` },
         ...(history || []).map(msg => ({
           role: msg.role as 'user' | 'assistant',
           content: msg.content,
