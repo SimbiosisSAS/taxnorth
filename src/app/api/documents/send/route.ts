@@ -22,8 +22,13 @@ function maskSensitiveFields(fields: Record<string, unknown>): Record<string, un
   return result
 }
 
-// Second step of the document flow: the client has seen the extracted data and agreed to send it.
+// Second step of the document flow: the client has seen the extracted data and agreed to share it.
 // /api/documents/process only reads and stores the document; nothing is emailed until this route is called.
+//
+// Rules:
+//  - no lead for the session (no contact details)  -> nothing is sent, answer 409 contact_required
+//  - lead with payment not confirmed               -> emailed to the admin marked "hold until payment is confirmed"
+//  - lead with payment confirmed                   -> emailed to the admin with the client's contact data and accountant
 export async function POST(req: NextRequest) {
   try {
     if (!rateLimit(`doc-send-ip:${clientIp(req)}`, 30, 60 * 60 * 1000)) {
@@ -42,25 +47,24 @@ export async function POST(req: NextRequest) {
     if (!documentId || !UUID_REGEX.test(documentId)) {
       return NextResponse.json({ error: 'Valid documentId required' }, { status: 400 })
     }
+    if (!sessionId || !UUID_REGEX.test(sessionId)) {
+      return NextResponse.json({ error: 'Valid sessionId required' }, { status: 400 })
+    }
 
-    // Verify the document belongs to this session
-    let query = supabaseAdmin
+    // the document must belong to this session
+    const { data: document, error } = await supabaseAdmin
       .from('documents')
       .select('*')
       .eq('id', documentId)
-
-    if (sessionId && UUID_REGEX.test(sessionId)) {
-      query = query.eq('session_id', sessionId)
-    }
-
-    const { data: document, error } = await query.single()
+      .eq('session_id', sessionId)
+      .single()
 
     if (error || !document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 })
     }
 
     if (document.sent_to_cpa) {
-      return NextResponse.json({ success: true, alreadySent: true })
+      return NextResponse.json({ success: true, alreadySent: true, status: 'sent' })
     }
 
     // a document whose extraction failed has nothing to send
@@ -68,8 +72,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Document was not processed' }, { status: 409 })
     }
 
+    // without contact details nobody could answer the client
+    const { data: lead } = await supabaseAdmin
+      .from('leads')
+      .select('full_name, email, phone, province, language, payment_status, professional_name')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (!lead) {
+      return NextResponse.json({ error: 'contact_required' }, { status: 409 })
+    }
+
     if (!process.env.ADMIN_EMAIL) {
       return NextResponse.json({ error: 'Admin email not configured' }, { status: 500 })
+    }
+
+    const paid = lead.payment_status === 'completed'
+
+    let accountant: { name: string | null; firm_name: string | null; email: string | null } | null = null
+    if (lead.professional_name) {
+      const { data: pro } = await supabaseAdmin
+        .from('professionals')
+        .select('name, firm_name, email')
+        .eq('name', lead.professional_name)
+        .limit(1)
+        .maybeSingle()
+      accountant = pro || { name: lead.professional_name, firm_name: null, email: null }
     }
 
     const extractedData = (document.extracted_data as Record<string, unknown>) || {}
@@ -79,20 +109,36 @@ export async function POST(req: NextRequest) {
     const recipient = (extractedData.recipient_name as string) || 'Unknown'
     const fields = (extractedData.fields as Record<string, unknown>) || {}
     const emailFields = maskSensitiveFields(fields)
+    const clientName = lead.full_name || recipient
 
-    await resend.emails.send({
+    const { error: sendError } = await resend.emails.send({
       from: 'TaxNorth <hello@taxnorth.ca>',
       to: process.env.ADMIN_EMAIL,
-      subject: `Document (client consent) — ${docType} ${taxYear} — ${recipient}`.replace(/[\r\n]+/g, ' '),
+      subject: `${paid ? '' : '[PAYMENT PENDING] '}Document (client consent) — ${docType} ${taxYear} — ${clientName}`.replace(/[\r\n]+/g, ' '),
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
           <div style="background:#1A2744;padding:24px;border-radius:8px 8px 0 0">
-            <h1 style="color:#F4A332;margin:0;font-size:18px">Document Sent with Client Consent</h1>
+            <h1 style="color:#F4A332;margin:0;font-size:18px">Document Shared with Client Consent</h1>
             <p style="color:white;opacity:.7;margin:8px 0 0;font-size:14px">
-              ${escapeHtml(docType)} · ${escapeHtml(taxYear)} · ${escapeHtml(recipient)}
+              ${escapeHtml(docType)} · ${escapeHtml(taxYear)} · ${escapeHtml(clientName)}
             </p>
           </div>
           <div style="background:#FAF8F5;padding:24px;border-radius:0 0 8px 8px">
+            ${paid ? '' : `
+            <div style="background:#FFF4DC;border-left:4px solid #F4A332;padding:12px 16px;margin-bottom:20px;font-size:14px;color:#1A2744">
+              <strong>Payment not confirmed yet.</strong> Hold this document and pass it to the accountant only after the payment is confirmed.
+            </div>`}
+            <h3 style="color:#1A2744;font-size:14px;margin:0 0 12px">Client</h3>
+            <table style="width:100%;border-collapse:collapse">
+              <tr><td style="padding:6px 0;color:#666;font-size:14px;width:160px">Name</td><td style="padding:6px 0;color:#1A2744;font-weight:600;font-size:14px">${escapeHtml(lead.full_name || 'Not provided')}</td></tr>
+              <tr style="border-top:1px solid #EEF1F7"><td style="padding:6px 0;color:#666;font-size:14px">Email</td><td style="padding:6px 0;font-size:14px"><a href="mailto:${escapeHtml(lead.email)}" style="color:#1A2744">${escapeHtml(lead.email || 'Not provided')}</a></td></tr>
+              <tr style="border-top:1px solid #EEF1F7"><td style="padding:6px 0;color:#666;font-size:14px">Phone</td><td style="padding:6px 0;font-size:14px"><a href="tel:${escapeHtml(lead.phone)}" style="color:#1A2744">${escapeHtml(lead.phone || 'Not provided')}</a></td></tr>
+              <tr style="border-top:1px solid #EEF1F7"><td style="padding:6px 0;color:#666;font-size:14px">Province</td><td style="padding:6px 0;color:#1A2744;font-size:14px">${escapeHtml(lead.province || 'Not provided')}</td></tr>
+              <tr style="border-top:1px solid #EEF1F7"><td style="padding:6px 0;color:#666;font-size:14px">Language</td><td style="padding:6px 0;color:#1A2744;font-size:14px">${escapeHtml(lead.language || 'Not provided')}</td></tr>
+              <tr style="border-top:1px solid #EEF1F7"><td style="padding:6px 0;color:#666;font-size:14px">Payment</td><td style="padding:6px 0;color:#1A2744;font-size:14px">${escapeHtml(paid ? 'Confirmed' : (lead.payment_status || 'Pending'))}</td></tr>
+              <tr style="border-top:1px solid #EEF1F7"><td style="padding:6px 0;color:#666;font-size:14px">Accountant</td><td style="padding:6px 0;color:#1A2744;font-size:14px">${accountant ? escapeHtml([accountant.name, accountant.firm_name, accountant.email].filter(Boolean).join(' · ')) : 'Not assigned yet'}</td></tr>
+            </table>
+            <h3 style="color:#1A2744;font-size:14px;margin:20px 0 12px">Document</h3>
             <table style="width:100%;border-collapse:collapse">
               <tr><td style="padding:8px 0;color:#666;font-size:14px;width:160px">Document type</td><td style="padding:8px 0;color:#1A2744;font-weight:600;font-size:14px">${escapeHtml(docType)}</td></tr>
               <tr style="border-top:1px solid #EEF1F7"><td style="padding:8px 0;color:#666;font-size:14px">Tax year</td><td style="padding:8px 0;color:#1A2744;font-size:14px">${escapeHtml(taxYear)}</td></tr>
@@ -115,18 +161,29 @@ export async function POST(req: NextRequest) {
               <p style="color:#999;font-size:11px;margin:8px 0 0">Link expires in 7 days</p>
             </div>` : ''}
             <p style="color:#999;font-size:11px;margin:16px 0 0">
-              Document ID: ${escapeHtml(documentId)} · Session: ${escapeHtml(sessionId || 'N/A')}
+              Document ID: ${escapeHtml(documentId)} · Session: ${escapeHtml(sessionId)}
             </p>
           </div>
         </div>`,
     })
 
+    // Resend does not throw when it rejects an email: it returns an error. Without this check the
+    // document would be marked as sent even though nobody received it.
+    if (sendError) {
+      console.error('Document email was rejected:', sendError.message || sendError)
+      return NextResponse.json({ error: 'Email could not be sent' }, { status: 502 })
+    }
+
+    // paid: the document counts as sent. Not paid yet: only the time of the notification is stored, so it
+    // can be sent again once the payment is confirmed.
     await supabaseAdmin
       .from('documents')
-      .update({ sent_to_cpa: true, sent_at: new Date().toISOString() })
+      .update(paid
+        ? { sent_to_cpa: true, sent_at: new Date().toISOString() }
+        : { sent_at: new Date().toISOString() })
       .eq('id', documentId)
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, status: paid ? 'sent' : 'pending_payment' })
 
   } catch (error) {
     console.error('Document send error:', error)

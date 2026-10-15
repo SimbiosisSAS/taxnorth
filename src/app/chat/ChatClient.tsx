@@ -116,11 +116,12 @@ export default function ChatClient() {
   async function sendMessage(content: string) {
     if (!content.trim() || isLoading) return
 
-    // Handle document send confirmation
+    // Handle document send confirmation.
+    // Only an explicit answer counts. Any other message is a normal question and the document stays pending.
     if (pendingDocumentId) {
-      const lower = content.toLowerCase()
-      const wantsToSend = lower.includes('yes') || lower.includes('send')
-      const wantsToKeep = lower.includes('no') || lower.includes('keep')
+      const answer = content.toLowerCase().replace(/[^a-z\s]/g, ' ').replace(/\s+/g, ' ').trim()
+      const wantsToSend = /^(yes|y|yes please|yes send it|yes send|send it|send)$/.test(answer)
+      const wantsToKeep = /^(no|n|no thanks|no keep it|no keep|keep it|keep)$/.test(answer)
 
       if (wantsToSend || wantsToKeep) {
         const docId = pendingDocumentId
@@ -128,28 +129,36 @@ export default function ChatClient() {
         setMessages(prev => [...prev, { role: 'user', content }])
         setInput('')
 
+        const reply = (text: string) => setMessages(prev => [...prev, { role: 'assistant', content: text }])
+
         if (wantsToSend) {
+          const retryMessage = 'There was an issue sending the document. Please reply "yes, send it" to try again, or contact hello@taxnorth.ca.'
           try {
-            await fetch('/api/documents/send', {
+            const response = await fetch('/api/documents/send', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ documentId: docId, sessionId: currentSessionId }),
             })
-            setMessages(prev => [...prev, {
-              role: 'assistant',
-              content: 'Your document has been sent to your accountant. They will review everything and contact you within 24 hours. Is there anything else you would like to know?'
-            }])
+            const result = await response.json().catch(() => ({}))
+
+            if (response.ok && result.success) {
+              if (result.status === 'pending_payment') {
+                reply('Done. Your document and your contact details are with the TaxNorth team. It will be passed on to your accountant once your payment is confirmed and an accountant is assigned. Is there anything else you would like to know?')
+              } else {
+                reply('Done. Your document has been sent to the TaxNorth team, who will pass it on to your accountant together with your contact details. Is there anything else you would like to know?')
+              }
+            } else if (result.error === 'contact_required') {
+              reply('To share documents with an accountant you first need to connect with one. That is where we collect your contact details and the one-time $19.99 fee, so your accountant knows how to reach you. [Connect with an accountant](/connect)\n\nYour document is saved. After you connect, upload it again and reply **"yes, send it"**.')
+            } else {
+              setPendingDocumentId(docId)
+              reply(retryMessage)
+            }
           } catch {
-            setMessages(prev => [...prev, {
-              role: 'assistant',
-              content: 'There was an issue sending the document. Please try again or contact hello@taxnorth.ca.'
-            }])
+            setPendingDocumentId(docId)
+            reply(retryMessage)
           }
         } else {
-          setMessages(prev => [...prev, {
-            role: 'assistant',
-            content: 'No problem. Your document is saved securely for your reference only. Your accountant has not been notified. Is there anything else I can help you with?'
-          }])
+          reply('No problem. Your document is saved securely for your reference only. Your accountant has not been notified. Is there anything else I can help you with?')
         }
         return
       }
