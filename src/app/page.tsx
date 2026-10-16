@@ -194,20 +194,20 @@ export default function HomePage() {
   {
     number: "01",
     icon: <AlertTriangle className="w-5 h-5" />,
-    title: "The CRA letter nobody expected",
-    body: "A friend followed their accountant's advice. A year later, a CRA audit. Back taxes, penalties, and stress that could have been avoided. Bad tax advice doesn't show up immediately — it shows up when it's too late."
+    title: "Get it right from the start",
+    body: "Your first tax return in Canada sets the foundation for everything that follows. Getting the right guidance from the beginning means more benefits, fewer surprises, and a cleaner file with the CRA year after year."
   },
   {
     number: "02",
     icon: <TrendingDown className="w-5 h-5" />,
-    title: "The free option that costs more",
-    body: "University and community programs mean well. But the person filing your return is still learning. You're not their client — you're their practice case. Your real situation, your real money, their learning curve."
+    title: "Experience that works for your situation",
+    body: "Community tax programs are a great first step. But newcomers often have unique situations — foreign income, partial-year residency, international student status — that need someone who has seen it before."
   },
   {
     number: "03",
     icon: <Sliders className="w-5 h-5" />,
-    title: "Tax software weren't built for you",
-    body: "Same questions for everyone, hundreds of returns a day — and no room to ask yours. The details that matter most get missed when the process was designed for the average filer, not for you."
+    title: "Built for your questions, not the average filer",
+    body: "Standard tax software asks the same questions for everyone. TaxNorth lets you explain your actual situation and get answers that apply to you, not a generic Canadian filer."
   }
 ].map((item) => (
   <div key={item.number} className="bg-white rounded-card p-8 shadow-sm">
