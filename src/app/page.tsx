@@ -2,6 +2,7 @@ import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users
 import Link from 'next/link'
 import Script from 'next/script'
 import LanguageSelector from '@/components/LanguageSelector'
+import StickyMobileCTA from '@/components/StickyMobileCTA'
 
 export default function HomePage() {
 
@@ -74,7 +75,7 @@ export default function HomePage() {
       </nav>
 
       {/* HERO */}
-      <section className="bg-midnight-north min-h-screen flex items-center justify-center px-6 py-20">
+      <section id="hero-section" className="bg-midnight-north min-h-screen flex items-center justify-center px-6 py-20">
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-8">
             <Flashlight className="w-8 h-8 text-lantern-amber" />
@@ -298,6 +299,8 @@ export default function HomePage() {
     <p className="mt-4 text-deep-ink/40 text-sm">Free to use. No account required.</p>
   </div>
 </section>
+
+<StickyMobileCTA />
 
       {/* FOOTER */}
       <footer className="bg-midnight-north border-t border-white/10 py-12 px-6">
