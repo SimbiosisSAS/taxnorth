@@ -439,27 +439,9 @@ export const resources: Resource[] = [
     ],
     affiliates: [
       {
-        name: 'Simplii Financial',
-        description: '$0 forever + $300 cash bonus + $50 gift card. Apply online if you arrived in the last 5 years.',
-        link: 'https://www.simplii.com/en/banking-simplii/join-simplii/new-to-canada.html',
-        badge: 'Best no-fee account'
-      },
-      {
-        name: 'Scotiabank StartRight',
-        description: '1 year free + up to $15,000 unsecured credit limit + 50,000 Scene+ points (~$500).',
-        link: 'https://startright.scotiabank.com',
-        badge: 'Best credit limit'
-      },
-      {
-        name: 'EQ Bank',
-        description: '$0 fees + up to 2.75% interest on every dollar with direct deposit.',
-        link: 'https://www.eqbank.ca/personal-banking/personal-account',
-        badge: 'Best interest rate'
-      },
-      {
         name: 'KOHO',
         description: 'Free Core Account with 3.5% interest and a prepaid Mastercard. Cash advance up to $500 with KOHO Cover.',
-      link: 'https://kohofinancial.pxf.io/c/7846688/1274983/15676?adnetwork=Impact&u=https%3A%2F%2Fwww.koho.ca%2Fnew-to-canada%2F',
+        link: 'https://kohofinancial.pxf.io/c/7846688/1274983/15676?adnetwork=Impact&u=https%3A%2F%2Fwww.koho.ca%2Fnew-to-canada%2F',
         badge: 'Best for credit building'
       }
     ],
@@ -505,20 +487,8 @@ export const resources: Resource[] = [
       {
         name: 'KOHO Credit Builder',
         description: 'Free Core Account with 3.5% interest. Credit building available as a separate add-on. Reports to both credit bureaus.',
-      link: 'https://kohofinancial.pxf.io/c/7846688/1274983/15676?adnetwork=Impact&u=https%3A%2F%2Fwww.koho.ca%2Fnew-to-canada%2F',
+        link: 'https://kohofinancial.pxf.io/c/7846688/1274983/15676?adnetwork=Impact&u=https%3A%2F%2Fwww.koho.ca%2Fnew-to-canada%2F',
         badge: 'No deposit required'
-      },
-      {
-        name: 'Neo Financial Secured Card',
-        description: 'Guaranteed approval — reports to both Equifax and TransUnion. Earn cash back while building credit.',
-        link: 'https://www.neofinancial.com',
-        badge: 'Reports to both bureaus'
-      },
-      {
-        name: 'Borrowell',
-        description: 'Check your Equifax credit score for free in 3 minutes. No impact on your score.',
-        link: 'https://www.borrowell.com',
-        badge: 'Free credit score'
       }
     ],
     cta: 'Questions about credit in Canada or how to get started? Ask TaxNorth — free guidance in any language.'
@@ -553,20 +523,6 @@ export const resources: Resource[] = [
       {
         heading: 'The First Home Savings Account (FHSA) — A third option for home buyers',
         content: 'If you plan to buy your first home in Canada, the First Home Savings Account combines the best of both worlds: contributions are tax-deductible like an RRSP, and withdrawals for a qualifying home purchase are completely tax-free like a TFSA. You can contribute up to $8,000 per year with a lifetime limit of $40,000. As a newcomer who has never owned a home in Canada, you almost certainly qualify. Wealthsimple and EQ Bank both offer FHSAs alongside their TFSA and RRSP accounts.'
-      }
-    ],
-    affiliates: [
-      {
-        name: 'Wealthsimple',
-        description: '$0 trading commissions. Open a TFSA, RRSP, or FHSA in 10 minutes. Available in multiple languages.',
-        link: 'https://www.wealthsimple.com/en-ca/accounts/tfsa',
-        badge: 'Best for beginners'
-      },
-      {
-        name: 'EQ Bank',
-        description: 'TFSA savings at up to 2.75% interest — no market risk, CDIC insured. No fees.',
-        link: 'https://www.eqbank.ca/personal-banking/tfsa',
-        badge: 'Best guaranteed rate'
       }
     ],
     cta: 'Questions about TFSAs, RRSPs, or where to start investing? Ask TaxNorth — free guidance in any language.'
@@ -637,29 +593,107 @@ export const resources: Resource[] = [
         content: 'If you are a freelancer or consultant with fewer than 20 clients: start with FreshBooks. Clean invoices, simple expense tracking, and it handles Canadian taxes correctly. If you drive for work and need mileage tracking: add QuickBooks Self-Employed. If your business is growing and you are working with a CPA: move to Xero when you are ready for more structure. Whatever you choose, connect it to your business bank account from day one.'
       }
     ],
-    affiliates: [
+    cta: 'Questions about taxes for your self-employed income? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'notice-of-assessment-canada',
+    title: 'What is a Notice of Assessment in Canada?',
+    metaTitle: 'Notice of Assessment Canada: Guide for Newcomers | TaxNorth',
+    description: 'Learn what a Notice of Assessment is, why every newcomer in Canada needs it, and how to read yours. Free, plain-language guide from TaxNorth.',
+    intro: 'If you recently filed your first Canadian tax return, you might be waiting for a document called a Notice of Assessment. This guide explains exactly what it is, why it matters for your life in Canada, and how to read it with confidence.',
+    sections: [
       {
-        name: 'FreshBooks',
-        description: 'Best invoicing and GST/HST tracking for Canadian freelancers. Generates the T2125 report automatically.',
-        link: 'https://www.freshbooks.com/campaign/canada',
-        badge: 'Best for freelancers'
+        heading: 'What is a Notice of Assessment?',
+        content: 'The Canada Revenue Agency reviews every tax return you file. After processing yours, they send you a Notice of Assessment. Think of it as your official tax receipt from the government — it confirms your return was processed and shows your final tax result for the year. It tells you whether you owe money, whether the government owes you a refund, or whether your balance is zero.'
       },
       {
-        name: 'QuickBooks',
-        description: 'Mileage tracking, automatic expense categorization, and CRA-ready reports.',
-        link: 'https://quickbooks.intuit.com/ca/',
-        badge: 'Best for mileage'
+        heading: 'Why newcomers need their Notice of Assessment',
+        content: 'Your Notice of Assessment is one of the most important documents you will use in Canada. Immigration applications often require it as proof that you are filing your taxes. Landlords and mortgage lenders use it to verify your income when you rent or buy a home. Student loan offices review it to determine your eligibility for financial assistance. Keep every Notice of Assessment you receive for at least six years.'
       },
       {
-        name: 'Xero',
-        description: 'Best for growing businesses working with a CPA. Integrates with 800+ apps.',
-        link: 'https://www.xero.com/ca/',
-        badge: 'Best for growth'
+        heading: 'How to get your Notice of Assessment',
+        content: 'If you filed your tax return by mail, the CRA mails your Notice of Assessment to your home address. Allow several weeks for processing. If you filed electronically using NETFILE, your Notice of Assessment is typically available online within two weeks. You can view it anytime through My CRA Account at canada.ca, often before the paper copy arrives.'
+      },
+      {
+        heading: 'How to read your Notice of Assessment',
+        content: 'Your Notice of Assessment is usually one or two pages. It shows the income you reported, the taxes you paid during the year, and your final result — either a refund amount or a balance owing. It also shows your RRSP deduction limit for the following year. If the CRA made any changes to your return, those changes are explained in the assessment. Review it carefully and compare it to what you filed.'
+      },
+      {
+        heading: 'What if you disagree with the assessment?',
+        content: 'If the CRA changed something on your return and you believe it is wrong, you have 90 days from the date on the Notice of Assessment to file a formal objection. You can do this through My CRA Account or by mailing Form T400A. Most straightforward errors are resolved at this stage without needing to go to court.'
       }
     ],
-    cta: 'Questions about taxes for your self-employed income? Ask TaxNorth — free guidance in any language.'
-  }
-   ,{
+    cta: 'Questions about your Notice of Assessment or what to do next? Ask TaxNorth — free answers in any language.'
+  },
+  {
+    slug: 'refugee-claimant-taxes-canada',
+    title: 'How to File Taxes in Canada as a Refugee Claimant',
+    metaTitle: 'Refugee Claimant Taxes Canada: Free Filing Guide | TaxNorth',
+    description: 'Are you a refugee claimant in Canada? Learn how to file your taxes, apply for benefits and get a temporary SIN. Free, plain-language tax help.',
+    intro: 'As a refugee claimant in Canada, filing your taxes is a powerful step toward securing your financial future and accessing government support. Your immigration status does not prevent you from participating in the tax system. You have the right to file a tax return, and doing so unlocks benefits your family may be entitled to receive.',
+    sections: [
+      {
+        heading: 'Can refugee claimants file taxes in Canada?',
+        content: 'Yes. The Canada Revenue Agency considers you a resident for tax purposes as soon as you establish residential ties in Canada, such as setting up a home, opening a bank account, or living with family here. Your immigration status does not prevent you from filing. You have the right to file a tax return just like any other person living in Canada.'
+      },
+      {
+        heading: 'Why you should file even with no income',
+        content: 'Many newcomers think they only need to file taxes if they have a job. In Canada, that is not the case. Even if you earned zero income or only received social assistance, you should still file a tax return. Filing is the only way to unlock the Canada Child Benefit if you have children, the Canada Groceries and Essentials Benefit paid quarterly, and provincial benefits depending on where you live. Every year you do not file is a year you miss those payments.'
+      },
+      {
+        heading: 'What identification number do you need?',
+        content: 'To file taxes in Canada, you need a Social Insurance Number (SIN), a nine-digit number issued by the government. Refugee claimants with a work permit can apply for a SIN at a Service Canada office. If your SIN starts with the number 9, it is a temporary SIN for people who are not yet permanent residents. If you cannot get a SIN, you can request a Temporary Tax Number directly from the CRA, or mail a paper return with a letter explaining your situation.'
+      },
+      {
+        heading: 'How to file your first tax return',
+        content: 'Gather all your income slips showing how much money you received during the year. Complete Form T1 Income Tax and Benefit Return. Because it may be your first time filing, you may need to print the forms and mail them rather than filing online. Keep copies of everything you send. Also complete the forms for newcomer benefits so your credit payments can start as soon as possible.'
+      },
+      {
+        heading: 'Social assistance and taxes',
+        content: 'Social assistance payments are not taxed in Canada. However, you still need to report them on your tax return so the government can accurately calculate the benefits you are eligible to receive. Not reporting them can result in overpayments that the CRA later asks you to repay.'
+      },
+      {
+        heading: 'Free tax help for refugee claimants',
+        content: 'The Community Volunteer Income Tax Program (CVITP) offers free tax filing help at locations across Canada, including settlement agencies and community centres that serve newcomers. Many locations have staff or volunteers who speak multiple languages. Search for a clinic near you at canada.ca/taxes-help.'
+      }
+    ],
+    cta: 'Questions about filing taxes as a refugee claimant? Ask TaxNorth — free, step-by-step guidance in your language.'
+  },
+  {
+    slug: 'cra-account-setup-newcomer',
+    title: 'How to Set Up Your CRA My Account as a Newcomer',
+    metaTitle: 'CRA Account Setup for Newcomers Canada: Step-by-Step Guide | TaxNorth',
+    description: 'Learn exactly when and how to register for CRA My Account as a newcomer to Canada. Step-by-step guide in plain language.',
+    intro: 'CRA My Account is your personal online portal with the Canada Revenue Agency. It lets you view your tax documents, check your benefit payments, update your direct deposit information, and track your RRSP and TFSA room, all in one place. Here is exactly how to set it up.',
+    sections: [
+      {
+        heading: 'The most important rule: file your taxes first',
+        content: 'You cannot register for CRA My Account before you file your very first Canadian tax return. The system uses information from your processed return to verify your identity. File your taxes, wait for the CRA to process your return (typically two weeks if filed electronically), and only then register. There are no exceptions to this rule.'
+      },
+      {
+        heading: 'What you need before you start',
+        content: 'Once your first return has been processed, gather these items before you begin. The system has an 18-minute time limit and will log you out if you take too long. You will need your Social Insurance Number, your exact date of birth, and a copy of the tax return you filed. The system asks you to enter a specific number from a specific line on your return to confirm your identity.'
+      },
+      {
+        heading: 'Option 1: Sign in with your bank (easiest)',
+        content: 'The easiest way to register is to use a Sign-In Partner, which means using your existing Canadian online banking username and password. Your bank confirms your identity with the CRA securely. This saves you from creating and remembering another password. Most major Canadian banks are supported including RBC, TD, Scotiabank, BMO, and CIBC.'
+      },
+      {
+        heading: 'Option 2: Create a CRA user ID and password',
+        content: 'If you prefer not to use your bank login, you can create a dedicated CRA user ID and password. Choose a strong password and write it down somewhere safe. You will also be required to set up multi-factor authentication. The CRA sends a passcode to your phone each time you log in to confirm it is really you.'
+      },
+      {
+        heading: 'Completing your identity verification',
+        content: 'After the initial setup, the CRA requires one final verification to unlock full account access. You can verify your identity using your mobile device camera, or the CRA will mail a physical security code to your home address. This can take 5 to 10 business days. Once you enter the code, your account is fully active.'
+      },
+      {
+        heading: 'What you can do once your account is set up',
+        content: 'With a fully active CRA My Account you can view your Notice of Assessment and previous tax returns, check your RRSP and TFSA contribution room, update your direct deposit information for faster refunds and benefit payments, apply for the Canada Child Benefit, track benefit payment dates, and update your address when you move.'
+      }
+    ],
+    cta: 'Questions about setting up your CRA account or anything else about Canadian taxes? Ask TaxNorth — free guidance in any language.'
+  },
+  {
     slug: 'social-insurance-number-newcomer-canada',
     title: 'How to Get Your Social Insurance Number (SIN) in Canada',
     metaTitle: 'How to Get a SIN in Canada: Step-by-Step Newcomer Guide | TaxNorth',
