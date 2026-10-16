@@ -1,4 +1,4 @@
-import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, Check, AlertTriangle, TrendingDown, Sliders } from 'lucide-react'
+import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, Check, AlertTriangle, TrendingDown, Sliders, Lock, Shield } from 'lucide-react'
 import Link from 'next/link'
 import Script from 'next/script'
 import LanguageSelector from '@/components/LanguageSelector'
@@ -91,9 +91,17 @@ export default function HomePage() {
           >
             Ask your first question →
           </Link>
-          <p className="text-white/50 text-sm mt-3">
-            Free to use. No account required.
-          </p>
+          <div className="flex items-center justify-center gap-5 mt-4 flex-wrap">
+  <span className="flex items-center gap-1.5 text-white/40 text-xs">
+    <Lock className="w-3 h-3" /> 100% Private
+  </span>
+  <span className="flex items-center gap-1.5 text-white/40 text-xs">
+    <Shield className="w-3 h-3" /> No Data Shared with CRA
+  </span>
+  <span className="flex items-center gap-1.5 text-white/40 text-xs">
+    <Check className="w-3 h-3" /> Free to Use
+  </span>
+</div>
         </div>
       </section>
 
