@@ -1,6 +1,7 @@
 import { Flashlight, Plane, GraduationCap, Star, MessageCircle, Lightbulb, Users, Check, AlertTriangle, TrendingDown, Sliders } from 'lucide-react'
 import Link from 'next/link'
 import Script from 'next/script'
+import LanguageSelector from '@/components/LanguageSelector'
 
 export default function HomePage() {
 
@@ -61,13 +62,14 @@ export default function HomePage() {
   <Link href="/professionals" className="hover:text-midnight-north transition-colors">Find a Pro</Link>
 </div>
           <div className="flex items-center gap-3">
-            <Link
-              href="/chat"
-              className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
-            >
-              Start for free
-            </Link>
-          </div>
+  <LanguageSelector />
+  <Link
+    href="/chat"
+    className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
+  >
+    Start for free
+  </Link>
+</div>
         </div>
       </nav>
 
