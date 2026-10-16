@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { resources } from '@/lib/resources'
 
 export const metadata = {
-  title: 'Canadian Tax Resources for Newcomers — TaxNorth.ca',
-  description: 'Free guides on Canadian taxes for newcomers, international students, and work permit holders. Learn about T4 slips, GST/HST credits, filing deadlines, and more.',
+  title: 'Canadian Tax Guides for Newcomers and Students | TaxNorth',
+  description: 'Learn how to file taxes in Canada for the first time. Clear guides on getting your Notice of Assessment, Canada Child Benefit and CRA account setup.',
 }
 
 export default function ResourcesPage() {
@@ -35,12 +35,11 @@ export default function ResourcesPage() {
             Free Tax Guides
           </p>
           <h1 className="font-heading font-bold text-white text-4xl md:text-5xl mb-6">
-            Canadian Tax Resources for Newcomers
-          </h1>
+  Canadian Tax Guides for First-Time Filers
+</h1>
           <p className="text-white/70 text-lg">
-            Clear, honest guides on everything newcomers need to know about
-            the Canadian tax system — written in plain language, not legal jargon.
-          </p>
+  Need answers fast? Skip the reading and ask our free AI tax assistant your specific questions in any language. Or explore our step-by-step guides below to learn everything from filing your first return to getting your Canada Child Benefit.
+</p>
         </div>
       </section>
 
@@ -69,17 +68,17 @@ export default function ResourcesPage() {
       <section className="bg-midnight-north py-16 px-6 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="font-heading font-bold text-white text-2xl mb-4">
-            Still have questions?
-          </h2>
-          <p className="text-white/70 mb-6">
-            Ask TaxNorth directly — free AI tax answers in any language.
-          </p>
-          <Link
-            href="/chat"
-            className="inline-block bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
-          >
-            Ask your question →
-          </Link>
+  Still have questions about your taxes?
+</h2>
+<p className="text-white/70 mb-6">
+  Everyone's situation is different. If you can't find what you're looking for, ask our free, multilingual AI tax assistant right now. No account or payment required.
+</p>
+<Link
+  href="/chat"
+  className="inline-block bg-lantern-amber text-midnight-north font-semibold px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
+>
+  Ask the AI Assistant
+</Link>
         </div>
       </section>
     </div>
