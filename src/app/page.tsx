@@ -254,6 +254,15 @@ export default function HomePage() {
     <span className="text-white/70 text-sm leading-relaxed">{item}</span>
   </div>
 ))}
+<Link
+  href="/connect"
+  className="inline-block mt-6 bg-lantern-amber text-midnight-north font-semibold text-sm px-6 py-3 rounded-button hover:opacity-90 transition-opacity"
+>
+  Connect with a verified CPA — $19.99
+</Link>
+<p className="text-white/40 text-xs mt-2">
+  One-time introduction fee. No subscription required.
+</p>
           </div>
         </div>
       </div>
