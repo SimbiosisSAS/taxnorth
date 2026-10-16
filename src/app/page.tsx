@@ -78,11 +78,11 @@ export default function HomePage() {
             <Flashlight className="w-8 h-8 text-lantern-amber" />
           </div>
           <h1 className="font-heading font-bold text-white text-4xl md:text-6xl mb-6 leading-tight">
-            Taxes that finally click.
-          </h1>
-          <p className="text-white/80 text-lg mb-8 leading-relaxed">
-            Your AI guide to Canadian taxes — in any language, for every newcomer.
-          </p>
+  Free Tax Help for Newcomers to Canada
+</h1>
+<p className="text-white/80 text-lg mb-8 leading-relaxed">
+  Filing taxes in a new country can be confusing. Our free, multilingual AI assistant answers your questions in plain language so you can get your refund and benefits faster.
+</p>
           <Link
             href="/chat"
             className="inline-block bg-lantern-amber text-midnight-north font-semibold text-base px-8 py-4 rounded-button hover:opacity-90 transition-opacity mb-4"
