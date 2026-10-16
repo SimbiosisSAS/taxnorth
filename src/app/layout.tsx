@@ -25,14 +25,17 @@ export const metadata: Metadata = {
   description: 'File your Canadian taxes with confidence. Meet your free, multilingual AI tax assistant for international students, PRs and newcomers. No account required.',
   keywords: 'free tax help newcomers Canada, how to file taxes Canada first time, notice of assessment Canada, international student taxes Canada, CRA account setup newcomer, Canada child benefit newcomer',
   verification: {
-  google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
-  other: {
-    'msvalidate.01': 'D1C1BE7C521A8B10763BB6027E7B401A',
-    'fo-verify': 'b13a8735-f039-405e-8138-b18195cde0ac',
-    'impact-site-verification': 'f3998595-7f42-427f-9598-337001370053',
+    google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
+    other: {
+      'msvalidate.01': 'D1C1BE7C521A8B10763BB6027E7B401A',
+      'fo-verify': 'b13a8735-f039-405e-8138-b18195cde0ac',
+      'impact-site-verification': 'f3998595-7f42-427f-9598-337001370053',
+    },
   },
-},
   metadataBase: new URL('https://www.taxnorth.ca'),
+  alternates: {
+    canonical: 'https://www.taxnorth.ca',
+  },
   openGraph: {
     type: 'website',
     url: 'https://www.taxnorth.ca',
