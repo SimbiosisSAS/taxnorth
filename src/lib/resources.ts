@@ -659,6 +659,108 @@ export const resources: Resource[] = [
     ],
     cta: 'Questions about taxes for your self-employed income? Ask TaxNorth — free guidance in any language.'
   }
+   ,{
+    slug: 'social-insurance-number-newcomer-canada',
+    title: 'How to Get Your Social Insurance Number (SIN) in Canada',
+    metaTitle: 'How to Get a SIN in Canada: Step-by-Step Newcomer Guide | TaxNorth',
+    description: 'Learn how to get your Social Insurance Number (SIN) in Canada for free through Service Canada. Required documents, processing times, and rules for newcomers.',
+    intro: 'Before you can start working or filing taxes in Canada, you need a Social Insurance Number (SIN). This nine-digit number is your official ID for government services and employers. Getting one is one of the first and most important steps in your Canadian journey.',
+    sections: [
+      {
+        heading: 'Who issues your SIN?',
+        content: 'Your Social Insurance Number is issued by Service Canada, not the Canada Revenue Agency. You need this number to work legally and file your tax return. The application is completely free. Service Canada no longer issues plastic cards. Instead, you receive a paper Confirmation of SIN letter. Keep this letter safe at home and never carry it in your wallet to protect yourself from identity theft.'
+      },
+      {
+        heading: 'Documents you need to apply',
+        content: 'To apply, you need one valid primary identity document. If you are a permanent resident, you can use your PR card or your Confirmation of Permanent Residence (COPR) along with your passport. If you are a temporary resident, you need your valid work permit or study permit. Your permit must explicitly state that you are authorized to work in Canada. You also need a secondary document such as a passport or government-issued ID to confirm your identity. If your documents are not in English or French, you must provide a certified translation.'
+      },
+      {
+        heading: 'How to apply for your SIN',
+        content: 'You can apply online, by mail, or in person at a Service Canada Centre. Applying in person is usually the fastest option. If you bring all your original documents to an office, you will typically receive your SIN the same day. Online applications require clear digital scans of your documents and can take a few weeks to process. If you apply by mail, you must send your original documents, which many people find stressful. In person or online is generally the better choice.'
+      },
+      {
+        heading: 'Understanding temporary SINs starting with 9',
+        content: 'If you are in Canada on a work or study permit, your SIN will start with the number 9. This means your number is temporary and tied to your current immigration status. Your SIN expires on the same day your permit expires. When you renew your permit, you must also update your SIN record with Service Canada. If you become a permanent resident later, your SIN will change to a permanent one.'
+      },
+      {
+        heading: 'Applying for a SIN for your children',
+        content: 'Anyone 12 years of age or older can apply for their own SIN. If you have children under the legal age of majority in your province, you can apply on their behalf as a parent or legal guardian. Getting a SIN for your children early is helpful if you plan to open a Registered Education Savings Plan (RESP) to save for their future education.'
+      },
+      {
+        heading: 'Frequently asked questions about the SIN',
+        content: 'How much does it cost to get a SIN? Getting a SIN is completely free. Never pay a third-party website that promises to get a SIN for you. Can I start working before I receive my SIN? You can start working if you have already applied and are waiting, as long as your permit allows you to work. What happens if my work permit expires? Your SIN becomes invalid for new employment. You must renew your immigration status first and then update your SIN record.'
+      }
+    ],
+    cta: 'Questions about getting your SIN or what to do first when you arrive in Canada? Ask TaxNorth — free guidance in any language.'
+  },
+  {
+    slug: 'foreign-income-reporting-canada-newcomer',
+    title: 'Foreign Income and Taxes in Canada: A Guide for Newcomers',
+    metaTitle: 'Foreign Income Taxes Canada: Newcomer Filing Guide | TaxNorth',
+    description: 'Understand how Canada taxes foreign income for newcomers. Learn the part-year residency rule, foreign tax credits, and the first-year T1135 exemption.',
+    intro: 'Many newcomers worry about being taxed twice on money they earned before arriving in Canada. The good news is that Canada has clear rules to protect you. Understanding when your Canadian residency officially begins makes the whole picture much simpler.',
+    sections: [
+      {
+        heading: 'The part-year residency rule',
+        content: 'Canada only taxes your worldwide income starting on the exact date you arrive and establish residential ties. Any income you earned in your home country before your landing date is not taxed by Canada. Once you officially settle here, Canada expects you to report all income you earn from anywhere in the world going forward.'
+      },
+      {
+        heading: 'Do I report income earned before I moved to Canada?',
+        content: 'No. You do not pay Canadian tax on money earned while living in your home country before you moved. On your first tax return, you only report worldwide income for the part of the year you actually lived in Canada. You will be asked to declare your pre-arrival income to determine eligibility for certain credits, but that income is not taxed by Canada.'
+      },
+      {
+        heading: 'Avoiding double taxation with foreign tax credits',
+        content: 'If you continue to earn income from your home country after moving to Canada, you must report it. But if your home country also taxes that income, Canada has tax treaties with many countries to prevent you from paying twice. You can usually claim a Foreign Tax Credit on your Canadian return using Form T2209. This credit reduces your Canadian tax by the amount you already paid abroad on the same income.'
+      },
+      {
+        heading: 'Reporting foreign property and the first-year exemption',
+        content: 'If you own foreign property worth more than $100,000 CAD, such as real estate or bank accounts, you must generally report it to the CRA using Form T1135. However, there is a helpful rule for newcomers: you do not have to file Form T1135 for the tax year you first become a Canadian resident. This gives you time to organize your finances without facing complicated forms in your very first year.'
+      },
+      {
+        heading: 'How Canada values assets you owned before arriving',
+        content: 'If you own a home or investments in your home country when you move to Canada, the CRA treats the fair market value on your arrival date as your starting cost. This means if you sell those assets years later, Canada only taxes the profit they made after you became a resident, not the value they gained before you arrived.'
+      },
+      {
+        heading: 'Frequently asked questions about foreign income',
+        content: 'Do I have to declare bank accounts from my home country? Yes, if the total value of your foreign assets exceeds the reporting threshold (generally $100,000 CAD), though you have an exemption in your very first year in Canada. What exchange rate do I use for foreign income? Convert foreign income to Canadian dollars using the Bank of Canada exchange rate for the day you received the money, or the average annual rate. Will Canada tax the house I still own back home? Canada does not tax the property just for owning it. If you rent it out, you must report the rental income. If you sell it, you may owe tax on the increase in value since the day you arrived in Canada.'
+      }
+    ],
+    cta: 'Foreign income rules can be confusing in your first year. Ask TaxNorth for free, plain-language answers in any language.'
+  },
+  {
+    slug: 'moving-expenses-tax-deduction-canada',
+    title: 'Moving Expenses Tax Deduction in Canada: What Newcomers Need to Know',
+    metaTitle: 'Moving Expenses Tax Deduction Canada: Newcomer Eligibility | TaxNorth',
+    description: 'Find out if you can deduct moving costs on your Canadian tax return. Learn the CRA 40-kilometre rule, eligible expenses, and important limits for newcomers.',
+    intro: 'Moving is expensive, and Canada does allow a moving expense deduction on your tax return. However, the rules for newcomers arriving from outside Canada are strict and often misunderstood. This guide explains exactly who qualifies so you can avoid costly mistakes.',
+    sections: [
+      {
+        heading: 'Can I claim my move from my home country to Canada?',
+        content: 'Under CRA rules, you generally cannot deduct moving expenses for a move from outside Canada. The standard deduction only applies if you were already a Canadian resident before the move. Most newcomers moving to Canada for the first time cannot claim international flights, shipping costs, or other relocation expenses. An exception exists for full-time international students earning taxable Canadian scholarship income, but this does not apply to most newcomers.'
+      },
+      {
+        heading: 'When newcomers can claim moving expenses',
+        content: 'You can claim moving expenses if you relocate between cities within Canada after you have already arrived and settled. For example, if you land in Toronto and later move to Calgary for a new job, that domestic move may be fully deductible. The move must be for a new job, to run a business, or to attend school full time.'
+      },
+      {
+        heading: 'The 40-kilometre rule',
+        content: 'To qualify for the moving expense deduction using Form T1-M, your new home must bring you at least 40 kilometres closer to your new workplace or school. This distance is measured by the shortest normal public route. Moving to a different apartment in the same city usually does not meet this requirement.'
+      },
+      {
+        heading: 'What expenses are eligible for domestic moves',
+        content: 'If your move qualifies, you can claim travel costs for you and your family, up to 15 days of temporary meals and lodging near your old or new home, moving company or truck rental fees, and costs associated with breaking your old lease. You cannot claim job search trips, passport fees, or new furniture purchases.'
+      },
+      {
+        heading: 'The income limitation on this deduction',
+        content: 'You can only deduct moving expenses against the income you earn at your new work location. You cannot use them to reduce taxes on investment income or earnings from before you moved. If your moving costs are higher than what you earned at your new job in the first year, you can carry the remainder forward to deduct in a future year.'
+      },
+      {
+        heading: 'Frequently asked questions about moving expense deductions',
+        content: 'Can I claim my flight to Canada as a moving expense? Generally no, unless you were already a Canadian tax resident before you moved or you are a full-time student with specific taxable income. Most first-time newcomers cannot claim this. Do I need to keep my receipts? Yes. You do not submit them when you file, but the CRA may ask to see them later. Keep all receipts for at least six years. What if my employer paid for my move? If your employer reimbursed your moving costs, you cannot claim those same expenses unless the reimbursement was included as taxable income on your T4 slip.'
+      }
+    ],
+    cta: 'Not sure what moving costs you can deduct? Ask TaxNorth for free, plain-language answers in any language.'
+  }
 ]
 
 export function getResource(slug: string): Resource | undefined {
