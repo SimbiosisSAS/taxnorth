@@ -21,9 +21,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'TaxNorth.ca — Taxes that finally click.',
-  description: 'Your free AI guide to Canadian taxes — in any language, for every newcomer. Understand what you owe, what you\'re owed, and when to file.',
-  keywords: 'Canadian taxes, newcomers Canada, tax guide, impuestos Canada, CRA, file taxes Canada',
+  title: 'Free Tax Help for Newcomers to Canada | TaxNorth',
+  description: 'File your Canadian taxes with confidence. Meet your free, multilingual AI tax assistant for international students, PRs and newcomers. No account required.',
+  keywords: 'free tax help newcomers Canada, how to file taxes Canada first time, notice of assessment Canada, international student taxes Canada, CRA account setup newcomer, Canada child benefit newcomer',
   verification: {
   google: 'JueBOwVpYLPvtc4l6Srl1tGr490cn6jiLRVSNNRLxT8',
   other: {
@@ -36,15 +36,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://www.taxnorth.ca',
-    title: 'TaxNorth.ca — Taxes that finally click.',
-    description: 'Your free AI guide to Canadian taxes — in any language, for every newcomer.',
+    title: 'Free Tax Help for Newcomers to Canada | TaxNorth',
+    description: 'File your Canadian taxes with confidence. Free, multilingual AI tax assistant for newcomers, international students and work permit holders.',
     siteName: 'TaxNorth.ca',
-    images: [{ url: '/og?v=2', width: 1200, height: 630, alt: 'TaxNorth.ca — Taxes that finally click.' }],
+    images: [{ url: '/og?v=2', width: 1200, height: 630, alt: 'TaxNorth.ca — Free Tax Help for Newcomers to Canada' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TaxNorth.ca — Taxes that finally click.',
-    description: 'Your free AI guide to Canadian taxes — in any language, for every newcomer.',
+    title: 'Free Tax Help for Newcomers to Canada | TaxNorth',
+    description: 'File your Canadian taxes with confidence. Free, multilingual AI tax assistant for newcomers, international students and work permit holders.',
     images: ['/og?v=2'],
   },
 }
