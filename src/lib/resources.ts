@@ -897,6 +897,97 @@ export const resources: Resource[] = [
     ],
     cta: 'The Disability Tax Credit application can feel overwhelming, especially when English is not your first language. Ask TaxNorth for free, plain-language guidance in any language.'
   }
+ ,{
+    slug: 'employment-insurance-newcomer-canada',
+    title: 'Employment Insurance for Newcomers in Canada',
+    metaTitle: 'EI for Newcomers in Canada | TaxNorth',
+    description: 'Wondering if newcomers to Canada can collect Employment Insurance? Learn about qualifying hours, benefit amounts, and how to apply.',
+    intro: 'Losing your job can be a stressful experience, especially when you are new to Canada. Fortunately, Canada offers a safety net called Employment Insurance, or EI. If you have been working in Canada and paying into the system, you might be eligible for temporary financial support while you look for your next opportunity.',
+    sections: [
+      {
+        heading: 'Can newcomers to Canada collect EI?',
+        content: 'Newcomers to Canada, including permanent residents, work permit holders, and international students, can collect Employment Insurance regular benefits. Your immigration status does not prevent you from receiving EI, as long as you are legally allowed to work in Canada and meet the standard requirements. Whenever you work in an insurable job in Canada, your employer automatically deducts EI premiums from your paycheque. Because you have been contributing to this system, you have the same right to claim benefits as any Canadian citizen. If your work permit expires and you lose your legal right to work in Canada, you will no longer be eligible to collect EI. EI is not a handout -- it is an insurance program that you and your employer paid into during your time working in Canada.'
+      },
+      {
+        heading: 'How many hours do you need to qualify?',
+        content: 'To qualify for regular EI benefits, you need to have worked a specific number of insurable hours during your qualifying period. This period is usually the 52 weeks before you apply, or the time since your last EI claim, whichever is shorter. The number of hours required depends on the unemployment rate in your specific region at the time you apply. Generally, between 420 and 700 insurable hours are required. If you live in an area with high unemployment, you need fewer hours. If hours were spread across multiple jobs, they can be combined. Always verify current regional thresholds at canada.ca as they are updated monthly.'
+      },
+      {
+        heading: 'How much money can you receive?',
+        content: 'The amount you receive depends on how much you were earning before you lost your job. The basic rate for calculating EI benefits is 55 percent of your average insurable weekly earnings, up to a maximum. The government sets a yearly maximum insurable earnings amount that determines the absolute weekly maximum you can receive. The duration of your benefits ranges from 14 weeks up to a maximum of 45 weeks, depending on the unemployment rate in your region and your total insurable hours. Always verify current maximum amounts and thresholds at canada.ca as they are adjusted annually.'
+      },
+      {
+        heading: 'What should you do if you lose your job?',
+        content: 'If you lose your job through no fault of your own, such as a layoff or company closure, apply for EI as soon as possible. Do not wait. Submit your application online through Service Canada within four weeks of your last day of work. If you wait longer, you risk losing benefits. You will need your Social Insurance Number, personal identification, and your Record of Employment from your employer. Your employer is legally required to issue a Record of Employment when you stop working. Even if you have not received it yet, start your EI application right away and provide the document later. Delaying your application can result in lost payments.'
+      },
+      {
+        heading: 'Frequently asked questions about EI for newcomers',
+        content: 'Can international students get EI? Yes, if they meet the required insurable hours and lose their job through no fault of their own. However, you must prove you are actively seeking work, which can be difficult to prove if you are studying full-time. What happens if I quit my job? Generally you cannot collect EI regular benefits if you voluntarily quit without just cause. Do I pay taxes on EI payments? Yes. EI payments are taxable income. Service Canada will withhold taxes from your weekly payments and issue you a T4E slip at year end. Does collecting EI affect my permanent residency application? No. EI is an insurance program you paid into, not welfare. You will not be penalized by Immigration Canada for using a benefit you earned.'
+      }
+    ],
+    cta: 'Questions about EI or how it affects your taxes? Ask TaxNorth — free answers in any language.'
+  },
+  {
+    slug: 'childcare-expenses-tax-deduction-canada',
+    title: 'Childcare Expenses Tax Deduction in Canada',
+    metaTitle: 'Childcare Tax Deduction Canada | TaxNorth',
+    description: 'Discover how newcomer families can claim the childcare expenses deduction in Canada. Learn 2026 limits, eligible expenses, and maximize your refund.',
+    intro: 'Raising a family in Canada comes with wonderful experiences and significant costs. Daycare and after-school care can take a large portion of your monthly budget. The good news is that the Canadian government offers the childcare expenses tax deduction to help ease this financial burden. Many newcomer families miss out on this valuable deduction simply because they do not know how it works.',
+    sections: [
+      {
+        heading: 'What is the childcare expenses tax deduction?',
+        content: 'The childcare expenses deduction allows parents to deduct the cost of eligible childcare from their taxable income, claimed on Line 21400 of your tax return. Lowering your taxable income reduces the total tax you owe and often results in a larger refund. This deduction is specifically for parents who need to pay for childcare so they can work, run a business, or attend school. By lowering your net income, you might also increase your eligibility for other income-tested benefits like the Canada Child Benefit or the Canada Groceries and Essentials Benefit, making this deduction even more powerful for your household finances.'
+      },
+      {
+        heading: 'How much can you claim?',
+        content: 'The amount you can claim depends on the age and health of your children. For the 2025 and 2026 tax years, you can claim up to $8,000 for each child under seven years of age at the end of the year. For children between ages seven and sixteen, the maximum is $5,000 per child. If your child has a severe and prolonged impairment and is eligible for the Disability Tax Credit, the maximum increases to $11,000 per year. You can only claim the actual amount you paid if it is lower than the limit, and your total childcare deduction cannot exceed two-thirds of your earned income for the year. Always verify current amounts at canada.ca.'
+      },
+      {
+        heading: 'Which parent must claim the deduction?',
+        content: 'In almost all families with two parents, the spouse or common-law partner with the lower net income must claim the childcare expenses. This rule prevents high-income earners from claiming the deduction to drop into a lower tax bracket. There are rare exceptions: the higher-income spouse may claim if the lower-income spouse was enrolled in school full-time, confined to a hospital, or physically or mentally unable to care for the children. Single parents simply claim the expenses on their own return.'
+      },
+      {
+        heading: 'What types of childcare expenses are eligible?',
+        content: 'Eligible expenses include fees paid to daycare centres, nursery schools, nannies, day camps, overnight summer camps, and before-school or after-school care programs. You cannot claim regular medical expenses, clothing, or transportation costs. Payments made to the child\'s parent or to anyone under 18 who is related to you do not qualify. When paying an individual like a nanny, you must have their Social Insurance Number on the receipt. Without a valid receipt containing a business number or Social Insurance Number, the CRA will deny your deduction.'
+      },
+      {
+        heading: 'Frequently asked questions about childcare deductions',
+        content: 'Can I claim childcare expenses if I am looking for work? Yes, you can claim eligible childcare expenses if you were actively seeking employment. Does the Canada Child Benefit affect this deduction? No. The monthly CCB is entirely separate and receiving one does not stop you from claiming the other. Can I claim payments made to relatives in my home country? No. The childcare provider must be a resident of Canada and the care must be provided in Canada. Do I need to send receipts to the CRA when I file? No. You do not attach receipts when filing, but you must keep them for at least six years. The CRA frequently requests childcare receipts after filing, and without them your deduction will be reversed with interest.'
+      }
+    ],
+    cta: 'Questions about claiming childcare or other family deductions? Ask TaxNorth — free, plain-language answers in any language.'
+  },
+  {
+    slug: 'canada-workers-benefit-newcomers',
+    title: 'The Canada Workers Benefit for Newcomers',
+    metaTitle: 'Canada Workers Benefit Newcomers | TaxNorth',
+    description: 'Are you a newcomer earning a modest income in Canada? You might qualify for the Canada Workers Benefit. Learn eligibility rules, amounts, and the residency catch.',
+    intro: 'Working hard in a new country should pay off, and the Canadian government offers a specific tax credit to help lower-income workers get ahead. The Canada Workers Benefit (CWB) is a refundable tax credit that puts real money directly into the pockets of eligible working individuals and families. Unfortunately, many newcomers miss out on this benefit because of a strict residency rule they are not aware of.',
+    sections: [
+      {
+        heading: 'What is the Canada Workers Benefit?',
+        content: 'The Canada Workers Benefit is a refundable tax credit that provides financial relief to low-income individuals and families who are in the workforce. Because it is refundable, it can reduce your tax bill to zero and provide you with a cash refund for the remaining amount. You apply simply by filing your annual tax return and completing Schedule 6. The government also introduced Advanced Canada Workers Benefit payments, which automatically distribute up to half of your estimated benefit in three installments throughout the year, helping families manage their cash flow without waiting until tax season.'
+      },
+      {
+        heading: 'The major catch for newcomers: the residency rule',
+        content: 'There is a very specific rule that catches many newcomers off guard. To be eligible for the Canada Workers Benefit, you must be a resident of Canada throughout the entire tax year, from January 1st to December 31st. If you arrived in Canada partway through the year, you are considered a part-year resident for that first tax year and are completely ineligible to claim the CWB for your arrival year. You must wait until your first full calendar year of living and working in Canada to claim this benefit. Your spouse or common-law partner must also meet this full-year residency requirement. Once you pass December 31st and enter your next calendar year, you will be fully eligible.'
+      },
+      {
+        heading: 'How much money can you receive?',
+        content: 'The amount depends on your marital status, eligible dependants, and total income. For the 2025 and 2026 tax years, the maximum basic amount for single individuals is $1,633. For families, the maximum is $2,813. The benefit begins to gradually reduce as your income rises and phases out completely above a certain threshold. If you or your spouse is eligible for the Disability Tax Credit, you may also qualify for a disability supplement. Always verify current amounts and income thresholds at canada.ca, as they are adjusted for inflation annually.'
+      },
+      {
+        heading: 'Are international students eligible?',
+        content: 'Generally you are not eligible for the CWB if you are enrolled as a full-time student at a designated educational institution for more than 13 weeks in the year. This effectively disqualifies most full-time international students even if they are working part-time. However, there is one exception: if you are a full-time student but have an eligible dependant such as a child living with you on December 31st, you are allowed to claim the Canada Workers Benefit. This is designed to help student parents who are juggling the costs of raising a family while advancing their education.'
+      },
+      {
+        heading: 'Frequently asked questions about the Canada Workers Benefit',
+        content: 'Do I need to apply separately for the CWB? No. You apply simply by filing your annual income tax return and completing the appropriate schedule. What counts as working income? Working income includes employment income from a T4 slip and net self-employment income. Do I pay tax on the CWB money I receive? No. The Canada Workers Benefit is tax-free and you do not report it as income the following year. What happens if my income goes up next year? The CWB is based on your current tax year income. If you earn more than the threshold next year, you simply will not qualify that year. You never have to repay previous years of benefits if your income increases later.'
+      }
+    ],
+    cta: 'Not sure if you qualify for the Canada Workers Benefit this year? Ask TaxNorth — free answers in any language.'
+  }
+
 ]
 
 export function getResource(slug: string): Resource | undefined {
