@@ -795,6 +795,108 @@ export const resources: Resource[] = [
     ],
     cta: 'Not sure what moving costs you can deduct? Ask TaxNorth for free, plain-language answers in any language.'
   }
+    ,{
+    slug: 'medical-expense-tax-credit-canada',
+    title: 'Medical Expense Tax Credit in Canada: What Newcomers Can Claim',
+    metaTitle: 'Medical Expense Tax Credit Canada: Newcomer Guide | TaxNorth',
+    description: 'Find out how newcomers can claim the medical expense tax credit in Canada. Learn what expenses qualify and get more of your money back.',
+    intro: 'Paying for healthcare in a new country can be stressful, especially when you have out-of-pocket costs for dental care, prescription glasses, or medications. The Canada Revenue Agency (CRA) offers the Medical Expense Tax Credit to help you recover some of those costs. If you are a newcomer filing your Canadian taxes for the first time, this guide shows you exactly how this credit works.',
+    sections: [
+      {
+        heading: 'What is the Medical Expense Tax Credit?',
+        content: 'The Medical Expense Tax Credit (METC) is a non-refundable tax credit offered by the Canadian government. It reduces the amount of federal income tax you owe if you have significant medical expenses. While it does not give you a direct cash refund if your tax bill is already zero, it can substantially lower the taxes you have to pay if you are working in Canada.'
+      },
+      {
+        heading: 'Can newcomers claim medical expenses in Canada?',
+        content: 'Yes. To qualify, you simply need to be considered a resident of Canada for tax purposes during the tax year. International students, permanent residents, and work permit holders who file a Canadian tax return are generally eligible. You can claim eligible medical expenses paid for yourself, your spouse or common-law partner, and your dependent children under 18.'
+      },
+      {
+        heading: 'What expenses qualify?',
+        content: 'Many newcomers are surprised by how many common healthcare costs qualify. You can claim prescription medications, dental services like cleanings and fillings, prescription eyeglasses or contact lenses, and fees paid to licensed medical practitioners like physiotherapists. You cannot claim over-the-counter medications, vitamins, or fitness club memberships. Always check the official CRA list to confirm whether a specific expense is eligible before claiming it.'
+      },
+      {
+        heading: 'Plain language explainer: how the threshold works',
+        content: 'You cannot claim every dollar you spent on medical expenses. The CRA requires you to reach a minimum threshold first. For the 2024 tax year, you can only claim the portion that exceeds either 3% of your net income or $2,759, whichever is lower. For example, if your net income is $40,000, your threshold is 3% of $40,000 which is $1,200. If you spent $2,000 on dental work, you subtract $1,200 and claim the remaining $800. Verify the current threshold at canada.ca as it adjusts annually.'
+      },
+      {
+        heading: 'The flexible 12-month rule',
+        content: 'You do not have to restrict your claims to a strict calendar year. The CRA allows you to choose any 12-month period ending in the current tax year to claim your medical expenses. This is helpful if you had a large medical expense in November of one year and another in October of the following year. You can group them together in the same 12-month window to get a larger credit.'
+      },
+      {
+        heading: 'Frequently asked questions about the medical expense tax credit',
+        content: 'Do I need to send my receipts to the CRA? No. You do not attach receipts when you file, but you must keep them for six years in case the CRA asks for them later. Can I claim medical expenses paid outside Canada? Yes, if you paid for eligible expenses in another country during your 12-month claim period, you can claim them. Convert the amounts to Canadian dollars using the Bank of Canada exchange rate. What if insurance covered part of my expenses? You can only claim the portion you paid out of pocket. The amount reimbursed by insurance does not qualify.'
+      }
+    ],
+    cta: 'Need help figuring out if your specific medical costs qualify? Ask TaxNorth — free, plain-language answers in any language.'
+  },
+  {
+    slug: 'first-home-buyer-tax-credit-canada',
+    title: 'First Home Buyers Tax Credit in Canada: Guide for Newcomers',
+    metaTitle: 'First Home Buyers Tax Credit Canada: Newcomer Guide | TaxNorth',
+    description: 'Buying your first home in Canada? Newcomers may qualify for up to $1,500 back through the First-Time Home Buyers Tax Credit. Learn who qualifies and how to claim.',
+    intro: 'Buying your first home in Canada is an exciting milestone that comes with significant expenses. To help offset closing costs, the Canadian government offers the First-Time Home Buyers Tax Credit (HBTC). If you are a newcomer to Canada who recently purchased a qualifying home, you may be able to reduce your federal tax bill by up to $1,500.',
+    sections: [
+      {
+        heading: 'What is the First-Time Home Buyers Tax Credit?',
+        content: 'The HBTC is a non-refundable federal tax credit. When you file your taxes, you can claim a $10,000 amount on Line 31270 of your return. Because the lowest federal tax rate is 15%, this $10,000 claim translates to a direct federal tax reduction of up to $1,500. If you share the home with a spouse, you can split the claim between both returns, but the combined total cannot exceed $10,000.'
+      },
+      {
+        heading: 'Are newcomers eligible for this credit?',
+        content: 'Yes. Newcomers who are considered residents for tax purposes can claim this credit. However, there is an important rule: to be considered a first-time home buyer by the CRA, you must not have owned and lived in another home anywhere in the world in the year of purchase or in any of the four preceding calendar years. This global ownership rule catches many newcomers by surprise.'
+      },
+      {
+        heading: 'Plain language explainer: the 4-year global rule',
+        content: 'The CRA looks at your property ownership worldwide, not just in Canada. If you owned and lived in a home in your home country three years before moving to Canada, you do not qualify for this credit. You must be completely free of homeownership anywhere in the world for the four full calendar years before your purchase year to be eligible.'
+      },
+      {
+        heading: 'What types of homes qualify?',
+        content: 'Most standard residential properties qualify. This includes single-family houses, semi-detached houses, townhomes, mobile homes, and condominium units. The home must be located in Canada and officially registered in your name or your spouse\'s name. You must also intend to occupy the home as your principal place of residence within one year of purchasing it.'
+      },
+      {
+        heading: 'Other home-buying programs newcomers should know',
+        content: 'The HBTC works well alongside other programs. The First Home Savings Account (FHSA) lets you save up to $8,000 per year tax-free toward a first home purchase. The Home Buyers\' Plan (HBP) allows you to withdraw up to $60,000 from your RRSP to buy a qualifying home. If you have RRSP contribution room as a newcomer, these programs can stack to provide significant financial support.'
+      },
+      {
+        heading: 'Frequently asked questions about the first home buyers tax credit',
+        content: 'Do work permit holders qualify? Yes, as long as you are a resident of Canada for tax purposes and meet the ownership rules, your immigration status does not disqualify you. What if I previously owned a home but never lived in it? The CRA requires that you both owned and lived in the home for the 4-year rule to apply. Owning a rental property you never occupied may not disqualify you. Confirm your specific situation with the CRA or a licensed tax professional. Can I claim the credit if I bought the home late in the year? Yes. As long as the purchase closed in the calendar year, you can claim the credit on that year\'s return.'
+      }
+    ],
+    cta: 'Buying a home changes your Canadian tax situation significantly. Ask TaxNorth for free guidance on all the credits and programs available to you as a newcomer homeowner.'
+  },
+  {
+    slug: 'disability-tax-credit-canada',
+    title: 'Disability Tax Credit in Canada: A Guide for Newcomers',
+    metaTitle: 'Disability Tax Credit Canada: Guide for Newcomers | TaxNorth',
+    description: 'Learn how newcomers can apply for the Disability Tax Credit in Canada. Plain-language guide to Form T2201, eligibility, and the financial support it unlocks.',
+    intro: 'Living with a severe physical or mental impairment can bring significant extra costs and daily challenges. The Disability Tax Credit (DTC) is a federal program designed to reduce the income tax owed by people with disabilities or their supporting family members. Many newcomers miss this valuable credit, but being approved can unlock substantial financial support.',
+    sections: [
+      {
+        heading: 'What is the Disability Tax Credit?',
+        content: 'The Disability Tax Credit is a non-refundable tax credit that helps people with disabilities or their family members reduce the amount of federal income tax they owe each year. The goal is to provide tax relief that partially offsets the extra costs related to a severe impairment. If you are approved, you can claim the disability amount on your tax return every year for as long as the certification remains valid.'
+      },
+      {
+        heading: 'Who is eligible for the DTC in Canada?',
+        content: 'To be eligible, a person must have a severe and prolonged impairment in physical or mental functions. The CRA defines prolonged as lasting or expected to last for a continuous period of at least 12 months. The impairment must significantly restrict a basic activity of daily living such as walking, speaking, hearing, seeing, dressing, feeding, or the mental functions necessary for everyday life.'
+      },
+      {
+        heading: 'Can newcomers apply for the Disability Tax Credit?',
+        content: 'Yes. Newcomers who are residents of Canada for tax purposes can apply for the DTC. Your immigration status does not disqualify you. You will need a recognized Canadian medical practitioner to certify your condition on the CRA form. If your medical records are from your home country, share them with a Canadian doctor who can assess your condition and complete the required paperwork.'
+      },
+      {
+        heading: 'Plain language explainer: the gateway credit',
+        content: 'The Disability Tax Credit is often called a gateway credit because being approved does more than provide a tax break. It unlocks eligibility for several other major federal programs. Once approved, you may become eligible to open a Registered Disability Savings Plan (RDSP), which allows you and the government to save for your long-term financial security. You may also qualify for the Canada Caregiver Credit if a family member supports you.'
+      },
+      {
+        heading: 'How to apply: Form T2201',
+        content: 'To apply, you submit Form T2201, the Disability Tax Credit Certificate, to the CRA. You complete Part A with your personal information. Your doctor or another qualified medical practitioner completes Part B, describing your impairment and how it affects your daily activities. Submit this form to the CRA for review and approval before filing your tax return. The CRA will notify you in writing whether you are approved and for which years.'
+      },
+      {
+        heading: 'Frequently asked questions about the Disability Tax Credit',
+        content: 'Do I need to be a permanent resident to apply? No. You only need to be a resident of Canada for tax purposes filing a Canadian return. Does the condition need to be permanent? No, but it must be expected to last for at least 12 continuous months. What if I was approved but missed claiming it in past years? If your doctor certifies that your condition started in a previous year, you can request adjustments to your past tax returns and claim the credit for those years retroactively. This can result in a significant refund.'
+      }
+    ],
+    cta: 'The Disability Tax Credit application can feel overwhelming, especially when English is not your first language. Ask TaxNorth for free, plain-language guidance in any language.'
+  }
 ]
 
 export function getResource(slug: string): Resource | undefined {
