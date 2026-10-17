@@ -24,6 +24,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   function setLanguage(lang: SupportedLanguage) {
     setLanguageState(lang)
     localStorage.setItem('taxnorth_language', lang)
+    document.cookie = `taxnorth_locale=${lang}; path=/; max-age=31536000; SameSite=Lax`
   }
 
   return (

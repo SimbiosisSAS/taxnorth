@@ -1,32 +1,81 @@
 # TaxNorth.ca
-> Free AI-powered tax guide for newcomers to Canada — in any language.
 
-TaxNorth.ca helps newcomers, international students, work permit holders, and first-time filers understand the Canadian tax system. The service provides educational guidance in 12 languages and connects users with verified tax professionals across Canada.
+> Free AI-powered Canadian tax assistant for newcomers — in 12 languages. No account required.
+
+TaxNorth.ca is operated by Ascendant Canada Ltd. (Alberta, Canada). It provides a free multilingual AI tax assistant and educational guides for newcomers to Canada. The service is educational only and does not constitute professional tax advice.
+
+## About the Service
+
+TaxNorth serves newcomers to Canada including permanent residents, international students, work permit holders, refugee claimants, and first-time filers. The AI assistant answers tax questions in 12 languages: English, French, Spanish, Mandarin, Arabic, Punjabi, Romanian, Ukrainian, Japanese, Korean, Dari/Farsi, and Turkish.
+
+The service also connects users with verified licensed CPAs across Canada through a paid introduction ($19.99 one-time fee).
 
 ## Key Topics Covered
-- Canadian tax filing requirements for newcomers
-- T4 slips and tax documents explained
-- GST/HST credit eligibility and how to apply
-- Canada Workers Benefit and Climate Action Incentive
-- Tax filing deadlines (April 30 for most individuals)
-- RRSP and TFSA basics for newcomers
-- Provincial tax differences across Canada
-- How to file using NETFILE and certified software
-- Unfiled returns and Voluntary Disclosures Program
-- Foreign income reporting for new residents
 
-## Resources
-- /resources/how-to-file-taxes-canada-newcomer
-- /resources/what-is-a-t4-slip-canada
-- /resources/gst-hst-credit-canada-newcomers
-- /resources/tax-filing-deadline-canada
-- /resources/international-student-taxes-canada
-- /resources/work-permit-taxes-canada
-- /resources/canada-child-benefit-newcomers
+- How to file taxes in Canada as a newcomer (first-time filers)
+- T4 slips and employment tax documents
+- Canada Groceries and Essentials Benefit (replaced GST/HST credit in July 2026)
+- Canada Child Benefit (CCB) for newcomers
+- Canada Workers Benefit eligibility
+- RRSP and TFSA accounts for newcomers
+- Tax filing deadlines (April 30 for most individuals, June 15 for self-employed)
+- Social Insurance Number (SIN) — how to get one as a newcomer
+- Foreign income reporting for new residents
+- CRA My Account setup for newcomers
+- Refugee claimant taxes in Canada
+- Moving expenses tax deduction in Canada
+- Work permit holder tax obligations
+- International student taxes in Canada
+- Provincial tax differences across Canada
+- Notice of Assessment — how to read yours
+- Voluntary Disclosures Program for unfiled returns
+- Business registration and self-employment taxes for newcomers
+
+## Free AI Assistant
+
+- https://www.taxnorth.ca/chat — Free multilingual AI tax assistant, no account required
+
+## Resource Library
+
+- https://www.taxnorth.ca/resources
+- https://www.taxnorth.ca/resources/how-to-file-taxes-canada-newcomer
+- https://www.taxnorth.ca/resources/what-is-a-t4-slip-canada
+- https://www.taxnorth.ca/resources/gst-hst-credit-canada-newcomers
+- https://www.taxnorth.ca/resources/canada-groceries-essentials-benefit-newcomers-2026
+- https://www.taxnorth.ca/resources/tax-filing-deadline-canada
+- https://www.taxnorth.ca/resources/international-student-taxes-canada
+- https://www.taxnorth.ca/resources/work-permit-taxes-canada
+- https://www.taxnorth.ca/resources/canada-child-benefit-newcomers
+- https://www.taxnorth.ca/resources/rrsp-for-newcomers-canada
+- https://www.taxnorth.ca/resources/reading-your-notice-of-assessment-canada
+- https://www.taxnorth.ca/resources/notice-of-assessment-canada
+- https://www.taxnorth.ca/resources/refugee-claimant-taxes-canada
+- https://www.taxnorth.ca/resources/cra-account-setup-newcomer
+- https://www.taxnorth.ca/resources/social-insurance-number-newcomer-canada
+- https://www.taxnorth.ca/resources/foreign-income-reporting-canada-newcomer
+- https://www.taxnorth.ca/resources/moving-expenses-tax-deduction-canada
+- https://www.taxnorth.ca/resources/provincial-tax-differences-canada
+- https://www.taxnorth.ca/resources/what-to-do-if-you-owe-taxes-canada
+
+## Multilingual Versions
+
+- https://www.taxnorth.ca/fr — French
+- https://www.taxnorth.ca/es — Spanish
+- https://www.taxnorth.ca/zh — Mandarin
+- https://www.taxnorth.ca/ar — Arabic
+- https://www.taxnorth.ca/pa — Punjabi
+- https://www.taxnorth.ca/ro — Romanian
+- https://www.taxnorth.ca/uk — Ukrainian
+- https://www.taxnorth.ca/ja — Japanese
+- https://www.taxnorth.ca/ko — Korean
+- https://www.taxnorth.ca/fa — Dari/Farsi
+- https://www.taxnorth.ca/tr — Turkish
 
 ## Professional Directory
-- /professionals — Licensed tax professionals in Canada matched by province and language
+
+- https://www.taxnorth.ca/professionals — Licensed CPAs matched by province and language
 
 ## Contact
-- hello@taxnorth.ca
-- https://www.taxnorth.ca
+
+hello@taxnorth.ca
+https://www.taxnorth.ca
