@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { resources, getResource } from '@/lib/resources'
 import { notFound } from 'next/navigation'
 import LanguageSelector from '@/components/LanguageSelector'
+import type { Resource } from '@/lib/resources'
 
 export async function generateStaticParams() {
   return resources.map((r) => ({ slug: r.slug }))
@@ -24,12 +25,79 @@ function isQuestion(heading: string): boolean {
   return heading.includes('?') || questionWords.some(word => lower.startsWith(word))
 }
 
+const TOPIC_CLUSTERS: Record<string, string[]> = {
+  filing: [
+    'how-to-file-taxes-canada-newcomer',
+    'tax-filing-deadline-canada',
+    'what-is-a-t4-slip-canada',
+    'cra-account-setup-newcomer',
+    'notice-of-assessment-canada',
+    'reading-your-notice-of-assessment-canada',
+    'what-to-do-if-you-owe-taxes-canada',
+    'foreign-income-reporting-canada-newcomer',
+  ],
+  benefits: [
+    'gst-hst-credit-canada-newcomers',
+    'canada-groceries-essentials-benefit-newcomers-2026',
+    'canada-workers-benefit-newcomers',
+    'canada-child-benefit-newcomers',
+    'employment-insurance-newcomer-canada',
+    'disability-tax-credit-canada',
+  ],
+  newcomer: [
+    'refugee-claimant-taxes-canada',
+    'social-insurance-number-newcomer-canada',
+    'cra-account-setup-newcomer',
+    'international-student-taxes-canada',
+    'work-permit-taxes-canada',
+    'provincial-tax-differences-canada',
+    'moving-expenses-tax-deduction-canada',
+  ],
+  credits: [
+    'medical-expense-tax-credit-canada',
+    'disability-tax-credit-canada',
+    'childcare-expenses-tax-deduction-canada',
+    'first-home-buyer-tax-credit-canada',
+    'moving-expenses-tax-deduction-canada',
+    'canada-workers-benefit-newcomers',
+  ],
+  savings: [
+    'rrsp-for-newcomers-canada',
+    'best-tfsa-rrsp-accounts-newcomers-canada',
+    'best-bank-accounts-newcomers-canada',
+    'build-credit-canada-newcomer',
+    'first-home-buyer-tax-credit-canada',
+  ],
+  selfemployed: [
+    'register-business-canada-newcomer',
+    'best-accounting-software-self-employed-newcomers',
+    'what-to-do-if-you-owe-taxes-canada',
+    'tax-filing-deadline-canada',
+  ],
+}
+
+function getRelatedResources(currentSlug: string): Resource[] {
+  const currentCluster = Object.values(TOPIC_CLUSTERS).find(slugs =>
+    slugs.includes(currentSlug)
+  )
+
+  if (currentCluster) {
+    const related = currentCluster
+      .filter(s => s !== currentSlug)
+      .map(s => resources.find(r => r.slug === s))
+      .filter(Boolean) as Resource[]
+    return related.slice(0, 3)
+  }
+
+  return resources.filter(r => r.slug !== currentSlug).slice(0, 3)
+}
+
 export default async function ResourcePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const resource = getResource(slug)
   if (!resource) notFound()
 
-  const otherResources = resources.filter(r => r.slug !== slug).slice(0, 3)
+  const relatedResources = getRelatedResources(slug)
 
   const faqSections = resource!.sections.filter(s => isQuestion(s.heading))
 
@@ -178,13 +246,13 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
           </Link>
         </div>
 
-        {otherResources.length > 0 && (
+        {relatedResources.length > 0 && (
           <div className="mt-12">
             <h3 className="font-heading font-semibold text-midnight-north text-lg mb-6">
-              More guides for newcomers
+              Related guides for newcomers
             </h3>
             <div className="space-y-3">
-              {otherResources.map((r) => (
+              {relatedResources.map((r) => (
                 <Link
                   key={r.slug}
                   href={`/resources/${r.slug}`}
