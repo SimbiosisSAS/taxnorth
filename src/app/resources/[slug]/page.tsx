@@ -2,6 +2,7 @@ import { Flashlight, ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { resources, getResource } from '@/lib/resources'
 import { notFound } from 'next/navigation'
+import LanguageSelector from '@/components/LanguageSelector'
 
 export async function generateStaticParams() {
   return resources.map((r) => ({ slug: r.slug }))
@@ -17,6 +18,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+function isQuestion(heading: string): boolean {
+  const questionWords = ['what', 'how', 'why', 'can', 'do', 'is', 'are', 'will', 'should', 'when', 'where', 'which']
+  const lower = heading.toLowerCase()
+  return heading.includes('?') || questionWords.some(word => lower.startsWith(word))
+}
+
 export default async function ResourcePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const resource = getResource(slug)
@@ -24,8 +31,49 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
 
   const otherResources = resources.filter(r => r.slug !== slug).slice(0, 3)
 
+  const faqSections = resource!.sections.filter(s => isQuestion(s.heading))
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": resource!.title,
+        "description": resource!.intro,
+        "url": `https://www.taxnorth.ca/resources/${slug}`,
+        "publisher": {
+          "@type": "Organization",
+          "name": "TaxNorth",
+          "url": "https://www.taxnorth.ca",
+          "logo": "https://www.taxnorth.ca/og?v=2"
+        },
+        "inLanguage": "en-CA",
+        "about": {
+          "@type": "Thing",
+          "name": "Canadian taxes for newcomers"
+        }
+      },
+      ...(faqSections.length > 0 ? [{
+        "@type": "FAQPage",
+        "mainEntity": faqSections.map(section => ({
+          "@type": "Question",
+          "name": section.heading.endsWith('?') ? section.heading : `${section.heading}?`,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": section.content
+          }
+        }))
+      }] : [])
+    ]
+  }
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
       <nav className="sticky top-0 z-50 bg-warm-white border-b border-fog-gray">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -36,12 +84,15 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
               TaxNorth<span className="text-sm">.ca</span>
             </span>
           </Link>
-          <Link
-            href="/chat"
-            className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
-          >
-            Ask TaxNorth
-          </Link>
+          <div className="flex items-center gap-3">
+            <LanguageSelector />
+            <Link
+              href="/chat"
+              className="bg-lantern-amber text-midnight-north font-semibold text-sm px-4 py-2 rounded-button hover:opacity-90 transition-opacity"
+            >
+              Ask TaxNorth
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -75,7 +126,6 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
           ))}
         </div>
 
-        {/* Affiliate products */}
         {resource!.affiliates && resource!.affiliates.length > 0 && (
           <div className="mt-12 pt-10 border-t border-fog-gray">
             <h3 className="font-heading font-semibold text-midnight-north text-lg mb-4">
