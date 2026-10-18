@@ -521,16 +521,18 @@ export default function ChatClient() {
           </div>
         </div>
 
-        {/* Mobile sticky CTA */}
-        <div className="md:hidden px-6 py-2 bg-white border-t border-fog-gray">
-          <Link
-            href="/connect"
-            onClick={handleConnectClick}
-            className="w-full flex items-center justify-center gap-2 bg-maple-green text-white font-semibold py-3 rounded-button text-sm hover:opacity-90 transition-opacity"
-          >
-            Connect with a licensed tax professional →
-          </Link>
-        </div>
+        {/* Mobile sticky CTA — only shown after engagement */}
+{messages.length >= 4 && (
+  <div className="md:hidden px-6 py-2 bg-white border-t border-fog-gray">
+    <Link
+      href="/connect"
+      onClick={handleConnectClick}
+      className="w-full flex items-center justify-center gap-2 bg-maple-green text-white font-semibold py-3 rounded-button text-sm hover:opacity-90 transition-opacity"
+    >
+      {t.connectPro} →
+    </Link>
+  </div>
+)}
 
         {/* EMAIL CAPTURE */}
         {showEmailCapture && !emailSaved && (
