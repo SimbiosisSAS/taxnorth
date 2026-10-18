@@ -12,6 +12,9 @@ interface HomepageTemplateProps {
 
 export default function HomepageTemplate({ t, locale }: HomepageTemplateProps) {
 
+  const RTL_LOCALES = ['ar', 'fa']
+  const isRTL = RTL_LOCALES.includes(locale)
+
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -43,7 +46,7 @@ export default function HomepageTemplate({ t, locale }: HomepageTemplateProps) {
   }
 
   return (
-    <div>
+    <div dir={isRTL ? 'rtl' : 'ltr'}>
       <Script
         id="structured-data"
         type="application/ld+json"
