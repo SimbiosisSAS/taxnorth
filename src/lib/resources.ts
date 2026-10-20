@@ -988,6 +988,127 @@ export const resources: Resource[] = [
     cta: 'Not sure if you qualify for the Canada Workers Benefit this year? Ask TaxNorth — free answers in any language.'
   }
 
+   ,{
+    slug: 'newcomer-taxes-ontario',
+    title: 'Taxes for Newcomers in Ontario: A Complete Guide',
+    metaTitle: 'Newcomer Taxes Ontario Guide | TaxNorth',
+    description: 'Filing taxes in Ontario as a newcomer? Learn about the Ontario Trillium Benefit, 13% HST, provincial tax rates, and free settlement resources in Toronto.',
+    intro: 'Welcome to Ontario. As Canada\'s most populous province and the top destination for newcomers, Ontario has a unique tax system that includes some of the most significant provincial credits for low-income individuals. Filing your taxes here is the key to unlocking benefits that can make your settlement journey much easier.',
+    sections: [
+      {
+        heading: 'Understanding Ontario provincial tax rates',
+        content: 'Canada uses a progressive tax system, which means the more you earn, the higher the percentage of tax you pay on the extra income. For the 2026 tax year, Ontario\'s lowest tax bracket is 5.05 percent on your first $53,891 of taxable income. Ontario also gives you a basic personal amount -- for 2026, it sits at $12,989. If you earn less than this, you owe zero provincial income tax. Even if you had no income since arriving, you still need to file a return to get your benefit payments. Always verify current amounts at canada.ca or the Ontario provincial website as these numbers adjust annually.'
+      },
+      {
+        heading: 'The Ontario Trillium Benefit (OTB)',
+        content: 'One of the biggest reasons to file your taxes right away in Ontario is the Ontario Trillium Benefit. This payment helps low-to-moderate income residents pay for energy costs, property taxes, and sales tax. The OTB combines three separate credits: the Ontario Energy and Property Tax Credit, the Northern Ontario Energy Credit, and the Ontario Sales Tax Credit. When you file your tax return, fill out the ON-BEN form to apply. If you qualify, the government sends this money in monthly payments starting in July of the following year. If your total benefit is under $500, it comes as a single lump sum. Keep rent receipts -- your landlord must provide them if you ask.'
+      },
+      {
+        heading: 'The 13% HST and how to offset it',
+        content: 'Whenever you buy goods or services in Ontario, you pay the Harmonized Sales Tax of 13 percent. This combines the 5 percent federal GST with an 8 percent provincial component. This can feel like a lot when furnishing a new apartment or buying winter gear for the first time. The government offsets this through the GST/HST credit -- a tax-free quarterly payment for lower-income residents. You do not need to apply separately. The CRA automatically checks your eligibility when you file your annual tax return.'
+      },
+      {
+        heading: 'Free settlement resources in Ontario',
+        content: 'Ontario has an outstanding network of settlement agencies, especially in Toronto. Organizations like ACCES Employment and COSTI have been helping newcomers find jobs and navigate Canadian life for decades. They offer free services including resume help, interview preparation and mentorship programs. During tax season, many community organizations host free tax clinics where CRA-trained volunteers can file your return for free if you have a modest income and a simple tax situation.'
+      },
+      {
+        heading: 'Frequently asked questions about Ontario taxes for newcomers',
+        content: 'Do I need to file taxes if I just arrived and have not worked yet? Yes. Filing is the only way the government knows you are here and eligible for the Ontario Trillium Benefit and Canada Child Benefit. What happens if I make a mistake on my return? An honest error does not affect your immigration status. You can file an adjustment with the CRA later. How do I prove rent paid for the OTB? Keep your rent receipts. You do not submit them with your return but must keep them in case the CRA requests them.'
+      }
+    ],
+    cta: 'Ready to get started? Use TaxNorth\'s free multilingual AI assistant to navigate your Ontario tax return with confidence.'
+  },
+  {
+    slug: 'newcomer-taxes-british-columbia',
+    title: 'Taxes for Newcomers in British Columbia: What You Need to Know',
+    metaTitle: 'Newcomer Taxes British Columbia | TaxNorth',
+    description: 'Everything you need to know about filing taxes in BC as a newcomer. Learn about the BC Family Benefit, Renter\'s Tax Credit, and local settlement resources.',
+    intro: 'Welcome to British Columbia. BC is a major destination for newcomers from Asia-Pacific countries and around the world. While the cost of living here can be high, the province offers several targeted tax credits and benefits designed to help you and your family thrive.',
+    sections: [
+      {
+        heading: 'BC provincial tax rates explained',
+        content: 'British Columbia uses a progressive income tax system. For the 2026 tax year, the lowest provincial tax bracket is 5.60 percent on your first $50,363 of taxable income. If you earn more, the rate increases in steps. BC also gives you a basic personal amount -- a portion of your income completely exempt from provincial tax -- which significantly helps during your first years in Canada. Tax brackets and rates adjust for inflation each year, so always verify current amounts at canada.ca or the BC government website before you file.'
+      },
+      {
+        heading: 'Sales tax in BC: PST and GST',
+        content: 'Unlike some provinces that combine their sales taxes into an HST, British Columbia keeps them separate. When you buy most goods and services in BC, you pay a 7 percent Provincial Sales Tax alongside the 5 percent federal GST, for a combined 12 percent. However, basic groceries, prescription drugs and children\'s clothing are usually exempt from PST. The federal GST/HST credit helps offset the federal portion -- just file your first tax return and the CRA automatically calculates your eligibility for these quarterly, tax-free payments.'
+      },
+      {
+        heading: 'BC Family Benefit and Renter\'s Tax Credit',
+        content: 'Raising a family and renting a home in Vancouver or Surrey can be expensive. The BC Family Benefit provides tax-free monthly payments to low and moderate-income families with children under 18. For the 2026 to 2027 benefit year, you could receive up to $1,750 for your first child. Verify current amounts at the BC government website. The BC Renter\'s Tax Credit allows renters with modest incomes who rented for at least six months to claim up to $400 on their return. BC also offers the BC Climate Action Tax Credit, paid quarterly alongside your federal GST credit.'
+      },
+      {
+        heading: 'Settlement resources in BC: MOSAIC and S.U.C.C.E.S.S.',
+        content: 'Organizations like MOSAIC and S.U.C.C.E.S.S. provide comprehensive support for newcomers, refugees and international students across BC. They offer free English classes, employment training and family counseling. During March and April, these organizations host free community tax clinics where trained volunteers help you file your return and ensure you claim all the provincial credits you are entitled to.'
+      },
+      {
+        heading: 'Frequently asked questions about BC taxes for newcomers',
+        content: 'Can international students claim the BC Renter\'s Tax Credit? Yes, as long as you meet the income requirements, are a BC resident on December 31, and rented an eligible place for at least six months. Do I apply separately for the BC Family Benefit? No. When you file your return and apply for the federal Canada Child Benefit, the CRA automatically calculates your provincial benefit too. What if I moved to BC from another province? You file taxes based on where you lived on December 31. If you moved to BC in November, you file under BC tax rules for that entire year.'
+      }
+    ],
+    cta: 'Have questions about your BC taxes? Chat with TaxNorth\'s free multilingual assistant to get clear, accurate answers.'
+  },
+  {
+    slug: 'newcomer-taxes-alberta',
+    title: 'Taxes for Newcomers in Alberta: Your Essential Guide',
+    metaTitle: 'Newcomer Taxes Alberta Guide | TaxNorth',
+    description: 'Filing taxes in Alberta as a newcomer? Learn about the province\'s tax advantages, no PST, the Alberta Child and Family Benefit, and local resources in Calgary and Edmonton.',
+    intro: 'Welcome to Alberta. Known for its strong job market in energy and technology, Alberta offers one of the most tax-friendly environments for newcomers in Canada. Whether you are settling in Calgary, Edmonton or a smaller community, understanding the Alberta tax system puts more money in your pocket from day one.',
+    sections: [
+      {
+        heading: 'The Alberta tax advantage',
+        content: 'Alberta has one of the most competitive provincial tax systems in Canada. For the 2026 tax year, you pay 8 percent provincial tax on your first $61,200 of taxable income. Alberta also has the highest basic personal amount in the country. For 2026, this is $22,769 -- meaning you can earn up to that amount before owing any provincial income tax at all. This is a significant advantage during your first years in Canada when income may be lower as you build your career. Always verify current amounts at canada.ca or the Alberta government website as they are indexed to inflation.'
+      },
+      {
+        heading: 'No provincial sales tax in Alberta',
+        content: 'The most immediate financial benefit you will notice in Alberta is at the cash register. Alberta is the only province in Canada with no Provincial Sales Tax. When you buy clothes, furniture or a car, you only pay the 5 percent federal GST. No extra 7 or 8 percent added on top. This makes day-to-day living noticeably more affordable than in other major provinces. Even without a PST, you are still eligible for the federal GST/HST credit. Filing your first tax return triggers the CRA to send you tax-free quarterly payments to offset the federal sales tax you do pay.'
+      },
+      {
+        heading: 'Alberta Child and Family Benefit (ACFB)',
+        content: 'Alberta provides strong financial support for families through the Alberta Child and Family Benefit. This program delivers direct, tax-free payments to lower and middle-income families with children under 18, paid in four installments in August, November, February and May. The benefit has two components: a base amount available to all qualifying families, and a working component that provides additional support to families with employment income. For older newcomers, the Alberta Seniors Benefit provides monthly financial assistance with living expenses. You cannot receive any of these benefits without filing your annual tax return.'
+      },
+      {
+        heading: 'Settlement support in Alberta',
+        content: 'Whether you settle in Calgary or Edmonton, excellent settlement resources are available. Immigrant Services Calgary provides comprehensive support from language assessments to career counseling. During tax season, settlement organizations across Alberta host free tax clinics where CRA-trained volunteers can file your return at no cost. TaxNorth is operated by Ascendant Canada Ltd., a company registered right here in Alberta. We built this tool specifically to help newcomers across the province get instant, accurate tax guidance in their own language.'
+      },
+      {
+        heading: 'Frequently asked questions about Alberta taxes for newcomers',
+        content: 'Do I pay provincial tax if I earn under $22,000? No. Because of Alberta\'s high basic personal amount, you owe zero provincial income tax below that threshold. How do I apply for the Alberta Child and Family Benefit? You do not need a separate application. File your federal tax return and apply for the Canada Child Benefit. The CRA automatically determines your ACFB eligibility. What if I work in Alberta but my family is still abroad? If you are considered a Canadian resident for tax purposes, you report your global income, but may still qualify for certain credits. TaxNorth can help clarify your specific situation.'
+      }
+    ],
+    cta: 'Make your first Alberta tax season stress-free. Ask TaxNorth\'s free AI assistant your questions in your preferred language today.'
+  },
+  {
+    slug: 'newcomer-taxes-quebec',
+    title: 'Taxes for Newcomers in Quebec: Filing Both Returns',
+    metaTitle: 'Newcomer Taxes Quebec Guide | TaxNorth',
+    description: 'Navigating taxes in Quebec as a newcomer? Learn how to file with both Revenu Quebec and the CRA, understand the Solidarity Tax Credit, and access family benefits.',
+    intro: 'Welcome to Quebec. Settling here offers a rich cultural experience and excellent social programs, including some of the best family support in Canada. However, Quebec has a unique tax system compared to the rest of the country. You will need to file two separate tax returns, and most provincial services operate in French.',
+    sections: [
+      {
+        heading: 'The dual tax system: CRA and Revenu Quebec',
+        content: 'In every other province, you file one tax return with the Canada Revenue Agency. In Quebec, you must file two separate returns every year -- one with the CRA for federal taxes, and one with Revenu Quebec for provincial taxes. This dual system means you will receive two separate notices of assessment after filing. Most modern tax software handles both returns simultaneously using the same information. Keep your address updated with both agencies separately. Moving and notifying only the CRA is not enough -- you must also inform Revenu Quebec to ensure your benefits continue without interruption.'
+      },
+      {
+        heading: 'Quebec provincial tax rates and the QPP',
+        content: 'Quebec has its own progressive income tax brackets. For the 2026 tax year, the lowest provincial rate is 14 percent on your first $54,345 of taxable income. While the rates look higher than other provinces, Quebec residents receive a federal tax abatement that partially offsets this. Another major difference is retirement savings. Instead of contributing to the Canada Pension Plan like the rest of Canada, workers in Quebec contribute to the Quebec Pension Plan (QPP). You will see QPP deductions on your paycheque. Always verify current amounts at canada.ca or the Revenu Quebec website.'
+      },
+      {
+        heading: 'Sales tax (QST) and the Solidarity Tax Credit',
+        content: 'Shopping in Quebec means paying a combined 14.975 percent in sales tax -- the 5 percent federal GST plus the 9.975 percent Quebec Sales Tax (QST). To help lower-income residents manage these costs, the province offers the Solidarity Tax Credit. This refundable credit helps cover QST, housing costs, and living expenses in northern communities. To receive it, file your Revenu Quebec return and complete Schedule D. Depending on your entitlement, payments arrive as a lump sum in July or in monthly and quarterly installments throughout the year.'
+      },
+      {
+        heading: 'Subsidized childcare and family support',
+        content: 'One of the most significant financial advantages of living in Quebec is the subsidized childcare network. If you secure a spot at a CPE (Centre de la petite enfance), you pay a very low daily rate -- saving families thousands of dollars annually compared to other provinces. If you use private unsubsidized daycare, Revenu Quebec offers a generous refundable tax credit for childcare expenses, which can be paid to you in advance. Quebec also provides a Family Allowance payment for families with children under 18. All of these benefits require filing your annual tax returns each year.'
+      },
+      {
+        heading: 'Frequently asked questions about Quebec taxes for newcomers',
+        content: 'Do I have to file my taxes in French? No. While French is the official language and most services operate in French, you have the right to request documents and communicate with Revenu Quebec in English. Can I use standard tax software? Yes. Most certified Canadian tax software generates both your federal CRA return and your Revenu Quebec return simultaneously using the same information. What is an RL-1 slip? In Quebec, your employer provides both a federal T4 slip and a provincial Relevé 1 (RL-1) slip. You need both to file your taxes correctly.'
+      }
+    ],
+    cta: 'Need help understanding your Quebec tax obligations? TaxNorth\'s free multilingual assistant is here to guide you through the process.'
+  }
+
 ]
 
 export function getResource(slug: string): Resource | undefined {
