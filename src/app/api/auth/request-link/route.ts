@@ -1,10 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabase'
-import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { sendMail } from '@/lib/mailer'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -52,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     const magicLink = `https://www.taxnorth.ca/api/auth/verify?token=${token}`
 
-    await resend.emails.send({
+    const sent = await sendMail('customer-magic-link', {
       from: 'TaxNorth <hello@taxnorth.ca>',
       to: email,
       subject: 'Access your TaxNorth conversation history',
@@ -76,6 +74,10 @@ export async function POST(req: NextRequest) {
         </div>
       `
     })
+
+    if (!sent) {
+      return NextResponse.json({ error: 'Email could not be sent' }, { status: 502 })
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -1,10 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabase'
-import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 import { isAdminRequest } from '@/lib/adminAuth'
+import { sendMail } from '@/lib/mailer'
 import { escapeHtml } from '@/lib/html'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function GET(req: NextRequest) {
   if (!(await isAdminRequest(req))) {
@@ -79,8 +77,9 @@ export async function PUT(req: NextRequest) {
       action: 'assigned',
     })
 
+    let emailSent = true
     if (professional?.email && lead) {
-      await resend.emails.send({
+      emailSent = await sendMail('assign-lead-to-accountant', {
         from: 'TaxNorth <hello@taxnorth.ca>',
         to: professional.email,
         subject: `New client assigned — ${lead.province || 'Canada'} — TaxNorth`,
@@ -137,10 +136,14 @@ export async function PUT(req: NextRequest) {
             </div>
           </div>
         `,
-      }).catch(console.error)
+      })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json(
+      emailSent
+        ? { success: true }
+        : { success: true, warning: 'The lead was assigned, but the email to the accountant could not be sent.' }
+    )
   }
 
   if (action === 'return') {

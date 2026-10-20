@@ -1,10 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabase'
-import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 import { escapeHtml } from '@/lib/html'
+import { sendMail } from '@/lib/mailer'
 import { safeEqual } from '@/lib/session'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
   // Vapi must send the secret configured in its server settings, either as
@@ -68,7 +66,7 @@ export async function POST(req: NextRequest) {
     else console.log('Saved/updated in Supabase')
 
     // Send email for all calls with transcript
-    await resend.emails.send({
+    await sendMail('vapi-call-summary', {
       from: 'TaxNorth <hello@taxnorth.ca>',
       to: process.env.ADMIN_EMAIL!,
       subject: `${interested ? '🔥 Interested!' : '📞 Call done'} — ${customerName || customerPhone}`.replace(/[\r\n]+/g, ' '),

@@ -1,11 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabase'
-import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { sendMail } from '@/lib/mailer'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
 import { escapeHtml } from '@/lib/html'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
   if (!rateLimit(`pro-link-ip:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
@@ -50,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   const link = `https://www.taxnorth.ca/api/accountant/verify?token=${token}`
 
-  await resend.emails.send({
+  await sendMail('cpa-magic-link', {
     from: 'TaxNorth <hello@taxnorth.ca>',
     to: email,
     subject: 'Access your TaxNorth partner portal',

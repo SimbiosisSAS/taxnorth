@@ -1,10 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { isAdminRequest } from '@/lib/adminAuth'
+import { sendMail } from '@/lib/mailer'
 import { openrouter } from '@/lib/openrouter'
-import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const EMAIL_PROMPTS = {
   cold: (prospect: Record<string, string>) => `
@@ -166,12 +164,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Prospect has no email' }, { status: 400 })
     }
 
-    await resend.emails.send({
+    const sent = await sendMail('prospect-outreach', {
       from: 'Andrés at TaxNorth <partners@taxnorth.ca>',
       to: recipientEmail,
       subject: emailData.subject,
       text: emailData.body,
     })
+
+    if (!sent) {
+      return NextResponse.json({ error: 'Email could not be sent' }, { status: 502 })
+    }
 
     // Log activity automáticamente
     await supabaseAdmin.from('prospect_activities').insert({

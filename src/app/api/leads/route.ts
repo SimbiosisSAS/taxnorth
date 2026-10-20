@@ -1,11 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { openrouter } from '@/lib/openrouter'
-import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 import { escapeHtml } from '@/lib/html'
+import { sendMail } from '@/lib/mailer'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -130,7 +128,7 @@ export async function POST(req: NextRequest) {
 
     const isPreSelected = !!professionalName
 
-    await resend.emails.send({
+    await sendMail('lead-admin-notification', {
       from: 'TaxNorth <hello@taxnorth.ca>',
       to: process.env.ADMIN_EMAIL!,
       subject: `${isPreSelected ? `Client for ${professionalName}` : 'New lead'} — ${province || 'Canada'} — ${new Date().toLocaleDateString('en-CA')}`,
@@ -214,7 +212,7 @@ export async function POST(req: NextRequest) {
       `,
     })
 
-    await resend.emails.send({
+    await sendMail('lead-client-confirmation', {
       from: 'TaxNorth <hello@taxnorth.ca>',
       to: email,
       subject: 'Your TaxNorth connection request is confirmed',
