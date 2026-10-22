@@ -1109,6 +1109,101 @@ export const resources: Resource[] = [
     cta: 'Need help understanding your Quebec tax obligations? TaxNorth\'s free multilingual assistant is here to guide you through the process.'
   }
 
+   ,{
+    slug: 'ontario-trillium-benefit-newcomers',
+    title: 'Ontario Trillium Benefit Guide for Newcomers to Canada',
+    metaTitle: 'Ontario Trillium Benefit for Newcomers | TaxNorth',
+    description: 'Learn how the Ontario Trillium Benefit works for newcomers to Canada. Discover eligibility rules, how to file Form ON-BEN, and why reporting world income matters.',
+    intro: 'The Ontario Trillium Benefit provides essential financial support to help residents pay for energy, property taxes, and sales tax. For newcomers to Canada, understanding how to apply for this benefit can unlock significant monthly deposits. This guide explains the eligibility rules and the exact steps you need to take during your first tax season.',
+    sections: [
+      {
+        heading: 'What is the Ontario Trillium Benefit?',
+        content: 'The Ontario Trillium Benefit, often referred to as the OTB, is a refundable tax credit program designed to help low-income and moderate-income residents of Ontario pay for energy costs, sales tax, and property taxes. The OTB combines three separate provincial credits into one monthly deposit: the Ontario Sales Tax Credit, the Ontario Energy and Property Tax Credit, and the Northern Ontario Energy Credit. You do not need to qualify for all three to receive a payment. Payments are distributed monthly, usually on the tenth of each month, making them a reliable source of extra funds for your household budget.'
+      },
+      {
+        heading: 'Why most newcomers miss out on the OTB',
+        content: 'Many newcomers miss out on the Ontario Trillium Benefit simply because they do not know how the application process works. A common misconception is that if you had no income in Canada during your first year, you do not need to file a tax return. However, filing a tax return is the only way CRA can calculate your eligibility for benefits like the OTB. Even if your Canadian income was zero, you must file a return to trigger these payments. Another major hurdle is Form ON-BEN. While the sales tax portion is calculated automatically when you file, the property and energy portions require you to complete Form ON-BEN with your tax return. You must also declare your world income for the two years prior to becoming a Canadian resident so the government can determine if your household falls within the eligible income threshold.'
+      },
+      {
+        heading: 'Eligibility rules and payment schedule',
+        content: 'To be eligible for the OTB as a newcomer, you must be a resident of Ontario on December 31 of the tax year you are filing for, and you must be at least 18 years old or have a spouse or child. The benefit year runs from July to June and payments are always based on your previous year\'s tax return. If your total annual entitlement is $500 or less, you receive a single lump-sum payment in July instead of monthly deposits. If your entitlement exceeds $500, you receive monthly payments. Verify current amounts at ontario.ca as income thresholds and maximum benefit amounts are adjusted annually.'
+      },
+      {
+        heading: 'How to apply as a newcomer step by step',
+        content: 'Gathering your documents is the first step. Collect records of any income earned outside Canada before you arrived, your total rent paid or property taxes paid while living in Ontario, and rent receipts from your landlord. When preparing your tax return, ensure Form ON-BEN is included. On this form, check the box to apply for the Ontario Energy and Property Tax Credit and enter your total rent or property taxes paid. Complete the newcomer schedules declaring your date of entry into Canada and your world income for prior years. Once your return is processed, the CRA will send you a Notice of Assessment followed by a notice detailing your OTB calculation and payment schedule. Set up direct deposit through CRA My Account for the fastest payments.'
+      },
+      {
+        heading: 'Frequently asked questions about the Ontario Trillium Benefit',
+        content: 'Do I need a job in Canada to get the OTB? No. The benefit is based on your household net income and housing costs. Even with zero income you can receive it if you paid rent in Ontario. What if I arrived mid-year? As long as you were living in Ontario on December 31 of that year, you can apply for the benefit on your first tax return. Is the OTB taxable income? No, it is a tax-free payment you do not report in the following year. What if I forgot to file Form ON-BEN? You can request an adjustment to your tax return to add the form later and the CRA will issue retroactive payments if you are eligible.'
+      }
+    ],
+    cta: 'Have questions about your OTB eligibility? Ask the TaxNorth free AI assistant in your language today.'
+  },
+  {
+    slug: 'gst-hst-registration-self-employed-canada',
+    title: 'GST/HST Registration Guide for Self-Employed Newcomers in Canada',
+    metaTitle: 'GST/HST Registration Self-Employed Newcomers | TaxNorth',
+    description: 'Find out when to register for GST/HST as a self-employed newcomer in Canada. Understand the $30,000 threshold, voluntary registration, and how to remit taxes.',
+    intro: 'Starting a freelance business is a great way to establish yourself in Canada, but it comes with specific tax responsibilities. Understanding when and how to register for a GST/HST account is critical for self-employed newcomers. This guide breaks down the mandatory threshold, exceptions, and the registration process.',
+    sections: [
+      {
+        heading: 'Understanding the GST/HST requirement for freelancers',
+        content: 'In Canada, the government requires certain business owners to register for a GST/HST account, charge this tax to their clients, collect the funds, and remit them to the CRA. GST/HST is not a tax on your personal income -- it is a consumption tax that your clients pay and you collect on behalf of the government. Many newcomer freelancers mistakenly believe they do not need to worry about sales tax until they incorporate a formal business. This is incorrect. Sole proprietors and independent contractors operating under their own names are equally subject to these tax rules. Failing to register when required can result in CRA charging you the uncollected sales tax directly from your own revenue.'
+      },
+      {
+        heading: 'The $30,000 small supplier threshold explained',
+        content: 'The CRA provides an exemption for very small businesses called the small supplier rule. If your worldwide gross revenue from taxable supplies stays under $30,000, you are considered a small supplier and are not legally required to register. There are two ways you might cross this threshold. First, if your total revenue over any four consecutive calendar quarters exceeds $30,000, you must register within 29 days of the month following the quarter you crossed the limit. Second, if you earn more than $30,000 in a single calendar quarter, you lose your small supplier status immediately on the day of the sale that pushed you over the limit. Always verify current threshold amounts at canada.ca as tax regulations are subject to legislative updates.'
+      },
+      {
+        heading: 'Mandatory exceptions: when you must register immediately',
+        content: 'Certain professions have no small supplier exemption at all. If you work as a taxi driver or a commercial ride-share driver for platforms like Uber or Lyft, you must register for a GST/HST account before you drive your very first passenger, regardless of how little money you expect to make. Every dollar earned from ride-sharing is subject to GST/HST from day one. Additionally, certain digital economy vendors and commercial real estate transactions have different mandatory registration rules. Always check if your specific industry has special requirements before assuming the standard $30,000 threshold applies to you.'
+      },
+      {
+        heading: 'Voluntary registration: should you register early?',
+        content: 'Even if your freelance income is well below $30,000, you can register voluntarily. The main advantage is the ability to claim Input Tax Credits. When registered, you can recover the sales tax you pay on your legitimate business expenses such as laptops, software subscriptions, and office supplies. This means the government refunds you the sales tax you paid on those items, which can save significant money if you have high startup costs. A second advantage is professional credibility -- enterprise clients in Canada often expect their contractors to have a GST/HST number, and registering voluntarily can make your business appear more established.'
+      },
+      {
+        heading: 'How to register and remit your taxes',
+        content: 'Registering for a GST/HST account is free and can be done online through the CRA Business Registration Online portal at canada.ca. When you register, the CRA assigns you a nine-digit Business Number followed by the letters RT and a four-digit reference code. This number must appear on all your invoices. The tax rate you charge depends on where your client is located, not where you live. After collecting the tax, hold it until it is time to file your GST/HST return. Depending on your revenue, you will be assigned a monthly, quarterly, or annual reporting period. File electronically, report the total tax collected, subtract your Input Tax Credits, and remit the balance to the CRA.'
+      },
+      {
+        heading: 'Frequently asked questions about GST/HST registration',
+        content: 'Does my foreign income count toward the $30,000 threshold? Yes. The CRA calculates the small supplier threshold based on your worldwide gross revenue from taxable supplies. If I provide services to international clients, do I charge GST/HST? Services provided to clients located outside Canada are generally zero-rated exports, meaning you charge 0 percent. However, these zero-rated sales still count toward your $30,000 registration threshold. What if I should have registered months ago? Contact the CRA to backdate your registration. You will be liable for the uncollected tax from that period plus potential interest and penalties, so it is always better to correct the mistake proactively.'
+      }
+    ],
+    cta: 'Need help understanding your self-employment tax obligations? Chat with TaxNorth\'s free AI assistant in your language.'
+  },
+  {
+    slug: 'canada-pension-plan-newcomers-canada',
+    title: 'Canada Pension Plan (CPP) Guide for Newcomers',
+    metaTitle: 'Canada Pension Plan (CPP) for Newcomers | TaxNorth',
+    description: 'Learn how the Canada Pension Plan works for newcomers. Understand CPP contribution rates, retirement benefits, and international social security agreements.',
+    intro: 'The Canada Pension Plan is a foundational part of the Canadian social safety net, providing retirement and disability benefits to workers. As a newcomer, you will likely see CPP deductions on your very first paycheque. This guide explains how these contributions work and how they build your future financial security in Canada.',
+    sections: [
+      {
+        heading: 'What is the Canada Pension Plan?',
+        content: 'The Canada Pension Plan, commonly known as the CPP, is a mandatory national social insurance program that provides income replacement for Canadians when they retire, become disabled, or pass away. If you are employed in Canada and over the age of 18, you will notice CPP deductions taken directly from your very first paycheque. This is not optional -- it is a mandatory contribution to your future retirement security. The system operates in every province and territory with the exception of Quebec. If you settle and work in Quebec, you will contribute to the Quebec Pension Plan (QPP), which functions very similarly to the federal program.'
+      },
+      {
+        heading: 'Understanding CPP contribution rates and limits',
+        content: 'The amount you contribute to CPP is based on your employment earnings, and the government sets annual limits on these deductions. You only start contributing once your earnings surpass the basic exemption amount of $3,500. For the Base CPP, employees and employers each pay a matching contribution rate on earnings up to the Year\'s Maximum Pensionable Earnings limit. A second tier called CPP2 requires an additional contribution on earnings above that first ceiling up to a second maximum. If you are self-employed, you pay both the employee and employer portions. Because contribution rates and annual maximums change each year, always verify current amounts at canada.ca.'
+      },
+      {
+        heading: 'How CPP builds your retirement benefits',
+        content: 'Many newcomers worry they will not work in Canada long enough to benefit from CPP deductions. Fortunately, to qualify for a basic CPP retirement pension you only need to make at least one valid contribution and reach the minimum eligible age of 60. The actual monthly amount you receive in retirement depends on how many years you contributed and how much you contributed during those years. Beyond retirement, your contributions also provide immediate protective coverage. If you suffer a severe and prolonged disability that prevents you from working, you may qualify for the CPP disability benefit. If you pass away, the plan provides survivor benefits and a one-time death benefit to your spouse or dependent children.'
+      },
+      {
+        heading: 'Portability and international social security agreements',
+        content: 'If you decide to leave Canada, your CPP contributions are never lost. The Canadian pension system is fully portable. You can apply for and receive your CPP retirement pension from abroad once you reach the eligible age. Furthermore, Canada has established bilateral international social security agreements with over 50 different countries. If you worked and paid into the pension system of your home country before moving to Canada, you can often combine those foreign working years with your Canadian working years through a process called totalization. This helps you meet the minimum qualifying periods for benefits in both countries. The actual payout from Canada will only reflect what you paid into the Canadian system, but the agreement ensures your foreign work history helps unlock eligibility.'
+      },
+      {
+        heading: 'Frequently asked questions about CPP for newcomers',
+        content: 'Do temporary foreign workers and international students pay into CPP? Yes. Your immigration status does not affect your pension obligations. If you are working legally in Canada and earn more than the $3,500 basic exemption, you must contribute. Can I opt out of CPP? No. Participation is strictly mandatory for all eligible workers in Canada. Your employer is legally required to deduct contributions and remit them to the government. What if I am self-employed but my business loses money? If your self-employment net income after expenses is less than the $3,500 basic exemption, you do not have to make any CPP contributions that year.'
+      }
+    ],
+    cta: 'Want to know more about your payroll deductions? Ask the TaxNorth free AI assistant in your language right now.'
+  }
+
 ]
 
 export function getResource(slug: string): Resource | undefined {
