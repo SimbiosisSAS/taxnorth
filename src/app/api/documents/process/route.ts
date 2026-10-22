@@ -1,9 +1,13 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit, clientIp } from '@/lib/rateLimit'
+import { crossCheckReadings, imageDimensions, isTooSmall } from '@/lib/readingsCheck'
 import { pairSlipBoxes, toLayoutText, guessSlipType, dropUnsupportedValues, labelSlipFields, type TextItem } from '@/lib/pdfLayout'
 
 const IMAGE_MODEL = 'openai/gpt-4o-mini'
+// Second, independent reader for photos (different company, so it rarely makes the same mistake).
+// Can be changed without touching the code: set IMAGE_VERIFIER_MODEL in Vercel.
+const IMAGE_VERIFIER_MODEL = process.env.IMAGE_VERIFIER_MODEL || 'google/gemini-3.6-flash'
 // Not a reasoning model on purpose: reasoning models spend max_tokens on hidden thinking and can return an empty reply.
 const TEXT_MODEL = 'openai/gpt-4o-mini'
 
@@ -117,7 +121,9 @@ Return ONLY valid JSON:
 
 async function extractFromImage(
   base64Content: string,
-  mimeType: string
+  mimeType: string,
+  model: string = IMAGE_MODEL,
+  maxTokens: number = 4000
 ): Promise<Record<string, unknown>> {
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
@@ -128,7 +134,7 @@ async function extractFromImage(
       'X-Title': 'TaxNorth.ca',
     },
     body: JSON.stringify({
-      model: IMAGE_MODEL,
+      model,
       messages: [{
         role: 'user',
         content: [
@@ -136,11 +142,49 @@ async function extractFromImage(
           { type: 'text', text: EXTRACTION_PROMPT },
         ],
       }],
-      max_tokens: 4000,
+      max_tokens: maxTokens,
       temperature: 0,
     }),
   })
   return readExtraction(response, 'image')
+}
+
+// A photo has no text layer to check the numbers against, so it is read by two different models and
+// only the values on which both agree are kept.
+async function extractFromPhoto(buffer: Buffer, base64Content: string, mimeType: string): Promise<Record<string, unknown>> {
+  if (isTooSmall(imageDimensions(buffer))) {
+    throw new Error('photo is too small to read reliably')
+  }
+
+  const [first, second] = await Promise.allSettled([
+    extractFromImage(base64Content, mimeType, IMAGE_MODEL, 4000),
+    extractFromImage(base64Content, mimeType, IMAGE_VERIFIER_MODEL, 8000),
+  ])
+  const why = (r: PromiseRejectedResult) => (r.reason instanceof Error ? r.reason.message : String(r.reason))
+
+  if (first.status === 'rejected' && second.status === 'rejected') {
+    throw new Error(`${why(first)} | second reader: ${why(second)}`)
+  }
+
+  // only one reader worked: its answer is kept but flagged, because it could not be cross-checked
+  if (first.status === 'rejected' || second.status === 'rejected') {
+    const failed = first.status === 'rejected' ? first : (second as PromiseRejectedResult)
+    console.warn('Photo: one of the two readings failed:', why(failed))
+    const only = first.status === 'fulfilled' ? first.value : (second as PromiseFulfilledResult<Record<string, unknown>>).value
+    return { ...only, confidence: 'low', notes: `This photo was read by a single model and could not be cross-checked (${why(failed).slice(0, 200)}).` }
+  }
+
+  const { data, agreed, dropped } = crossCheckReadings(first.value, second.value)
+  if (agreed < 2) {
+    throw new Error(`the two readings of the photo agree on only ${agreed} value(s)`)
+  }
+  return {
+    ...data,
+    confidence: dropped.length === 0 ? 'medium' : 'low',
+    notes: dropped.length === 0
+      ? 'Read from a photo by two models that agree on every value.'
+      : `Read from a photo by two models. Values they disagreed on were left out: ${dropped.join(', ')}.`,
+  }
 }
 
 const METADATA_PROMPT = `Read this Canadian tax slip and return ONLY a JSON object, with no other text:
@@ -336,7 +380,7 @@ export async function POST(req: NextRequest) {
     try {
       extractedData = file.type === 'application/pdf'
         ? await extractFromPDF(buffer)
-        : await extractFromImage(base64, file.type)
+        : await extractFromPhoto(buffer, base64, file.type)
       if (!hasUsableFields(extractedData)) {
         throw new Error('extraction returned no usable fields')
       }
@@ -384,7 +428,7 @@ export async function POST(req: NextRequest) {
         await supabaseAdmin.from('messages').insert({
           conversation_id: targetConversationId,
           role: 'assistant',
-          content: `[Document received] ${String(extractedData.document_type || 'Tax document')}${extractedData.tax_year ? ` (${String(extractedData.tax_year)})` : ''}. Values read from the user's uploaded file:\n${summaryLines}`,
+          content: `[Document received] ${String(extractedData.document_type || 'Tax document')}${extractedData.tax_year ? ` (${String(extractedData.tax_year)})` : ''}. Values read from the user's uploaded file (${file.type === 'application/pdf' ? 'PDF' : 'photo'}, reading confidence: ${String(extractedData.confidence || 'unknown')}):\n${summaryLines}`,
         })
       }
     } catch (saveError) {
@@ -399,6 +443,7 @@ export async function POST(req: NextRequest) {
       extractedData,
       status: extractionStatus,
       confidence: extractedData.confidence || null,
+      source: file.type === 'application/pdf' ? 'pdf' : 'photo',
     })
 
   } catch (error) {

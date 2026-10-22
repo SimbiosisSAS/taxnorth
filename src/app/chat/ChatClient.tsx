@@ -275,7 +275,7 @@ export default function ChatClient() {
 
       const agentMessage: Message = {
         role: 'assistant',
-        content: `Here is what I extracted from your **${documentType || 'document'}**${taxYear ? ` (${taxYear})` : ''}:\n\n${fieldLines || 'No specific fields detected.'}\n\n---\nDoes this look correct? If you would like to share this document with your accountant, reply **"yes, send it"**. If you prefer to keep it for your reference only, reply **"no, keep it"**.`
+        content: `Here is what I extracted from your **${documentType || 'document'}**${taxYear ? ` (${taxYear})` : ''}:\n\n${fieldLines || 'No specific fields detected.'}${result.confidence && result.confidence !== 'high' ? '\n\n**Please check every number against your original document before sharing it.**' + (result.source === 'photo' ? ' A photo can be misread; a PDF gives the most accurate reading.' : '') : ''}\n\n---\nDoes this look correct? If you would like to share this document with your accountant, reply **"yes, send it"**. If you prefer to keep it for your reference only, reply **"no, keep it"**.`
       }
 
       setMessages(prev => [...prev, agentMessage])
@@ -576,7 +576,7 @@ export default function ChatClient() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/heic,application/pdf"
+              accept="image/jpeg,image/png,image/webp,application/pdf"
               onChange={handleFileUpload}
               className="hidden"
             />
