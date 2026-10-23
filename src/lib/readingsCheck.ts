@@ -1,8 +1,25 @@
 // Photos have no text layer, so a single model reading cannot be verified. Two different models read the
 // same photo; only the values on which both agree are kept.
 
+// Different models name the same box differently: "box_14", "14", "Box 14", "box_14_employment_income",
+// "Employment income (Box 14)". All of them become box_14 so the readings can be compared.
+export function canonicalKey(key: string): string {
+  const k = String(key).trim()
+  const withWord = /(?:^|[^a-z0-9])(?:box|case)[\s_-]*(\d{1,3}[a-z]?)(?![a-z0-9])/i.exec(k)
+  if (withWord) return `box_${withWord[1].toUpperCase()}`
+  const startsWithNumber = /^(\d{1,3}[a-z]?)(?:[\s_.:)-].*)?$/i.exec(k)
+  if (startsWithNumber) return `box_${startsWithNumber[1].toUpperCase()}`
+  return k.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+}
+
 export function normalizeValue(value: unknown): string | null {
   if (value === null || value === undefined) return null
+  if (typeof value === 'object') {
+    // some models answer { value: "570.00" } instead of "570.00"
+    const o = value as Record<string, unknown>
+    const inner = o.value ?? o.amount ?? o.text
+    return inner === undefined || typeof inner === 'object' ? null : normalizeValue(inner)
+  }
   const text = String(value).trim()
   if (!text || text === '-' || text === '--') return null
   const numeric = text.replace(/[$,\s]/g, '')
@@ -10,10 +27,30 @@ export function normalizeValue(value: unknown): string | null {
   return `s:${text.toLowerCase().replace(/\s+/g, ' ')}`
 }
 
+// Accepts { box_14: "570.00" } and also [{ box: "14", value: "570.00" }, ...]. Keys come back canonical.
+export function fieldsOf(reading: Record<string, unknown>): Record<string, unknown> {
+  const raw = reading.fields
+  const out: Record<string, unknown> = {}
+  if (Array.isArray(raw)) {
+    for (const item of raw) {
+      if (!item || typeof item !== 'object') continue
+      const o = item as Record<string, unknown>
+      const name = o.box ?? o.key ?? o.name ?? o.label ?? o.field
+      const value = o.value ?? o.amount ?? o.text
+      if (name !== undefined && value !== undefined) out[canonicalKey(String(name))] = value
+    }
+  } else if (raw && typeof raw === 'object') {
+    for (const [key, value] of Object.entries(raw as Record<string, unknown>)) out[canonicalKey(key)] = value
+  }
+  return out
+}
+
 export type CrossCheck = {
   data: Record<string, unknown>
   agreed: number
   dropped: string[]
+  first: Record<string, unknown>   // what each reader saw, with canonical keys (for diagnosis)
+  second: Record<string, unknown>
 }
 
 // a and b are the two parsed readings ({ document_type, tax_year, issuer_name, recipient_name, fields, ... }).
@@ -22,11 +59,9 @@ export function crossCheckReadings(a: Record<string, unknown>, b: Record<string,
   const typeA = normalizeValue(a.document_type)
   const typeB = normalizeValue(b.document_type)
   if (!typeA || !typeB || typeA !== typeB) {
-    throw new Error('the two readings disagree on the document type')
+    throw new Error(`the two readings disagree on the document type (${String(a.document_type)} vs ${String(b.document_type)})`)
   }
 
-  const fieldsOf = (r: Record<string, unknown>): Record<string, unknown> =>
-    r.fields && typeof r.fields === 'object' && !Array.isArray(r.fields) ? (r.fields as Record<string, unknown>) : {}
   const fa = fieldsOf(a)
   const fb = fieldsOf(b)
 
@@ -51,6 +86,8 @@ export function crossCheckReadings(a: Record<string, unknown>, b: Record<string,
     },
     agreed: Object.keys(kept).length,
     dropped,
+    first: fa,
+    second: fb,
   }
 }
 

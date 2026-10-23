@@ -174,9 +174,14 @@ async function extractFromPhoto(buffer: Buffer, base64Content: string, mimeType:
     return { ...only, confidence: 'low', notes: `This photo was read by a single model and could not be cross-checked (${why(failed).slice(0, 200)}).` }
   }
 
-  const { data, agreed, dropped } = crossCheckReadings(first.value, second.value)
+  const { data, agreed, dropped, first: seenByFirst, second: seenBySecond } = crossCheckReadings(first.value, second.value)
   if (agreed < 2) {
-    throw new Error(`the two readings of the photo agree on only ${agreed} value(s)`)
+    // keep what each reader saw (SIN masked, values cut short) so the reason can be diagnosed afterwards
+    const brief = (fields: Record<string, unknown>) =>
+      Object.fromEntries(Object.entries(maskSensitiveFields(fields)).slice(0, 30).map(([k, v]) => [k, String(v ?? '').slice(0, 40)]))
+    const failure = new Error(`the two readings of the photo agree on only ${agreed} value(s)`) as Error & { debug?: unknown }
+    failure.debug = { first_reader: brief(seenByFirst), second_reader: brief(seenBySecond) }
+    throw failure
   }
   return {
     ...data,
@@ -391,7 +396,8 @@ export async function POST(req: NextRequest) {
       const reason = err instanceof Error ? err.message : String(err)
       console.error('Extraction failed:', reason)
       extractionStatus = 'error'
-      extractedData = { error: reason.slice(0, 500) }
+      const debug = err instanceof Error ? (err as Error & { debug?: unknown }).debug : undefined
+      extractedData = debug ? { error: reason.slice(0, 500), debug } : { error: reason.slice(0, 500) }
     }
 
     await supabaseAdmin
